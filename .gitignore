@@ -35,4 +35,4 @@ nosetests.xml
 .pydevproject
 
 # Custom
-messages.log
+.DS_Store

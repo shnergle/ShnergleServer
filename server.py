@@ -6,6 +6,8 @@ from datetime import datetime
 from pymongo import MongoClient
 from gridfs import GridFS
 
+mongo = MongoClient('mongodb://server:$Hnergle1@ds045077.mongolab.com:45077/').Shnergle
+
 def error(status, message, traceback, version):
     cherrypy.response.headers['Content-Type'] = 'application/json'
     return json.dumps({'status': status, 'message': message})

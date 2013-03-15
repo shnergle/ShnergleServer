@@ -1,4 +1,6 @@
-server
-======
+Requirements
+============
 
-Initial Python Server, should be moved to use WSGI.
+ * Python 3
+ * CherryPy
+ * PyMongo

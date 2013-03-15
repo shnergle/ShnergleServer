@@ -12,7 +12,7 @@ def error(status, message, traceback, version):
 
 class Common:
     def jsonp(self, object, **kwargs):
-        cherrypy.response.headers['Expires'] = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        cherrypy.response.headers['Expires'] = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
         cherrypy.response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
         jsonres = json.dumps(object)
         if 'callback' in kwargs:

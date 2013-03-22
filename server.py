@@ -13,8 +13,8 @@ def error(status, message, traceback, version):
     cherrypy.response.headers['Content-Type'] = 'application/json'
     return json.dumps({'status': status, 'message': message})
 
-class Common:
-    def jsonp(self, object, **kwargs):
+def jsonp(self, object, **kwargs):
+    def decorator():
         cherrypy.response.headers['Expires'] = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
         cherrypy.response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
         jsonres = json.dumps(object)
@@ -24,9 +24,14 @@ class Common:
         else:
             cherrypy.response.headers['Content-Type'] = 'application/json'
         return jsonres
+    return decorator
+        
+class Common:
+    pass
 
 class User(Common):
     @cherrypy.expose
+    @jsonp
     def add(self, **kwargs):
         res = {}
         res['Function'] = 'Test'
@@ -34,7 +39,9 @@ class User(Common):
 
 class ShnergleServer(Common):
     users = User()
+
     @cherrypy.expose
+    @jsonp
     def index(self, **kwargs):
         res = {}
         res['Function'] = 'Overview'

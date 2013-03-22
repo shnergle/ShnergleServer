@@ -16,5 +16,5 @@ if __name__ == '__main__':
                         },
               '/':      {'error_page.default': error}
              }
-    app = cherrypy.tree.mount(ShnergleServer(), "/", config)
+    app = cherrypy.tree.mount(controller.ShnergleServer(), "/", config)
     wsgiref.handlers.CGIHandler().run(app)

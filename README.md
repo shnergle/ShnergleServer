@@ -18,3 +18,6 @@ Structure
    * operation is one of add, get or set, corresponding to the CRUD operations (no delete) and a method
  * WSGI is used as interface to a proper web server
  * Parameters can be given as GET and/or POST, POST parameters take precedence
+ * Output is in JSON or JSONP
+ * All delivered JSON documents should be as close as possible to representation in database
+ * It is not a RESTful server, yet can be used as such

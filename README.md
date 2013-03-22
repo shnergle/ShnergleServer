@@ -7,7 +7,7 @@ Requirements
 ------------
 
  * Python 2
- * CherryPy
+ * CherryPy (included)
 
 
 Structure

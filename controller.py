@@ -15,7 +15,7 @@ def jsonp(func):
                                                       'must-revalidate, '
                                                       'post-check=0, '
                                                       'pre-check=0')
-        res = json.dumps(func(*args, **kwargs))
+        res = json.dumps(func(*args, **kwargs), separators=(',', ':'))
         if 'callback' in kwargs:
             cherrypy.response.headers['Content-Type'] = ('text/javascript; '
                                                          'charset=utf-8')

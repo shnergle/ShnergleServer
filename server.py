@@ -3,8 +3,9 @@ import controller
 
 import cherrypy
 import json
-import wsgiref.handlers
+from google.appengine.ext.webapp.util import run_wsgi_app
 from datetime import datetime
+
 
 def error(status, message, traceback, version):
     cherrypy.response.headers['Content-Type'] = 'application/json'
@@ -13,4 +14,4 @@ def error(status, message, traceback, version):
 if __name__ == '__main__':
     config = {'/': {'error_page.default': error}}
     app = cherrypy.tree.mount(controller.ShnergleServer(), "/", config)
-    wsgiref.handlers.CGIHandler().run(app)
+    run_wsgi_app(app)

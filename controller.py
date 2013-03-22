@@ -7,17 +7,16 @@ from functools import wraps
 
 def jsonp(func):
     @wraps(func)
-    def decorator(*args, **kw):
+    def decorator(*args, **kwargs):
         cherrypy.response.headers['Expires'] = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
         cherrypy.response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
-        funcres = func(*args, **kw)
-        jsonres = json.dumps(funcres['res'])
-        if 'callback' in funcres['kwargs']:
+        res = json.dumps(func(*args, **kwargs))
+        if 'callback' in kwargs:
             cherrypy.response.headers['Content-Type'] = 'text/javascript; charset=utf-8'
-            jsonres = funcres['kwargs']['callback'] + '(' + jsonres + ');'
+            res = kwargs['callback'] + '(' + res + ');'
         else:
             cherrypy.response.headers['Content-Type'] = 'application/json'
-        return jsonres
+        return res
     return decorator
 
 
@@ -27,7 +26,7 @@ class User:
     def add(self, **kwargs):
         res = {}
         res['Function'] = 'Test'
-        return {'res': res, 'kwargs': kwargs}
+        return res
 
 
 class ShnergleServer:
@@ -38,4 +37,4 @@ class ShnergleServer:
     def index(self, **kwargs):
         res = {}
         res['Function'] = 'Overview'
-        return {'res': res, 'kwargs': kwargs}
+        return res

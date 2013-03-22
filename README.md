@@ -6,9 +6,8 @@ This is the server used for communication with consumer and merchant app for Shn
 Requirements
 ------------
 
- * Python 3
+ * Python 2
  * CherryPy
- * PyMongo
 
 
 Structure

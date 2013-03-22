@@ -3,16 +3,11 @@ import controller
 
 import cherrypy
 import json
-from datetime import datetime
-
-from google.appengine.ext.webapp.util import run_wsgi_app
 
 
 def error(status, message, traceback, version):
     cherrypy.response.headers['Content-Type'] = 'application/json'
     return json.dumps({'status': status, 'message': message})
 
-if __name__ == '__main__':
-    config = {'/': {'error_page.default': error}}
-    app = cherrypy.tree.mount(controller.ShnergleServer(), "/", config)
-    run_wsgi_app(app)
+config = {'/': {'error_page.default': error}}
+app = cherrypy.Application(controller.ShnergleServer(), '/', config)

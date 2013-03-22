@@ -2,6 +2,7 @@
 
 import cherrypy
 import json
+import wsgiref.handlers
 from datetime import datetime
 #from pymongo import MongoClient
 #from gridfs import GridFS
@@ -45,4 +46,5 @@ if __name__ == '__main__':
                         },
               '/':      {'error_page.default': error}
              }
-    cherrypy.quickstart(ShnergleServer(), config=config)
+    app = cherrypy.tree.mount(ShnergleServer(), "/", config)
+    wsgiref.handlers.CGIHandler().run(app)

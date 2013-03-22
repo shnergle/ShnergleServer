@@ -8,6 +8,7 @@ Requirements
 
  * Python 2
  * CherryPy (included)
+ * Google App Engine
 
 
 Structure

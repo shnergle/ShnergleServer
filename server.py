@@ -13,14 +13,15 @@ def error(status, message, traceback, version):
     cherrypy.response.headers['Content-Type'] = 'application/json'
     return json.dumps({'status': status, 'message': message})
 
-def jsonp(self, object, **kwargs):
+def jsonp(func):
     def decorator():
         cherrypy.response.headers['Expires'] = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
         cherrypy.response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
-        jsonres = json.dumps(object)
-        if 'callback' in kwargs:
+        funcres = func()
+        jsonres = json.dumps(funcres['res'])
+        if 'callback' in funcres['kwargs']:
             cherrypy.response.headers['Content-Type'] = 'text/javascript; charset=utf-8'
-            jsonres = kwargs['callback'] + '(' + jsonres + ');'
+            jsonres = funcres['kwargs']['callback'] + '(' + jsonres + ');'
         else:
             cherrypy.response.headers['Content-Type'] = 'application/json'
         return jsonres
@@ -35,7 +36,7 @@ class User(Common):
     def add(self, **kwargs):
         res = {}
         res['Function'] = 'Test'
-        return self.jsonp(res, **kwargs)
+        return {'res': res, 'kwargs': **kwargs}
 
 class ShnergleServer(Common):
     users = User()
@@ -45,7 +46,7 @@ class ShnergleServer(Common):
     def index(self, **kwargs):
         res = {}
         res['Function'] = 'Overview'
-        return self.jsonp(res, **kwargs)
+        return {'res': res, 'kwargs': **kwargs}
 
 if __name__ == '__main__':
     config = {'global': {'server.socket_host': '0.0.0.0',

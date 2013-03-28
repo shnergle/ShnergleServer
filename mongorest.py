@@ -14,8 +14,8 @@ class MongoRest:
         if id:
             id = '/' + str(id)
         args[self._apikeyp] = self._apikey
-        args_list = []
-        for key, value in args.iteritems():
-            args_list.append(key + '=' + value)
-        args_str = '?' + '&'.join(args_list)
+        args_str = '&'.join(
+            [key + '=' + value for key, value in args.iteritems()])
+        if args_str:
+            args_str = '?' + args_str
         return self._url + self.db + '/collections' + collection + id + args_str

@@ -24,4 +24,4 @@ Structure
  * Output is in JSON or JSONP
  * All delivered JSON documents should be as close as possible to representation in database
  * It is not a RESTful server, yet can be used as such
- * No dependency on hosting provider
+ * No dependency on hosting provider, thus can be tested by calling the main script (default port is 8080, can be changed by passing an argument)

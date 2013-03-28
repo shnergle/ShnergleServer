@@ -14,7 +14,8 @@ Requirements
 Structure
 ---------
  
- * URL Structure is /class/operation
+ * URL Structure is /version/class/operation
+   * version is in the moment always v1, can but should not be ommited
    * class corresponds to an actual class and should also correspond to a database collection
    * operation is one of add, get or set, corresponding to the CRUD operations (no delete) and a method
    * the index operation (/class/) will display an index where applicable

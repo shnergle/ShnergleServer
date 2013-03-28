@@ -40,6 +40,9 @@ class User:
 class ShnergleServer:
     users = User()
 
+    def __init__(self):
+        self.v1 = self
+
     @cherrypy.expose
     @jsonp
     def index(self, **kwargs):

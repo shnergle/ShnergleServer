@@ -6,17 +6,19 @@ import json
 from datetime import datetime
 from functools import wraps
 
+def dont_cache():
+    cherrypy.response.headers['Expires'] = datetime.utcnow().strftime(
+        '%a, %d %b %Y %H:%M:%S GMT')
+    cherrypy.response.headers['Cache-Control'] = ('no-store, '
+                                                  'no-cache, '
+                                                  'must-revalidate, '
+                                                  'post-check=0, '
+                                                  'pre-check=0')
 
 def jsonp(func):
     @wraps(func)
     def decorator(*args, **kwargs):
-        cherrypy.response.headers['Expires'] = datetime.utcnow().strftime(
-            '%a, %d %b %Y %H:%M:%S GMT')
-        cherrypy.response.headers['Cache-Control'] = ('no-store, '
-                                                      'no-cache, '
-                                                      'must-revalidate, '
-                                                      'post-check=0, '
-                                                      'pre-check=0')
+        dont_cache()
         res = json.dumps(func(*args, **kwargs), separators=(',', ':'))
         if 'callback' in kwargs:
             cherrypy.response.headers['Content-Type'] = ('text/javascript; '

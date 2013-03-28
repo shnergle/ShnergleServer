@@ -1,3 +1,5 @@
+from mongorest import MongoRest
+
 import cherrypy
 import json
 

@@ -6,9 +6,9 @@ This is the server used for communication with consumer and merchant app for Shn
 Requirements
 ------------
 
- * Python 2
- * CherryPy (included)
- * Google App Engine
+ * Python 2.7 or higher
+ * CherryPy (included) [fixed wrong import]
+ * Requests (included) [made certs import in utils relative, and git fixes]
 
 
 Structure
@@ -23,3 +23,4 @@ Structure
  * Output is in JSON or JSONP
  * All delivered JSON documents should be as close as possible to representation in database
  * It is not a RESTful server, yet can be used as such
+ * No dependency on hosting provider

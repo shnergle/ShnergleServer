@@ -1,12 +1,14 @@
 import requests
+import json
 
 class MongoRest:
     _apikeyp = 'apiKey'
-    _apikey = 'O7VCBY3vn25Qpa3byNmRFN920L7KOPIj'
     _url = 'https://api.mongolab.com/api/1/databases/'
     
     def __init__(self, db='shnergle'):
         self.db = db
+        with open('config.json') as config:
+            self._apikey = json.load(config)['mongoApiKey']
         
     def url(self, collection='', id=''):
         if collection:

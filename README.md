@@ -1,7 +1,7 @@
 ShnergleServer
 ==============
 
-This is the server used for communication with consumer and merchant app for Shnergle, taking care of data storage.
+This is the server used for communication with consumer and merchant app for Shnergle, taking care of data storage and aggregation.
 
 Requirements
 ------------

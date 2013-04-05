@@ -11,13 +11,22 @@ Requirements
  * Requests (included) [made certs import in utils relative, and git fixes]
 
 
+Setup
+-----
+
+Just copy config.json.dist to config.json and edit the settings.
+
+
 Structure
 ---------
  
  * URL Structure is /version/class/operation
    * version is in the moment always v1, can but should not be ommited
    * class corresponds to an actual class and should also correspond to a database collection
-   * operation is one of add, get or set, corresponding to the CRUD operations (no delete) and a method
+   * operation is either get or set
+     * get returns the data
+     * set updates data if _id is specified, otherwise creates a new entry
+	 * _id is the parameter to identify entries
    * the index operation (/class/) will display an index where applicable
  * WSGI is used as interface to a proper web server
  * Parameters can be given as GET and/or POST, POST parameters take precedence

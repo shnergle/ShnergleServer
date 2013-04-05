@@ -7,8 +7,10 @@ Requirements
 ------------
 
  * Python 2.7 or higher
- * CherryPy (included) [fixed wrong import]
- * Requests (included) [made certs import in utils relative, and git fixes]
+ * CherryPy (3.2.2 included) [fixed wrong import]
+ * Requests (1.1.0 included) [made certs import in utils relative, and git fixes]
+
+Where the library is included, the server has not been tested with any other version!
 
 
 Setup
@@ -34,3 +36,4 @@ Structure
  * All delivered JSON documents should be as close as possible to representation in database
  * It is not a RESTful server, yet can be used as such
  * No dependency on hosting provider, thus can be tested by calling the main script (default port is 8080, can be changed by passing an argument)
+ * The server module has a public app attribute for use with WSGI compliant servers

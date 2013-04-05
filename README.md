@@ -17,8 +17,10 @@ Setup
 -----
 
 Just copy config.json.dist to config.json and edit the settings.
+
 app.yaml and index.yaml are configure for Google App Engine and not needed for any other hosting provider.
-If not using Google App Engine, optionally add a static route for favicon.ico and make the WSGI server use the public app variable in server.py/
+
+If not using Google App Engine, optionally add a static route for favicon.ico and make the WSGI server use the public app variable in server.py.
 
 
 Structure

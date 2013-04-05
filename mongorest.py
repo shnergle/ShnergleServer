@@ -13,6 +13,20 @@ class MongoRest:
     def url(self, collection='', id=''):
         if collection:
             collection = '/' + collection
-        if id:
+        if str(id):
             id = '/' + str(id)
         return self._url + self.db + '/collections' + collection + id
+    
+    def secure(self, data):
+        data.pop(self._apikeyp, True)
+        data.pop('_id', True)
+        return json.dumps(data)
+        
+    def get(self, collection='', id=''):
+        return requests.get(self.url(collection, id), params={self._apikeyp: self._apikey}).json()
+        
+    def put(self, collection='', id='', data={}):
+        return requests.put(self.url(collection, id), params={self._apikeyp: self._apikey}, headers={'content-type': 'application/json'}, data=self.secure(data)).json()
+        
+    def post(self, collection='', data={}):
+        return requests.post(self.url(collection), params={self._apikeyp: self._apikey}, headers={'content-type': 'application/json'}, data=self.secure(data)).json()

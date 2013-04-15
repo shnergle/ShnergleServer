@@ -8,7 +8,7 @@ Requirements
 
  * Python 2.7 or higher
  * CherryPy (3.2.2 included) [fixed wrong import]
- * Requests (1.1.0 included) [made certs import in utils relative, and git fixes]
+ * MySQL Connector/Python (1.0.9 included)
 
 Where the library is included, the server has not been tested with any other version!
 
@@ -31,8 +31,8 @@ Structure
    * class corresponds to an actual class and should also correspond to a database collection
    * operation is either get or set
      * get returns the data
-     * set updates data if _id is specified, otherwise creates a new entry
-	 * _id is the parameter to identify entries
+     * set updates data if id is specified, otherwise creates a new entry
+	 * id is the parameter to identify entries
    * the index operation (/class/) will display an index where applicable
  * WSGI is used as interface to a proper web server
  * Parameters can be given as GET and/or POST, POST parameters take precedence

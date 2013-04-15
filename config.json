@@ -1,3 +1,8 @@
 {
-	"mongoApiKey": "O7VCBY3vn25Qpa3byNmRFN920L7KOPIj"
+	"user": "shnergle",
+	"password": "$Hnergle1",
+	"host": "instance43701.db.xeround.com",
+	"port": 9049,
+	"database": "shnergle"
 }
+

@@ -1,12 +1,8 @@
-from mongorest import MongoRest
-
 import cherrypy
 import json
 
 from datetime import datetime
 from functools import wraps
-
-mongo = MongoRest()
 
 def dont_cache():
     cherrypy.response.headers['Expires'] = datetime.utcnow().strftime(
@@ -47,20 +43,17 @@ class Venue:
     @cherrypy.expose
     @jsonp
     def get(self, **kwargs):
-        return mongo.get(self._name, kwargs['_id'])
+        return {}
         
     @cherrypy.expose
     @jsonp
     def set(self, **kwargs):
-        if '_id' in kwargs:
-            return mongo.put(self._name, kwargs['_id'], kwargs)
-        else:
-            return mongo.post(self._name, kwargs)
+        return {}
         
     @cherrypy.expose
     @jsonp
     def index(self, **kwargs):
-        return mongo.get(self._name)
+        return {}
 
 
 class ShnergleServer:

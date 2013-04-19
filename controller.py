@@ -1,6 +1,8 @@
 import cherrypy
 import json
 
+import mysql.connector
+
 from datetime import datetime
 from functools import wraps
 
@@ -29,17 +31,80 @@ def jsonp(func):
     return decorator
 
 
+def mysqli(func):
+    @wraps(func)
+    def decorator(*args, **kwargs):
+	def decode(data):
+	    ret = {'raw': True}
+	    for key, val in data.iteritems():
+		ret[str(key)] = str(val)
+	    return ret
+	with open('config.json') as config:
+	    cnx = mysql.connector.connect(**decode(json.load(config)))
+	cursor = cnx.cursor()
+	res = func(*args, cursor=cursor, **kwargs)
+	cursor.close()
+	cnx.close()
+	return res
+    return decorator
+
+
 class User:
     @cherrypy.expose
+    @mysqli
     @jsonp
-    def add(self, **kwargs):
-        res = {}
-        res['Function'] = 'Test'
+    def get(self, cursor=None, **kwargs):
+	cond = False
+	if 'id' in kwargs:
+	    cond = 'users.id = %s'
+	    id = kwargs['id']
+	elif 'facebook_token' in kwargs:
+	    cond = 'users.facebook_token = %s'
+	    id = kwargs['facebook_token']
+	elif 'twitter_token' in kwargs:
+	    cond = 'users.twitter_token = %s'
+	    id = kwargs['twitter_token']
+	query = '''SELECT
+		       users.id,
+		       users.facebook_token,
+		       users.twitter_token,
+		       users.facebook,
+		       users.twitter,
+		       users.forename,
+		       users.surname,
+		       users.age,
+		       users.birth_day,
+		       users.birth_month,
+		       users.birth_year,
+		       users.gender,
+		       users.image,
+		       users.staff,
+		       users.manager,
+		       users.venue_id,
+		       users.promotion_perm,
+		       users.rank,
+		       users.employee,
+		       users.joined,
+		       countries.code as country,
+		       lc.code as language_country,
+		       languages.code as language
+		    FROM
+		       users
+		    LEFT JOIN (countries, countries lc, languages)
+		    ON (
+		       users.country_id = countries.id AND
+		       users.language_id = languages.id AND
+		       languages.country_id = lc.id
+		    )'''
+	if cond:
+	    cursor.execute(query + ' WHERE ' + cond + ' LIMIT 1', (id))
+	    res = {col: con for col, con in zip(cursor.column_names, cursor.fetchone())}
+	else:
+	    cursor.execute(query)
+	    res = [{col: con for col, con in zip(cursor.column_names, row)} for row in cursor]
         return res
 
 class Venue:
-    _name = 'venues'
-        
     @cherrypy.expose
     @jsonp
     def get(self, **kwargs):

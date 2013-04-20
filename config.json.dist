@@ -3,5 +3,6 @@
 	"password": "",
 	"host": "localhost",
 	"port": 3306,
-	"database": "shnergle"
+	"database": "shnergle",
+	"time_zone": "+0:00"
 }

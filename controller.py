@@ -15,6 +15,7 @@ def dont_cache():
                                                   'post-check=0, '
                                                   'pre-check=0')
 
+
 def jsonp(func):
     @wraps(func)
     def decorator(*args, **kwargs):
@@ -31,6 +32,19 @@ def jsonp(func):
     return decorator
 
 
+class MySQLCursorDict(mysql.connector.cursor.MySQLCursor):
+    def _row_to_python(self, rowdata, desc=None):
+        row = super(MySQLCursorDict, self)._row_to_python(rowdata, desc)
+        if row:
+            return dict(zip(self.column_names, row))
+        return None
+
+
+class MySQLConverterJSON(mysql.connector.conversion.MySQLConverter):
+    _DATETIME_to_python =  mysql.connector.conversion.MySQLConverter._str
+    _TIMESTAMP_to_python = _DATETIME_to_python
+
+
 def mysqli(func):
     @wraps(func)
     def decorator(*args, **kwargs):
@@ -39,12 +53,15 @@ def mysqli(func):
 	    for key, val in data.iteritems():
 		ret[str(key)] = str(val)
 	    return ret
-	with open('config.json') as config:
+        with open('config.json') as config:
 	    cnx = mysql.connector.connect(**decode(json.load(config)))
-	cursor = cnx.cursor()
-	res = func(*args, cursor=cursor, **kwargs)
-	cursor.close()
-	cnx.close()
+        cnx.set_converter_class(MySQLConverterJSON)
+        cursor = cnx.cursor(cursor_class=MySQLCursorDict)
+        try:
+	    res = func(*args, cursor=cursor, **kwargs)
+	finally:
+            cursor.close()
+	    cnx.close()
 	return res
     return decorator
 
@@ -98,10 +115,10 @@ class User:
 		    )'''
 	if cond:
 	    cursor.execute(query + ' WHERE ' + cond + ' LIMIT 1', (id))
-	    res = {col: con for col, con in zip(cursor.column_names, cursor.fetchone())}
+	    res = cursor.fetchone()
 	else:
 	    cursor.execute(query)
-	    res = [{col: con for col, con in zip(cursor.column_names, row)} for row in cursor]
+	    res = [row for row in cursor]
         return res
 
 class Venue:

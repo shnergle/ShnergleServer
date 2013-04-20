@@ -49,16 +49,14 @@ def mysqli(func):
     @wraps(func)
     def decorator(*args, **kwargs):
 	def decode(data):
-	    ret = {'raw': True}
-	    for key, val in data.iteritems():
-		ret[str(key)] = str(val)
-	    return ret
+	    return {str(key): str(val) for key, val in data.iteritems()}
         with open('config.json') as config:
 	    cnx = mysql.connector.connect(**decode(json.load(config)))
         cnx.set_converter_class(MySQLConverterJSON)
         cursor = cnx.cursor(cursor_class=MySQLCursorDict)
+        kwargs.update(cursor=cursor)
         try:
-	    res = func(*args, cursor=cursor, **kwargs)
+	    res = func(*args, **kwargs)
 	finally:
             cursor.close()
 	    cnx.close()

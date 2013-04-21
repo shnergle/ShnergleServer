@@ -18,9 +18,7 @@ Setup
 
 Just copy config.py.dist to config.py and edit the settings. Then import the MySQL dump.
 
-app.yaml and index.yaml are configured for Google App Engine and not needed for any other hosting provider.
-
-If not using Google App Engine, optionally add a static route for favicon.ico and point the WSGI server to the variable app in server.py.
+app.yaml and index.yaml are configured for Google App Engine and not needed for any other hosting provider. For other providers point the WSGI server to the variable app in server.py.
 
 
 Structure

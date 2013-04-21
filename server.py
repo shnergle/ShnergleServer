@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime
 from functools import wraps
 
@@ -173,6 +174,9 @@ def error(status, message, traceback, version):
     return json.dumps({'status': status, 'message': message},
                       separators=(',', ':'))
 
-
-cp_config = {'/': {'error_page.default': error}}
+current_dir = os.path.dirname(os.path.abspath(__file__))
+cp_config = {'/':            {'error_page.default': error},
+             '/favicon.ico': {'tools.staticfile.on': True,
+                              'tools.staticfile.filename':
+                              os.path.join(current_dir, 'favicon.ico')}}
 app = cherrypy.Application(ShnergleServer(), '/', cp_config)

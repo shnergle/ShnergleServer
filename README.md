@@ -6,7 +6,7 @@ This is the server used for communication with consumer and merchant app for Shn
 Requirements
 ------------
 
- * Python 2.7 or higher
+ * Python 2.7
  * CherryPy (3.2.4 included)
  * MySQL Connector/Python (1.0.9 included)
 

@@ -7,7 +7,7 @@ Requirements
 ------------
 
  * Python 2.7 or higher
- * CherryPy (3.2.2 included) [fixed wrong import]
+ * CherryPy (3.2.4 included)
  * MySQL Connector/Python (1.0.9 included)
 
 Where the library is included, the server has not been tested with any other version!

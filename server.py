@@ -65,21 +65,25 @@ def mysqli(func):
     return decorator
 
 
+def implode(glue, list):
+    return list if isinstance(list, str) else glue.join(list)
+
+
 def query(select=None, table=None, left_join=None, on=None, where=None,
           limit=None):
     if select:
-        query = 'SELECT ' + ', '.join(select)
+        qry = 'SELECT ' + implode(', ', select)
     if table:
-        query += ' FROM ' + table
+        qry += ' FROM ' + implode(', ', table)
     if left_join:
-        query += ' LEFT JOIN (' + ', '.join(left_join) + ')'
+        qry += ' LEFT JOIN (' + implode(', ', left_join) + ')'
     if on:
-        query += ' ON (' + ' AND '.join(on) + ')'
+        qry += ' ON (' + implode(' AND ', on) + ')'
     if where:
-        query += ' WHERE ' + ' AND '.join(where)
+        qry += ' WHERE ' + implode(' AND ', where)
     if limit:
-        query += ' LIMIT ' + str(limit)
-    return query
+        qry += ' LIMIT ' + str(limit)
+    return qry
 
 
 class User:
@@ -91,13 +95,13 @@ class User:
         cond = False
         if 'id' in kwargs:
             cond = 'users.id = %s'
-            id = kwargs['id']
+            token = kwargs['id']
         elif 'facebook_token' in kwargs:
             cond = 'users.facebook_token = %s'
-            id = kwargs['facebook_token']
+            token = kwargs['facebook_token']
         elif 'twitter_token' in kwargs:
             cond = 'users.twitter_token = %s'
-            id = kwargs['twitter_token']
+            token = kwargs['twitter_token']
         qry = {'select':    ('users.id',
                              'users.facebook_token',
                              'users.twitter_token',
@@ -127,8 +131,8 @@ class User:
                              'users.language_id = languages.id',
                              'languages.country_id = lc.id')}
         if cond:
-            qry.update({'where': (cond,), 'limit': 1})
-            cursor.execute(query(**qry), id)
+            qry.update({'where': cond, 'limit': 1})
+            cursor.execute(query(**qry), token)
             res = cursor.fetchone()
         else:
             cursor.execute(query(**qry))
@@ -173,6 +177,7 @@ def error(status, message, traceback, version):
     cherrypy.response.headers['Content-Type'] = 'application/json'
     return json.dumps({'status': status, 'message': message},
                       separators=(',', ':'))
+
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 cp_config = {'/':            {'error_page.default': error},

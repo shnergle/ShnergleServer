@@ -16,7 +16,7 @@ Where the library is included, the server has not been tested with any other ver
 Setup
 -----
 
-Just copy config.json.dist to config.json and edit the settings. Then import the MySQL dump.
+Just copy config.py.dist to config.py and edit the settings. Then import the MySQL dump.
 
 app.yaml and index.yaml are configured for Google App Engine and not needed for any other hosting provider.
 

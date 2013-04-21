@@ -5,6 +5,8 @@ from functools import wraps
 import cherrypy
 import mysql.connector
 
+from config import config
+
 
 def dont_cache():
     cherrypy.response.headers['Expires'] = datetime.utcnow().strftime(
@@ -49,13 +51,10 @@ class MySQLConverterJSON(mysql.connector.conversion.MySQLConverter):
 def mysqli(func):
     @wraps(func)
     def decorator(*args, **kwargs):
-        def decode(data):
-            return {str(key): str(val) for key, val in data.iteritems()}
-        with open('config.json') as config:
-            cnx = mysql.connector.connect(**decode(json.load(config)))
-            cnx.set_converter_class(MySQLConverterJSON)
-            cursor = cnx.cursor(cursor_class=MySQLCursorDict)
-            kwargs.update(cursor=cursor)
+        cnx = mysql.connector.connect(**config)
+        cnx.set_converter_class(MySQLConverterJSON)
+        cursor = cnx.cursor(cursor_class=MySQLCursorDict)
+        kwargs.update(cursor=cursor)
         try:
             res = func(*args, **kwargs)
         finally:
@@ -175,5 +174,5 @@ def error(status, message, traceback, version):
                       separators=(',', ':'))
 
 
-config = {'/': {'error_page.default': error}}
-app = cherrypy.Application(ShnergleServer(), '/', config)
+cp_config = {'/': {'error_page.default': error}}
+app = cherrypy.Application(ShnergleServer(), '/', cp_config)

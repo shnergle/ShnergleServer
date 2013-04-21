@@ -16,11 +16,11 @@ Where the library is included, the server has not been tested with any other ver
 Setup
 -----
 
-Just copy config.json.dist to config.json and edit the settings.
+Just copy config.json.dist to config.json and edit the settings. Then import the MySQL dump.
 
-app.yaml and index.yaml are configure for Google App Engine and not needed for any other hosting provider.
+app.yaml and index.yaml are configured for Google App Engine and not needed for any other hosting provider.
 
-If not using Google App Engine, optionally add a static route for favicon.ico and make the WSGI server use the public app variable in server.py.
+If not using Google App Engine, optionally add a static route for favicon.ico and point the WSGI server to the variable app in server.py.
 
 
 Structure
@@ -38,6 +38,5 @@ Structure
  * Parameters can be given as GET and/or POST, POST parameters take precedence
  * Output is in JSON or JSONP
  * All delivered JSON documents should be as close as possible to representation in database
- * It is not a RESTful server, yet can be used as such
- * No dependency on hosting provider, thus can be tested by calling the main script (default port is 8080, can be changed by passing an argument)
- * The server module has a public app attribute for use with WSGI compliant servers
+ * No dependency on hosting provider
+ * The server module has a public attribute app for use with WSGI compliant servers

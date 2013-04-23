@@ -12,17 +12,7 @@ class User:
     @util.expose
     @util.mysqli
     @util.jsonp
-    def get(self, cursor=None, **kwargs):
-        cond = False
-        if 'id' in kwargs:
-            cond = 'users.id = %s'
-            token = kwargs['id']
-        elif 'facebook_token' in kwargs:
-            cond = 'users.facebook_token = %s'
-            token = kwargs['facebook_token']
-        elif 'twitter_token' in kwargs:
-            cond = 'users.twitter_token = %s'
-            token = kwargs['twitter_token']
+    def get(self, cursor, id=None, facebook_token=None, **kwargs):
         qry = {'select':    ('users.id',
                              'users.facebook_token',
                              'users.twitter_token',
@@ -40,7 +30,6 @@ class User:
                              'users.manager',
                              'users.venue_id',
                              'users.promotion_perm',
-                             'users.rank',
                              'users.employee',
                              'users.joined',
                              'countries.code as country',
@@ -51,14 +40,49 @@ class User:
                'on':        ('users.country_id = countries.id',
                              'users.language_id = languages.id',
                              'languages.country_id = lc.id')}
-        if cond:
-            qry.update({'where': cond, 'limit': 1})
-            cursor.execute(util.query(**qry), token)
+        if facebook_token:
+            qry.update({'where': 'users.facebook_token = %s', 'limit': 1})
+            cursor.execute(util.query(**qry), (facebook_token,))
             res = cursor.fetchone()
         else:
             cursor.execute(util.query(**qry))
             res = [row for row in cursor]
         return res
+        
+    @util.expose
+    @util.mysqli
+    @util.jsonp
+    def set(self, cursor, facebook_token=None, twitter_token=None,
+            forename=None, surname=None, **kwargs):
+        if not facebook_token:
+            raise cherrypy.HTTPError(403)
+        qry = {'select': 'COUNT(users.id) as count',
+               'table': 'users',
+               'where': 'users.facebook_token = %s'}
+        cursor.execute(util.query(**qry), (facebook_token,))
+        res = cursor.fetchone()['count']
+        columns = []
+        values = []
+        if twitter_token:
+            columns.append('users.twitter_token')
+            values.append(twitter_token)
+        if forename:
+            columns.append('users.forename')
+            values.append(forename)
+        if surname:
+            columns.append('users.surname')
+            values.append(surname)
+        values.append(facebook_token)
+        if res:
+            qry = {'update':     'users',
+                   'set_values': columns,
+                   'where':      'users.facebook_token = %s'}
+            cursor.execute(util.query(**qry), values)
+        else:
+            columns.append('users.facebook_token')
+            qry = {'insert_into': 'users',
+                   'columns':     columns}
+            cursor.execute(util.query(**qry), values)
 
 
 class ShnergleServer:

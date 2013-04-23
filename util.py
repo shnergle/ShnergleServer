@@ -54,10 +54,11 @@ def mysqli(func):
         cnx = mysql.connector.connect(**config)
         cnx.set_converter_class(MySQLConverterJSON)
         cursor = cnx.cursor(cursor_class=MySQLCursorDict)
-        kwargs.update(cursor=cursor)
+        args += (cursor,)
         try:
             res = func(*args, **kwargs)
         finally:
+            cnx.commit()
             cursor.close()
             cnx.close()
         return res
@@ -69,19 +70,32 @@ def implode(glue, list):
 
 
 def query(select=None, table=None, left_join=None, on=None, where=None,
-          limit=None):
+          limit=None,
+          insert_into=None, columns=None,
+          update=None, set_values=None):
     if select:
         qry = 'SELECT ' + implode(', ', select)
-    if table:
-        qry += ' FROM ' + implode(', ', table)
-    if left_join:
-        qry += ' LEFT JOIN (' + implode(', ', left_join) + ')'
-    if on:
-        qry += ' ON (' + implode(' AND ', on) + ')'
-    if where:
-        qry += ' WHERE ' + implode(' AND ', where)
-    if limit:
-        qry += ' LIMIT ' + str(limit)
+        if table:
+            qry += ' FROM ' + implode(', ', table)
+        if left_join:
+            qry += ' LEFT JOIN (' + implode(', ', left_join) + ')'
+        if on:
+            qry += ' ON (' + implode(' AND ', on) + ')'
+        if where:
+            qry += ' WHERE ' + implode(' AND ', where)
+        if limit:
+            qry += ' LIMIT ' + str(limit)
+    elif insert_into:
+        qry = 'INSERT INTO ' + insert_into
+        if columns:
+            qry += (' (' + implode(', ', columns) + ')' + ' VALUES (' +
+                    ('%s' + ', %s' * (len(columns) - 1)) + ')')
+    elif update:
+        qry = 'UPDATE ' + update
+        if set_values:
+            qry += ' SET ' + implode('=%s, ', set_values) + '=%s'
+        if where:
+            qry += ' WHERE ' + implode(' AND ', where)
     return qry
 
 

@@ -1,5 +1,6 @@
 import datetime
 import json
+import math
 import os
 
 import cherrypy
@@ -13,8 +14,9 @@ class User:
     @util.expose
     @util.protect
     @util.mysqli
+    @util.auth
     @util.jsonp
-    def get(self, cursor, facebook_token=None, **kwargs):
+    def get(self, cursor, user_id, getall=None, facebook_token=None, **kwargs):
         qry = {'select':    ['users.id',
                              'users.facebook',
                              'users.twitter',
@@ -32,23 +34,61 @@ class User:
                              'users.promotion_perm',
                              'users.employee',
                              'users.joined',
-                             'countries.code as country',
+                             'countries.code AS country',
                              'CONCAT(LOWER(languages.code), "_",'
-                                    'UPPER(lc.code)) as language'],
+                                    'UPPER(lc.code)) AS language',
+                             'COUNT(posts.id) AS post_count'],
                'table':      'users',
-               'left_join': ('countries', 'countries lc', 'languages'),
+               'left_join': ('countries',
+                             'countries lc',
+                             'languages',
+                             'posts'),
                'on':        ('users.country_id = countries.id',
                              'users.language_id = languages.id',
-                             'languages.country_id = lc.id')}
-        if facebook_token:
+                             'languages.country_id = lc.id',
+                             'posts.user_id = users.id'),
+               'group_by':   'users.id'}
+                             
+        users = {'select': 'COUNT(users.id) AS count', 'table': 'users'}
+        cursor.execute(util.query(**users))
+        users = cursor.fetchone()['count']
+        thresholds = []
+        for percent in (0.8, 0.95, 0.99):
+            number = math.floor(percent * users)
+            thresholdqry = {'select':    'COUNT(posts.id) AS count',
+                            'table':     'posts',
+                            'group_by':  'posts.id',
+                            'order_by':  'count',
+                            'limit':     (number - 1, number)}
+            cursor.execute(util.query(**thresholdqry))
+            count = cursor.fetchone()
+            thresholds.append(count['count'] if count else 0)
+
+        if util.to_bool(getall):
+            cursor.execute(util.query(**qry))
+            res = []
+            for row in cursor:
+                posts = row.pop('post_count')
+                for threshold in thresholds:
+                    if posts < threshold:
+                        row['ranking'] = 0
+                        break
+                else:
+                    row['ranking'] = len(thresholds)
+                res.append(row)
+        else:
             qry['select'].append('users.facebook_token')
             qry['select'].append('users.twitter_token')
-            qry.update({'where': 'users.facebook_token = %s', 'limit': 1})
-            cursor.execute(util.query(**qry), (facebook_token,))
+            qry.update({'where': 'users.id = %s', 'limit': 1})
+            cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
-        else:
-            cursor.execute(util.query(**qry))
-            res = [row for row in cursor]
+            posts = res.pop('post_count')
+            for threshold in thresholds:
+                if posts < threshold:
+                    res['ranking'] = 0
+                    break
+            else:
+                res['ranking'] = len(thresholds)
         return res
         
     @util.expose
@@ -62,7 +102,7 @@ class User:
             venue_id=None, country=None, language=None, **kwargs):
         if not facebook_token:
             raise cherrypy.HTTPError(403)
-        qry = {'select': 'COUNT(users.id) as count',
+        qry = {'select': 'COUNT(users.id) AS count',
                'table':  'users',
                'where':  'users.facebook_token = %s',
                'limit':  1}

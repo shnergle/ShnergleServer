@@ -104,7 +104,7 @@ def implode(glue, list):
 
 
 def query(select=None, table=None, left_join=None, on=None, where=None,
-          order_by=None, limit=None,
+          group_by=None, order_by=None, limit=None,
           insert_into=None, columns=None,
           update=None, set_values=None):
     if select:
@@ -117,10 +117,16 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
             qry += ' ON (' + implode(' AND ', on) + ')'
         if where:
             qry += ' WHERE ' + implode(' AND ', where)
+        if group_by:
+            qry += ' GROUP BY ' + implode(', ', group_by)
         if order_by:
-            qry += ' ORDER BY ' + order_by
+            qry += ' ORDER BY ' + implode(', ', order_by)
         if limit:
-            qry += ' LIMIT ' + str(limit)
+            qry += ' LIMIT '
+            if isinstance(limit, str) or isinstance(limit, int):
+                qry += str(limit)
+            else:
+                qry += str(int(limit[0])) + ',' + str(int(limit[1]))
     elif insert_into:
         qry = 'INSERT INTO ' + insert_into
         if columns:
@@ -142,6 +148,6 @@ def to_int(value):
     return int(value) if value else None
 
 def to_bool(value):
-    if value in (0, False, '0'): return False
+    if value in (0, False, None, '0'): return False
     if isinstance(value, str) and value in ('false', 'no', 'off'): return False
     return True

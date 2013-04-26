@@ -27,6 +27,23 @@ def protect(func):
             raise cherrypy.HTTPError(403)
         return func(*args, **kwargs)
     return decorator
+    
+
+def auth(func):
+    @functools.wraps(func)
+    def decorator(*args, **kwargs):
+        if not facebook_token:
+            raise cherrypy.HTTPError(403)
+        qry = {'select': 'id',
+               'table':  'users',
+               'where':  'facebook_token = %s',
+               'limit':  1}
+        cursor.execute(util.query(**qry), (facebook_token,))
+        res = cursor.fetchone()['id']
+        if not res:
+            raise cherrypy.HTTPError(403)
+        return func(*args, **kwargs)
+    return decorator
 
 
 def jsonp(func):

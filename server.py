@@ -15,9 +15,7 @@ class User:
     @util.mysqli
     @util.jsonp
     def get(self, cursor, id=None, facebook_token=None, **kwargs):
-        qry = {'select':    ('users.id',
-                             'users.facebook_token',
-                             'users.twitter_token',
+        qry = {'select':    ['users.id',
                              'users.facebook',
                              'users.twitter',
                              'users.forename',
@@ -36,13 +34,15 @@ class User:
                              'users.joined',
                              'countries.code as country',
                              'CONCAT(LOWER(languages.code), "_",'
-                                    'UPPER(lc.code)) as language'),
+                                    'UPPER(lc.code)) as language'],
                'table':      'users',
                'left_join': ('countries', 'countries lc', 'languages'),
                'on':        ('users.country_id = countries.id',
                              'users.language_id = languages.id',
                              'languages.country_id = lc.id')}
         if facebook_token:
+            qry['select'].append('users.facebook_token')
+            qry['select'].append('users.twitter_token')
             qry.update({'where': 'users.facebook_token = %s', 'limit': 1})
             cursor.execute(util.query(**qry), (facebook_token,))
             res = cursor.fetchone()

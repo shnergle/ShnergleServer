@@ -6,3 +6,5 @@ config = {
 	"database": "shnergle",
 	"time_zone": "+0:00"
 }
+
+app_secret = 'FCuf65iuOUDCjlbiyyer678Coutyc64v655478VGvgh76'

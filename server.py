@@ -11,6 +11,7 @@ import util
 class User:
 
     @util.expose
+    @util.protect
     @util.mysqli
     @util.jsonp
     def get(self, cursor, id=None, facebook_token=None, **kwargs):
@@ -51,6 +52,7 @@ class User:
         return res
         
     @util.expose
+    @util.protect
     @util.mysqli
     @util.jsonp
     def set(self, cursor, facebook_token=None, twitter_token=None,
@@ -79,7 +81,7 @@ class User:
                 'users.staff':          (datetime.datetime.utcnow()
                                          if util.to_bool(staff) else False),
                 'users.manager':        util.to_bool(manager),
-                'users.promotion_perm': util.to_bool(promotion_perm):
+                'users.promotion_perm': util.to_bool(promotion_perm),
                 'users.employee':       util.to_bool(employee),
                 'users.venue_id':       venue_id}
         columns = []

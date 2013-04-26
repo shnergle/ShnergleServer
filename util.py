@@ -7,7 +7,7 @@ import functools
 import cherrypy
 import mysql.connector
 
-from config import config
+import config
 
 
 def dont_cache():
@@ -18,6 +18,15 @@ def dont_cache():
                                                   'must-revalidate, '
                                                   'post-check=0, '
                                                   'pre-check=0')
+
+
+def protect(func):
+    @functools.wraps(func)
+    def decorator(*args, **kwargs):
+        if kwargs.pop('app_secret', False) != config.app_secret:
+            raise cherrypy.HTTPError(403)
+        return func(*args, **kwargs)
+    return decorator
 
 
 def jsonp(func):
@@ -57,7 +66,7 @@ class MySQLConverterJSON(mysql.connector.conversion.MySQLConverter):
 def mysqli(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        cnx = mysql.connector.connect(**config)
+        cnx = mysql.connector.connect(**config.config)
         cnx.set_converter_class(MySQLConverterJSON)
         cursor = cnx.cursor(cursor_class=MySQLCursorDict)
         args += (cursor,)

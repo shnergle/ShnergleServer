@@ -130,6 +130,7 @@ class User:
             qry = {'insert_into': 'users',
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
+        return cursor.lastrowid
 
 
 class ShnergleServer:

@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 
@@ -33,8 +34,8 @@ class User:
                              'users.employee',
                              'users.joined',
                              'countries.code as country',
-                             'lc.code as language_country',
-                             'languages.code as language'),
+                             'CONCAT(LOWER(languages.code), "_",'
+                                    'UPPER(lc.code)) as language'),
                'table':      'users',
                'left_join': ('countries', 'countries lc', 'languages'),
                'on':        ('users.country_id = countries.id',
@@ -53,25 +54,69 @@ class User:
     @util.mysqli
     @util.jsonp
     def set(self, cursor, facebook_token=None, twitter_token=None,
-            forename=None, surname=None, **kwargs):
+            facebook=None, twitter=None, forename=None, surname=None, age=None,
+            birth_day=None, birth_month=None, birth_year=None, gender=None,
+            staff=None, manager=None, promotion_perm=None, employee=None,
+            venue_id=None, country=None, language=None, **kwargs):
         if not facebook_token:
             raise cherrypy.HTTPError(403)
         qry = {'select': 'COUNT(users.id) as count',
-               'table': 'users',
-               'where': 'users.facebook_token = %s'}
+               'table':  'users',
+               'where':  'users.facebook_token = %s',
+               'limit':  1}
         cursor.execute(util.query(**qry), (facebook_token,))
         res = cursor.fetchone()['count']
+        data = {'users.twitter_token':  twitter_token,
+                'users.facebook':       facebook,
+                'users.twitter':        twitter,
+                'users.forename':       forename,
+                'users.surname':        surname,
+                'users.age':            util.to_int(age),
+                'users.birth_day':      util.to_int(birth_day),
+                'users.birth_month':    util.to_int(birth_month),
+                'users.birth_year':     util.to_int(birth_year),
+                'users.gender':         gender,
+                'users.staff':          (datetime.datetime.utcnow()
+                                         if util.to_bool(staff) else False),
+                'users.manager':        util.to_bool(manager),
+                'users.promotion_perm': util.to_bool(promotion_perm):
+                'users.employee':       util.to_bool(employee),
+                'users.venue_id':       venue_id}
         columns = []
         values = []
-        if twitter_token:
-            columns.append('users.twitter_token')
-            values.append(twitter_token)
-        if forename:
-            columns.append('users.forename')
-            values.append(forename)
-        if surname:
-            columns.append('users.surname')
-            values.append(surname)
+        for key, val in data.iteritems():
+            if val:
+                columns.append(key)
+                values.append(val)
+        if country:
+            subqry = {'select': 'id',
+                      'table':  'countries',
+                      'where':  'countries.code = %s',
+                      'limit':  1}
+            cursor.execute(util.query(**subqry), (country.lower(),))
+            subres = cursor.fetchone()['id']
+            if subres:
+                columns.append('users.country_id')
+                values.append(subres)
+        if language:
+            lang = language.split('_')
+            subqry = {'select': 'id',
+                      'table':  'countries',
+                      'where':  'countries.code = %s',
+                      'limit':  1}
+            cursor.execute(util.query(**subqry), (lang[1].lower(),))
+            subres = cursor.fetchone()['id']
+            if subres:
+                subqry = {'select': 'id',
+                          'table':  'languages',
+                          'where':  ('languages.code = %s',
+                                     'languages.country_id = %s'),
+                          'limit':  1}
+                cursor.execute(util.query(**subqry), (lang[0].lower(), subres))
+                subres = cursor.fetchone()['id']
+                if subres:
+                    columns.append('users.language_id')
+                    values.append(subres)
         values.append(facebook_token)
         if res:
             qry = {'update':     'users',

@@ -1,6 +1,8 @@
+import calendar
+import datetime
+import time
 import json
 import functools
-from datetime import datetime
 
 import cherrypy
 import mysql.connector
@@ -9,7 +11,7 @@ from config import config
 
 
 def dont_cache():
-    cherrypy.response.headers['Expires'] = datetime.utcnow().strftime(
+    cherrypy.response.headers['Expires'] = datetime.datetime.utcnow().strftime(
         '%a, %d %b %Y %H:%M:%S GMT')
     cherrypy.response.headers['Cache-Control'] = ('no-store, '
                                                   'no-cache, '
@@ -44,7 +46,11 @@ class MySQLCursorDict(mysql.connector.cursor.MySQLCursor):
 
 
 class MySQLConverterJSON(mysql.connector.conversion.MySQLConverter):
-    _DATETIME_to_python =  mysql.connector.conversion.MySQLConverter._str
+    
+    def _DATETIME_to_python(self, v, desc=None):
+        ret = time.strptime(v + ' UTC', '%Y-%m-%d %H:%M:%S %Z')
+        return calendar.timegm(ret)
+
     _TIMESTAMP_to_python = _DATETIME_to_python
 
 
@@ -100,3 +106,12 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
 
 
 expose = cherrypy.expose
+
+
+def to_int(value):
+    return int(value) if value else None
+
+def to_bool(value):
+    if value in (0, False, '0'): return False
+    if isinstance(value, str) and value in ('false', 'no', 'off'): return False
+    return True

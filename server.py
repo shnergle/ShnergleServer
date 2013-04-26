@@ -14,7 +14,7 @@ class User:
     @util.protect
     @util.mysqli
     @util.jsonp
-    def get(self, cursor, id=None, facebook_token=None, **kwargs):
+    def get(self, cursor, facebook_token=None, **kwargs):
         qry = {'select':    ['users.id',
                              'users.facebook',
                              'users.twitter',
@@ -96,10 +96,10 @@ class User:
                       'where':  'countries.code = %s',
                       'limit':  1}
             cursor.execute(util.query(**subqry), (country.lower(),))
-            subres = cursor.fetchone()['id']
+            subres = cursor.fetchone()
             if subres:
                 columns.append('users.country_id')
-                values.append(subres)
+                values.append(subres['id'])
         if language:
             lang = language.split('_')
             subqry = {'select': 'id',
@@ -107,18 +107,19 @@ class User:
                       'where':  'countries.code = %s',
                       'limit':  1}
             cursor.execute(util.query(**subqry), (lang[1].lower(),))
-            subres = cursor.fetchone()['id']
+            subres = cursor.fetchone()
             if subres:
                 subqry = {'select': 'id',
                           'table':  'languages',
                           'where':  ('languages.code = %s',
                                      'languages.country_id = %s'),
                           'limit':  1}
-                cursor.execute(util.query(**subqry), (lang[0].lower(), subres))
-                subres = cursor.fetchone()['id']
+                cursor.execute(util.query(**subqry), (lang[0].lower(),
+                                                      subres['id']))
+                subres = cursor.fetchone()
                 if subres:
                     columns.append('users.language_id')
-                    values.append(subres)
+                    values.append(subres['id'])
         values.append(facebook_token)
         if res:
             qry = {'update':     'users',
@@ -133,8 +134,49 @@ class User:
         return cursor.lastrowid
 
 
+class UserSearch:
+    
+    @util.expose
+    @util.protect
+    @util.mysqli
+    @util.auth
+    @util.jsonp
+    def get(self, cursor, user_id, **kwargs):
+        qry = {'select':   ('id', 'term', 'time'),
+               'table':    'user_searches',
+               'where':    'user_id = %s',
+               'order_by': 'time DESC'}
+        cursor.execute(util.query(**qry), (user_id,))
+        return [row for row in cursor]
+    
+    @util.expose
+    @util.protect
+    @util.mysqli
+    @util.auth
+    @util.jsonp
+    def set(self, cursor, user_id, term=None, **kwargs):
+        qry = {'select': 'id',
+               'table':  'user_searches',
+               'where':  ('user_id = %s', 'term = %s'),
+               'limit':  1}
+        cursor.execute(util.query(**qry), (user_id, term))
+        res = cursor.fetchone()
+        if res:
+            qry = {'update':  'user_searches',
+                   'columns': ('time'),
+                   'where':   'user_id = %s'}
+            cursor.execute(util.query(**qry), (datetime.datetime.utcnow(),
+                                               user_id))
+        else:
+            qry = {'insert_into': 'user_searches',
+                   'columns':     ('user_id', 'term')}
+            cursor.execute(util.query(**qry), (user_id, term))
+        return cursor.lastrowid
+
+
 class ShnergleServer:
     users = User()
+    user_searches = UserSearch()
 
     def __init__(self):
         self.v1 = self

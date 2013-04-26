@@ -32,16 +32,18 @@ def protect(func):
 def auth(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        if not facebook_token:
+        if not kwargs.get('facebook_token', False):
             raise cherrypy.HTTPError(403)
+        cursor = args[1]
         qry = {'select': 'id',
                'table':  'users',
                'where':  'facebook_token = %s',
                'limit':  1}
-        cursor.execute(util.query(**qry), (facebook_token,))
+        cursor.execute(query(**qry), (kwargs['facebook_token'],))
         res = cursor.fetchone()['id']
         if not res:
             raise cherrypy.HTTPError(403)
+        args += (res,)
         return func(*args, **kwargs)
     return decorator
 
@@ -102,7 +104,7 @@ def implode(glue, list):
 
 
 def query(select=None, table=None, left_join=None, on=None, where=None,
-          limit=None,
+          order_by=None, limit=None,
           insert_into=None, columns=None,
           update=None, set_values=None):
     if select:
@@ -115,6 +117,8 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
             qry += ' ON (' + implode(' AND ', on) + ')'
         if where:
             qry += ' WHERE ' + implode(' AND ', where)
+        if order_by:
+            qry += ' ORDER BY ' + order_by
         if limit:
             qry += ' LIMIT ' + str(limit)
     elif insert_into:

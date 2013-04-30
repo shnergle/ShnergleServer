@@ -16,7 +16,8 @@ class User:
     @util.mysqli
     @util.auth
     @util.jsonp
-    def get(self, cursor, user_id, getall=None, facebook_token=None, **kwargs):
+    def get(self, cursor=None, user_id=None, getall=None, facebook_token=None,
+            **kwargs):
         qry = {'select':    ['users.id',
                              'users.facebook',
                              'users.twitter',
@@ -95,7 +96,7 @@ class User:
     @util.protect
     @util.mysqli
     @util.jsonp
-    def set(self, cursor, facebook_token=None, twitter_token=None,
+    def set(self, cursor=None, facebook_token=None, twitter_token=None,
             facebook=None, twitter=None, forename=None, surname=None, age=None,
             birth_day=None, birth_month=None, birth_year=None, gender=None,
             staff=None, manager=None, promotion_perm=None, employee=None,
@@ -181,7 +182,7 @@ class UserSearch:
     @util.mysqli
     @util.auth
     @util.jsonp
-    def get(self, cursor, user_id, **kwargs):
+    def get(self, cursor=None, user_id=None, **kwargs):
         qry = {'select':   ('id', 'term', 'time'),
                'table':    'user_searches',
                'where':    'user_id = %s',
@@ -194,7 +195,7 @@ class UserSearch:
     @util.mysqli
     @util.auth
     @util.jsonp
-    def set(self, cursor, user_id, term=None, **kwargs):
+    def set(self, cursor=None, user_id=None, term=None, **kwargs):
         qry = {'select': 'id',
                'table':  'user_searches',
                'where':  ('user_id = %s', 'term = %s'),

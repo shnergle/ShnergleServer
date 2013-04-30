@@ -34,7 +34,7 @@ def auth(func):
     def decorator(*args, **kwargs):
         if not kwargs.get('facebook_token', False):
             raise cherrypy.HTTPError(403)
-        cursor = args[1]
+        cursor = kwargs['cursor']
         qry = {'select': 'id',
                'table':  'users',
                'where':  'facebook_token = %s',
@@ -43,7 +43,7 @@ def auth(func):
         res = cursor.fetchone()['id']
         if not res:
             raise cherrypy.HTTPError(403)
-        args += (res,)
+        kwargs.update(user_id=res)
         return func(*args, **kwargs)
     return decorator
 
@@ -88,7 +88,7 @@ def mysqli(func):
         cnx = mysql.connector.connect(**config.config)
         cnx.set_converter_class(MySQLConverterJSON)
         cursor = cnx.cursor(cursor_class=MySQLCursorDict)
-        args += (cursor,)
+        kwargs.update(cursor=cursor)
         try:
             res = func(*args, **kwargs)
         finally:

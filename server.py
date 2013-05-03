@@ -82,6 +82,7 @@ class User:
             qry.update({'where': 'users.id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
+            res = {t[0]: value for t, value in zip(cursor.description, res)}
             posts = 0 #res.pop['post_count']
             for threshold in thresholds:
                 if posts < threshold:

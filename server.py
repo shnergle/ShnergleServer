@@ -229,7 +229,9 @@ class ShnergleServer:
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-cp_config = {'/':            {'error_page.default': ShnergleServer.error},
+cp_config = {'/':            {'error_page.default': ShnergleServer.error,
+                              'log.error_file':
+                              os.path.join(current_dir, 'error.log')},
              '/favicon.ico': {'tools.staticfile.on': True,
                               'tools.staticfile.filename':
                               os.path.join(current_dir, 'favicon.ico')}}

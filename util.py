@@ -34,10 +34,11 @@ def auth(func):
         if not kwargs.get('facebook_token', False):
             raise cherrypy.HTTPError(403)
         cursor = kwargs['cursor']
-        qry = {'select': 'id',
-               'table':  'users',
-               'where':  'facebook_token = ?',
-               'limit':  1}
+        qry = {'select':   'id',
+               'table':    'users',
+               'where':    'facebook_token = ?',
+               'order_by': 'id',
+               'limit':    1}
         cursor.execute(query(**qry), (kwargs['facebook_token'],))
         res = cursor.fetchone()['id']
         if not res:

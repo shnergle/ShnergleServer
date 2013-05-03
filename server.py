@@ -47,7 +47,8 @@ class User:
                              'users.language_id = languages.id',
                              'languages.country_id = lc.id',
                              'posts.user_id = users.id'),
-               'group_by':   'users.id'}
+               'group_by':   'users.id',
+               'order_by':   'users.id'}
                              
         users = {'select': 'COUNT(users.id) AS count', 'table': 'users'}
         cursor.execute(util.query(**users))
@@ -102,10 +103,11 @@ class User:
             venue_id=None, country=None, language=None, **kwargs):
         if not facebook_token:
             raise cherrypy.HTTPError(403)
-        qry = {'select': 'COUNT(users.id) AS count',
-               'table':  'users',
-               'where':  'users.facebook_token = ?',
-               'limit':  1}
+        qry = {'select':   'COUNT(users.id) AS count',
+               'table':    'users',
+               'where':    'users.facebook_token = ?',
+               'order_by': 'users.id',
+               'limit':    1}
         cursor.execute(util.query(**qry), (facebook_token,))
         res = cursor.fetchone()['count']
         data = {'users.twitter_token':  twitter_token,
@@ -131,10 +133,11 @@ class User:
                 columns.append(key)
                 values.append(val)
         if country:
-            subqry = {'select': 'id',
-                      'table':  'countries',
-                      'where':  'countries.code = ?',
-                      'limit':  1}
+            subqry = {'select':   'id',
+                      'table':    'countries',
+                      'where':    'countries.code = ?',
+                      'order_by': 'id',
+                      'limit':    1}
             cursor.execute(util.query(**subqry), (country.lower(),))
             subres = cursor.fetchone()
             if subres:
@@ -142,18 +145,20 @@ class User:
                 values.append(subres['id'])
         if language:
             lang = language.split('_')
-            subqry = {'select': 'id',
-                      'table':  'countries',
-                      'where':  'countries.code = ?',
-                      'limit':  1}
+            subqry = {'select':   'id',
+                      'table':    'countries',
+                      'where':    'countries.code = ?',
+                      'order_by': 'id',
+                      'limit':    1}
             cursor.execute(util.query(**subqry), (lang[1].lower(),))
             subres = cursor.fetchone()
             if subres:
-                subqry = {'select': 'id',
-                          'table':  'languages',
-                          'where':  ('languages.code = ?',
-                                     'languages.country_id = ?'),
-                          'limit':  1}
+                subqry = {'select':   'id',
+                          'table':    'languages',
+                          'where':    ('languages.code = ?',
+                                       'languages.country_id = ?'),
+                          'order_by': 'id',
+                          'limit':    1}
                 cursor.execute(util.query(**subqry), (lang[0].lower(),
                                                       subres['id']))
                 subres = cursor.fetchone()
@@ -195,10 +200,11 @@ class UserSearch:
     @util.auth
     @util.jsonp
     def set(self, cursor=None, user_id=None, term=None, **kwargs):
-        qry = {'select': 'id',
-               'table':  'user_searches',
-               'where':  ('user_id = ?', 'term = ?'),
-               'limit':  1}
+        qry = {'select':   'id',
+               'table':    'user_searches',
+               'where':    ('user_id = ?', 'term = ?'),
+               'order_by': 'id',
+               'limit':     1}
         cursor.execute(util.query(**qry), (user_id, term))
         res = cursor.fetchone()
         if res:

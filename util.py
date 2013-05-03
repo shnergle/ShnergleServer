@@ -36,7 +36,7 @@ def auth(func):
         cursor = kwargs['cursor']
         qry = {'select': 'id',
                'table':  'users',
-               'where':  'facebook_token = %s',
+               'where':  'facebook_token = ?',
                'limit':  1}
         cursor.execute(query(**qry), (kwargs['facebook_token'],))
         res = cursor.fetchone()['id']
@@ -111,11 +111,11 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
         qry = 'INSERT INTO ' + insert_into
         if columns:
             qry += (' (' + implode(', ', columns) + ')' + ' VALUES (' +
-                    ('%s' + ', %s' * (len(columns) - 1)) + ')')
+                    ('?' + ', ?' * (len(columns) - 1)) + ')')
     elif update:
         qry = 'UPDATE ' + update
         if set_values:
-            qry += ' SET ' + implode('=%s, ', set_values) + '=%s'
+            qry += ' SET ' + implode('=?, ', set_values) + '=?'
         if where:
             qry += ' WHERE ' + implode(' AND ', where)
     return qry

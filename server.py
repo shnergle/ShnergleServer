@@ -79,7 +79,7 @@ class User:
         else:
             qry['select'].append('users.facebook_token')
             qry['select'].append('users.twitter_token')
-            qry.update({'where': 'users.id = %s', 'limit': 1})
+            qry.update({'where': 'users.id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
             posts = res.pop('post_count')
@@ -104,7 +104,7 @@ class User:
             raise cherrypy.HTTPError(403)
         qry = {'select': 'COUNT(users.id) AS count',
                'table':  'users',
-               'where':  'users.facebook_token = %s',
+               'where':  'users.facebook_token = ?',
                'limit':  1}
         cursor.execute(util.query(**qry), (facebook_token,))
         res = cursor.fetchone()['count']
@@ -133,7 +133,7 @@ class User:
         if country:
             subqry = {'select': 'id',
                       'table':  'countries',
-                      'where':  'countries.code = %s',
+                      'where':  'countries.code = ?',
                       'limit':  1}
             cursor.execute(util.query(**subqry), (country.lower(),))
             subres = cursor.fetchone()
@@ -144,15 +144,15 @@ class User:
             lang = language.split('_')
             subqry = {'select': 'id',
                       'table':  'countries',
-                      'where':  'countries.code = %s',
+                      'where':  'countries.code = ?',
                       'limit':  1}
             cursor.execute(util.query(**subqry), (lang[1].lower(),))
             subres = cursor.fetchone()
             if subres:
                 subqry = {'select': 'id',
                           'table':  'languages',
-                          'where':  ('languages.code = %s',
-                                     'languages.country_id = %s'),
+                          'where':  ('languages.code = ?',
+                                     'languages.country_id = ?'),
                           'limit':  1}
                 cursor.execute(util.query(**subqry), (lang[0].lower(),
                                                       subres['id']))
@@ -164,7 +164,7 @@ class User:
         if res:
             qry = {'update':     'users',
                    'set_values': columns,
-                   'where':      'users.facebook_token = %s'}
+                   'where':      'users.facebook_token = ?'}
             cursor.execute(util.query(**qry), values)
         else:
             columns.append('users.facebook_token')
@@ -184,7 +184,7 @@ class UserSearch:
     def get(self, cursor=None, user_id=None, **kwargs):
         qry = {'select':   ('id', 'term', 'time'),
                'table':    'user_searches',
-               'where':    'user_id = %s',
+               'where':    'user_id = ?',
                'order_by': 'time DESC'}
         cursor.execute(util.query(**qry), (user_id,))
         return [row for row in cursor]
@@ -197,14 +197,14 @@ class UserSearch:
     def set(self, cursor=None, user_id=None, term=None, **kwargs):
         qry = {'select': 'id',
                'table':  'user_searches',
-               'where':  ('user_id = %s', 'term = %s'),
+               'where':  ('user_id = ?', 'term = ?'),
                'limit':  1}
         cursor.execute(util.query(**qry), (user_id, term))
         res = cursor.fetchone()
         if res:
             qry = {'update':  'user_searches',
                    'columns': ('time'),
-                   'where':   'user_id = %s'}
+                   'where':   'user_id = ?'}
             cursor.execute(util.query(**qry), (datetime.datetime.utcnow(),
                                                user_id))
         else:

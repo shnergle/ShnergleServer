@@ -118,7 +118,6 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
             qry += ' SET ' + implode('=?, ', set_values) + '=?'
         if where:
             qry += ' WHERE ' + implode(' AND ', where)
-    raise Exception(qry)
     return qry
 
 

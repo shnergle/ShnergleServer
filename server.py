@@ -37,7 +37,7 @@ class User:
                              'countries.code AS country',
                              '(LOWER(languages.code) + \'_\' + '
                                     'UPPER(lc.code)) AS language',
-                             'COUNT(posts.id) AS post_count'],
+                             ],#'COUNT(posts.id) AS post_count'],
                'table':      'users',
                'left_join': ('countries',
                              'languages',

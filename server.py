@@ -35,8 +35,8 @@ class User:
                              'users.employee',
                              'users.joined',
                              'countries.code AS country',
-                             'CONCAT(LOWER(languages.code), "_", '
-                                    'UPPER(lc.code)) AS language',
+                             'LOWER(languages.code) + "_" + '
+                                    'UPPER(lc.code) AS language',
                              'COUNT(posts.id) AS post_count'],
                'table':      'users',
                'left_join': ('countries',

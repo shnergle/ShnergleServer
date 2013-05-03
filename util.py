@@ -38,6 +38,7 @@ def auth(func):
                'table':  'users',
                'where':  'facebook_token = ?',
                'limit':  1}
+        raise Exception(query(**qry))
         cursor.execute(query(**qry), (kwargs['facebook_token'],))
         res = cursor.fetchone()['id']
         if not res:

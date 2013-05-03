@@ -68,7 +68,7 @@ class User:
             cursor.execute(util.query(**qry))
             res = []
             for row in cursor:
-                posts = row.pop('post_count')
+                posts = 0 #row['post_count']
                 for threshold in thresholds:
                     if posts < threshold:
                         row['ranking'] = 0
@@ -82,7 +82,7 @@ class User:
             qry.update({'where': 'users.id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
-            posts = res.pop('post_count')
+            posts = 0 #res.pop['post_count']
             for threshold in thresholds:
                 if posts < threshold:
                     res['ranking'] = 0

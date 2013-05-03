@@ -47,7 +47,6 @@ class User:
                              'users.language_id = languages.id',
                              'languages.country_id = lc.id',
                              'posts.user_id = users.id'),
-               'group_by':   'users.id',
                'order_by':   'users.id'}
                              
         users = {'select': 'COUNT(users.id) AS count', 'table': 'users'}

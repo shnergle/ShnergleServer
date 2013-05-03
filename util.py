@@ -102,11 +102,11 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
         if order_by:
             qry += ' ORDER BY ' + implode(', ', order_by)
         if limit:
-            qry += ' LIMIT '
             if isinstance(limit, str) or isinstance(limit, int):
-                qry += str(limit)
+                qry += ' OFFSET 0 ROWS FETCH NEXT ' + str(limit) + ' ROWS ONLY'
             else:
-                qry += str(int(limit[0])) + ',' + str(int(limit[1]))
+                qry += (' OFFSET ' + str(int(limit[0])) + ' ROWS FETCH NEXT ' +
+                        str(int(limit[1])) + ' ROWS ONLY')
     elif insert_into:
         qry = 'INSERT INTO ' + insert_into
         if columns:

@@ -59,7 +59,7 @@ class User:
                             'table':     'posts',
                             'group_by':  'posts.id',
                             'order_by':  'count',
-                            'limit':     (number - 1, number)}
+                            'limit':     (number - 1, 1)}
             cursor.execute(util.query(**thresholdqry))
             count = cursor.fetchone()
             thresholds.append(count['count'] if count else 0)

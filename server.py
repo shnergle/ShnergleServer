@@ -4,7 +4,6 @@ import math
 import os
 
 import cherrypy
-import mysql.connector
 
 import util
 
@@ -13,7 +12,7 @@ class User:
 
     @util.expose
     @util.protect
-    @util.mysqli
+    @util.db
     @util.auth
     @util.jsonp
     def get(self, cursor=None, user_id=None, getall=None, facebook_token=None,
@@ -94,7 +93,7 @@ class User:
         
     @util.expose
     @util.protect
-    @util.mysqli
+    @util.db
     @util.jsonp
     def set(self, cursor=None, facebook_token=None, twitter_token=None,
             facebook=None, twitter=None, forename=None, surname=None, age=None,
@@ -179,7 +178,7 @@ class UserSearch:
     
     @util.expose
     @util.protect
-    @util.mysqli
+    @util.db
     @util.auth
     @util.jsonp
     def get(self, cursor=None, user_id=None, **kwargs):
@@ -192,7 +191,7 @@ class UserSearch:
     
     @util.expose
     @util.protect
-    @util.mysqli
+    @util.db
     @util.auth
     @util.jsonp
     def set(self, cursor=None, user_id=None, term=None, **kwargs):

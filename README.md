@@ -8,7 +8,7 @@ Requirements
 
  * Python 2.7, 3.0 or higher
  * CherryPy (3.2.4 included)
- * MySQL Connector/Python (1.0.9 included)
+ * pypyodbc (1.1.2 included)
 
 Where the library is included, the server has not been tested with any other version!
 
@@ -16,9 +16,7 @@ Where the library is included, the server has not been tested with any other ver
 Setup
 -----
 
-Just copy config.py.dist to config.py and edit the settings. Then import the MySQL dump.
-
-app.yaml and index.yaml are configured for Google App Engine and not needed for any other hosting provider. For other providers point the WSGI server to the variable app in server.py.
+Point the WSGI server to server.app and set the environment variable APP_SECRET to a random string and DATABASE to the connection string.
 
 
 Structure

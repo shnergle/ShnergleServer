@@ -5,9 +5,7 @@ import json
 import functools
 
 import cherrypy
-import mysql.connector
-
-import config
+import pypyodbc
 
 
 def dont_cache():
@@ -23,7 +21,7 @@ def dont_cache():
 def protect(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        if kwargs.pop('app_secret', False) != config.app_secret:
+        if kwargs.pop('app_secret', False) != os.environ['APP_SECRET']:
             raise cherrypy.HTTPError(403)
         return func(*args, **kwargs)
     return decorator
@@ -64,30 +62,11 @@ def jsonp(func):
     return decorator
 
 
-class MySQLCursorDict(mysql.connector.cursor.MySQLCursor):
-
-    def _row_to_python(self, rowdata, desc=None):
-        row = super(MySQLCursorDict, self)._row_to_python(rowdata, desc)
-        if row:
-            return dict(zip(self.column_names, row))
-        return None
-
-
-class MySQLConverterJSON(mysql.connector.conversion.MySQLConverter):
-    
-    def _DATETIME_to_python(self, v, desc=None):
-        ret = time.strptime(v + ' UTC', '%Y-%m-%d %H:%M:%S %Z')
-        return calendar.timegm(ret)
-
-    _TIMESTAMP_to_python = _DATETIME_to_python
-
-
-def mysqli(func):
+def db(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        cnx = mysql.connector.connect(**config.config)
-        cnx.set_converter_class(MySQLConverterJSON)
-        cursor = cnx.cursor(cursor_class=MySQLCursorDict)
+        cnx = pypyodbc.connect(os.environ['DATABASE'])
+        cursor = cnx.cursor()
         kwargs.update(cursor=cursor)
         try:
             res = func(*args, **kwargs)

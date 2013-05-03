@@ -68,21 +68,22 @@ class User:
             cursor.execute(util.query(**qry))
             res = []
             for row in cursor:
+                drow = {t[0]: val for t, val in zip(cursor.description, row)}
                 posts = 0 #row['post_count']
                 for threshold in thresholds:
                     if posts < threshold:
-                        row['ranking'] = 0
+                        drow['ranking'] = 0
                         break
                 else:
-                    row['ranking'] = len(thresholds)
-                res.append(row)
+                    drow['ranking'] = len(thresholds)
+                res.append(drow)
         else:
             qry['select'].append('users.facebook_token')
             qry['select'].append('users.twitter_token')
             qry.update({'where': 'users.id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
-            res = {t[0]: value for t, value in zip(cursor.description, res)}
+            res = {t[0]: val for t, val in zip(cursor.description, res)}
             posts = 0 #res.pop['post_count']
             for threshold in thresholds:
                 if posts < threshold:

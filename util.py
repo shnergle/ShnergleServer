@@ -92,10 +92,13 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
         qry = 'SELECT ' + implode(', ', select)
         if table:
             qry += ' FROM ' + implode(', ', table)
-        if left_join:
-            qry += ' LEFT JOIN (' + implode(', ', left_join) + ')'
-        if on:
-            qry += ' ON (' + implode(' AND ', on) + ')'
+        if left_join and on:
+            if isinstance(left_join, str):
+                left_join = [left_join]
+            if isinstance(on, str):
+                on = [on]
+            for j, o in zip(left_join, on):
+                qry += ' LEFT JOIN ' + j + ' ON ' + o
         if where:
             qry += ' WHERE ' + implode(' AND ', where)
         if group_by:

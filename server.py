@@ -81,6 +81,7 @@ class User:
             qry['select'].append('users.facebook_token')
             qry['select'].append('users.twitter_token')
             qry.update({'where': 'users.id = ?', 'limit': 1})
+            raise Exception(util.query(**qry))
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
             posts = res.pop('post_count')

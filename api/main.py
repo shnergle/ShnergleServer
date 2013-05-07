@@ -23,4 +23,5 @@ class User():
         
 app = falcon.API(before=[auth], after=[json])
 db = None
+app.add_route('/users', User(db))
 app.add_route('/1/users/{_id}', User(db))

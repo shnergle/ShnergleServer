@@ -21,6 +21,6 @@ class User():
         resp.body = {'success': True}
         
         
-app = falcon.API(before=['auth'], after=['json'])
+app = falcon.API(before=[auth], after=[json])
 db = None
-api.add_route('/1/users/{_id}', User(db))
+app.add_route('/1/users/{_id}', User(db))

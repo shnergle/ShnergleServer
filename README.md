@@ -16,7 +16,8 @@ Where the library is included, the server has not been tested with any other ver
 Setup
 -----
 
-Point the WSGI server to server.app and set the environment variable APP_SECRET to a random string and DATABASE to the connection string.
+ * Add the directories app and site-packages to the python path.
+ * Point the WSGI server to main.app and set the environment variable APP_SECRET to a random string and DATABASE to the connection string.
 
 
 Structure

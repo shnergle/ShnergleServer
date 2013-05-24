@@ -35,15 +35,15 @@ def protect(func):
 def auth(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        if not kwargs.get('facebook_token', False):
+        if not kwargs.get('facebook_id', False):
             raise cherrypy.HTTPError(403)
         cursor = kwargs['cursor']
         qry = {'select':   'id',
                'table':    'users',
-               'where':    'facebook_token = ?',
+               'where':    'facebook_id = ?',
                'order_by': 'id',
                'limit':    1}
-        cursor.execute(query(**qry), (kwargs['facebook_token'],))
+        cursor.execute(query(**qry), (kwargs['facebook_id'],))
         res = cursor.fetchone()['id']
         if not res:
             raise cherrypy.HTTPError(403)

@@ -57,7 +57,7 @@ class User:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, user_id=None, getall=None, facebook_token=None,
+    def get(self, cursor=None, user_id=None, getall=None, facebook_id=None,
             **kwargs):
         qry = {'select':    ['users.id',
                              'users.facebook',
@@ -90,8 +90,9 @@ class User:
             cursor.execute(util.query(**qry))
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
-            qry['select'].append('users.facebook_token')
+            qry['select'].append('users.twitter_id')
             qry['select'].append('users.twitter_token')
+            qry['select'].append('users.twitter_token_secret')
             qry.update({'where': 'users.id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
@@ -101,55 +102,58 @@ class User:
     @util.protect
     @util.db
     @util.jsonp
-    def set(self, cursor=None, facebook_token=None, twitter_token=None,
+    def set(self, cursor=None, facebook_id=None, twitter_token=None,
             facebook=None, twitter=None, forename=None, surname=None, age=None,
             birth_day=None, birth_month=None, birth_year=None, gender=None,
             staff=None, manager=None, promotion_perm=None, employee=None,
             venue_id=None, country=None, language=None, email=None, top5=None,
-            **kwargs):
-        if not facebook_token:
+            twitter_id=None, twitter_token_secret=None, **kwargs):
+        if not facebook_id:
             raise cherrypy.HTTPError(403)
         qry = {'select':   'COUNT(users.id) AS count',
                'table':    'users',
-               'where':    'users.facebook_token = ?',
+               'where':    'users.facebook_id = ?',
                'order_by': 'users.id',
                'limit':    1}
-        cursor.execute(util.query(**qry), (facebook_token,))
+        cursor.execute(util.query(**qry), (facebook_id,))
         res = cursor.fetchone()['count']
-        data = {'users.twitter_token':  twitter_token,
-                'users.facebook':       facebook,
-                'users.twitter':        twitter,
-                'users.forename':       forename,
-                'users.surname':        surname,
-                'users.age':            util.to_int(age),
-                'users.birth_day':      util.to_int(birth_day),
-                'users.birth_month':    util.to_int(birth_month),
-                'users.birth_year':     util.to_int(birth_year),
-                'users.gender':         gender,
-                'users.staff':          (datetime.datetime.utcnow()
-                                         if util.to_bool(staff) else False),
-                'users.manager':        util.to_bool(manager),
-                'users.promotion_perm': util.to_bool(promotion_perm),
-                'users.employee':       util.to_bool(employee),
-                'users.venue_id':       venue_id,
-                'users.country':        country,
-                'users.language':       language,
-                'users.email':          email,
-                'users.top5':           util.to_bool(top5)}
+        data = {'users.twitter_id':            twitter_id,
+                'users.twitter_token':         twitter_token,
+                'users.twitter_token_secret':  twitter_token_secret,
+                'users.facebook':              facebook,
+                'users.twitter':               twitter,
+                'users.forename':              forename,
+                'users.surname':               surname,
+                'users.age':                   util.to_int(age),
+                'users.birth_day':             util.to_int(birth_day),
+                'users.birth_month':           util.to_int(birth_month),
+                'users.birth_year':            util.to_int(birth_year),
+                'users.gender':                gender,
+                'users.staff':                 (datetime.datetime.utcnow()
+                                                if util.to_bool(staff) else
+                                                False),
+                'users.manager':               util.to_bool(manager),
+                'users.promotion_perm':        util.to_bool(promotion_perm),
+                'users.employee':              util.to_bool(employee),
+                'users.venue_id':              venue_id,
+                'users.country':               country,
+                'users.language':              language,
+                'users.email':                 email,
+                'users.top5':                  util.to_bool(top5)}
         columns = []
         values = []
         for key, val in data.iteritems():
             if val:
                 columns.append(key)
                 values.append(val)
-        values.append(facebook_token)
+        values.append(facebook_id)
         if res:
             qry = {'update':     'users',
                    'set_values': columns,
-                   'where':      'users.facebook_token = ?'}
+                   'where':      'users.facebook_id = ?'}
             cursor.execute(util.query(**qry), values)
         else:
-            columns.append('users.facebook_token')
+            columns.append('users.facebook_id')
             columns.append('users.joined')
             values.append(datetime.datetime.utcnow())
             qry = {'insert_into': 'users',

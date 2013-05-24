@@ -81,8 +81,6 @@ class User:
                              'users.top5'
                              ],
                'table':     'users',
-               'left_join': 'posts',
-               'on':        'posts.user_id = users.id',
                'order_by':  'users.id'}
 
         if util.to_bool(getall):

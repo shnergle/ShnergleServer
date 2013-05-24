@@ -18,9 +18,9 @@ class Ranking:
     def get(self, cursor=None, user_id=None, thresholds=None, **kwargs):
         if util.to_bool(thresholds):
             return self.thresholds(cursor)
-        posts = {'select': 'COUNT(posts.id) AS count',
+        posts = {'select': 'COUNT(id) AS count',
                  'table': 'posts',
-                 'where': 'posts.user_id = ?'}
+                 'where': 'user_id = ?'}
         cursor.execute(util.query(**posts), (user_id,))
         posts = cursor.fetchone()['count']
         for threshold in self.thresholds(cursor):
@@ -33,16 +33,16 @@ class Ranking:
             
             
     def thresholds(self, cursor):
-        users = {'select': 'COUNT(users.id) AS count', 'table': 'users'}
+        users = {'select': 'COUNT(id) AS count', 'table': 'users'}
         cursor.execute(util.query(**users))
         users = cursor.fetchone()['count']
         thresholds = []
         for percent in (0.8, 0.95, 0.99):
             number = math.floor(percent * users)
-            thresholdqry = {'select':    ('COUNT(posts.id) AS count',
-                                          'posts.user_id'),
+            thresholdqry = {'select':    ('COUNT(id) AS count',
+                                          'user_id'),
                             'table':     'posts',
-                            'group_by':  'posts.user_id',
+                            'group_by':  'user_id',
                             'order_by':  'count',
                             'limit':     (number - 1, 1)}
             cursor.execute(util.query(**thresholdqry))
@@ -60,39 +60,39 @@ class User:
     @util.jsonp
     def get(self, cursor=None, user_id=None, getall=None, facebook_id=None,
             **kwargs):
-        qry = {'select':    ['users.id',
-                             'users.facebook',
-                             'users.twitter',
-                             'users.forename',
-                             'users.surname',
-                             'users.age',
-                             'users.birth_day',
-                             'users.birth_month',
-                             'users.birth_year',
-                             'users.gender',
-                             'users.image',
-                             'users.staff',
-                             'users.manager',
-                             'users.venue_id',
-                             'users.promotion_perm',
-                             'users.employee',
-                             'users.joined',
-                             'users.country',
-                             'users.language',
-                             'users.email',
-                             'users.top5'
+        qry = {'select':    ['id',
+                             'facebook',
+                             'twitter',
+                             'forename',
+                             'surname',
+                             'age',
+                             'birth_day',
+                             'birth_month',
+                             'birth_year',
+                             'gender',
+                             'image',
+                             'staff',
+                             'manager',
+                             'venue_id',
+                             'promotion_perm',
+                             'employee',
+                             'joined',
+                             'country',
+                             'language',
+                             'email',
+                             'top5'
                              ],
                'table':     'users',
-               'order_by':  'users.id'}
+               'order_by':  'id'}
 
         if util.to_bool(getall):
             cursor.execute(util.query(**qry))
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
-            qry['select'].append('users.twitter_id')
-            qry['select'].append('users.twitter_token')
-            qry['select'].append('users.twitter_token_secret')
-            qry.update({'where': 'users.id = ?', 'limit': 1})
+            qry['select'].append('twitter_id')
+            qry['select'].append('twitter_token')
+            qry['select'].append('twitter_token_secret')
+            qry.update({'where': 'id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
             return util.row_to_dict(cursor, row)
@@ -109,36 +109,36 @@ class User:
             twitter_id=None, twitter_token_secret=None, **kwargs):
         if not facebook_id:
             raise cherrypy.HTTPError(403)
-        qry = {'select':   'COUNT(users.id) AS count',
+        qry = {'select':   'COUNT(id) AS count',
                'table':    'users',
-               'where':    'users.facebook_id = ?',
-               'order_by': 'users.id',
+               'where':    'facebook_id = ?',
+               'order_by': 'id',
                'limit':    1}
         cursor.execute(util.query(**qry), (facebook_id,))
         res = cursor.fetchone()['count']
-        data = {'users.twitter_id':            twitter_id,
-                'users.twitter_token':         twitter_token,
-                'users.twitter_token_secret':  twitter_token_secret,
-                'users.facebook':              facebook,
-                'users.twitter':               twitter,
-                'users.forename':              forename,
-                'users.surname':               surname,
-                'users.age':                   util.to_int(age),
-                'users.birth_day':             util.to_int(birth_day),
-                'users.birth_month':           util.to_int(birth_month),
-                'users.birth_year':            util.to_int(birth_year),
-                'users.gender':                gender,
-                'users.staff':                 (datetime.datetime.utcnow()
+        data = {'twitter_id':            twitter_id,
+                'twitter_token':         twitter_token,
+                'twitter_token_secret':  twitter_token_secret,
+                'facebook':              facebook,
+                'twitter':               twitter,
+                'forename':              forename,
+                'surname':               surname,
+                'age':                   util.to_int(age),
+                'birth_day':             util.to_int(birth_day),
+                'birth_month':           util.to_int(birth_month),
+                'birth_year':            util.to_int(birth_year),
+                'gender':                gender,
+                'staff':                 (datetime.datetime.utcnow()
                                                 if util.to_bool(staff) else
                                                 False),
-                'users.manager':               util.to_bool(manager),
-                'users.promotion_perm':        util.to_bool(promotion_perm),
-                'users.employee':              util.to_bool(employee),
-                'users.venue_id':              venue_id,
-                'users.country':               country,
-                'users.language':              language,
-                'users.email':                 email,
-                'users.top5':                  util.to_bool(top5)}
+                'manager':               util.to_bool(manager),
+                'promotion_perm':        util.to_bool(promotion_perm),
+                'employee':              util.to_bool(employee),
+                'venue_id':              venue_id,
+                'country':               country,
+                'language':              language,
+                'email':                 email,
+                'top5':                  util.to_bool(top5)}
         columns = []
         values = []
         for key, val in data.iteritems():
@@ -149,11 +149,11 @@ class User:
         if res:
             qry = {'update':     'users',
                    'set_values': columns,
-                   'where':      'users.facebook_id = ?'}
+                   'where':      'facebook_id = ?'}
             cursor.execute(util.query(**qry), values)
         else:
-            columns.append('users.facebook_id')
-            columns.append('users.joined')
+            columns.append('facebook_id')
+            columns.append('joined')
             values.append(datetime.datetime.utcnow())
             qry = {'insert_into': 'users',
                    'columns':     columns}

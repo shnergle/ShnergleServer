@@ -9,7 +9,7 @@ import cherrypy
 import pypyodbc
 
 
-def connect():
+def connect(thread_index):
     cherrypy.thread_data.db = pypyodbc.connect(os.environ['DATABASE'])
     
 

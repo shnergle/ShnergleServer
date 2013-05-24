@@ -9,6 +9,10 @@ import cherrypy
 import pypyodbc
 
 
+def connect():
+    cherrypy.thread_data.db = pypyodbc.connect(os.environ['DATABASE'])
+    
+
 def dont_cache():
     cherrypy.response.headers['Expires'] = datetime.datetime.utcnow().strftime(
         '%a, %d %b %Y %H:%M:%S GMT')
@@ -67,15 +71,13 @@ def jsonp(func):
 def db(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        cnx = pypyodbc.connect(os.environ['DATABASE'])
-        cursor = cnx.cursor()
+        cursor = cherrypy.thread_data.db.cursor()
         kwargs.update(cursor=cursor)
         try:
             res = func(*args, **kwargs)
         finally:
             cnx.commit()
             cursor.close()
-            cnx.close()
         return res
     return decorator
 

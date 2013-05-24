@@ -34,18 +34,13 @@ class User:
                              'users.promotion_perm',
                              'users.employee',
                              'users.joined',
-                             'countries.code AS country',
-                             '(LOWER(languages.code) + \'_\' + '
-                                    'UPPER(lc.code)) AS language',
+                             'users.country',
+                             'users.language',
                              ],#'COUNT(posts.id) AS post_count'],
                'table':      'users',
                'left_join': ('countries',
-                             'languages',
-                             'countries lc',
                              'posts'),
                'on':        ('users.country_id = countries.id',
-                             'users.language_id = languages.id',
-                             'languages.country_id = lc.id',
                              'posts.user_id = users.id'),
                'order_by':   'users.id'}
                              
@@ -126,46 +121,15 @@ class User:
                 'users.manager':        util.to_bool(manager),
                 'users.promotion_perm': util.to_bool(promotion_perm),
                 'users.employee':       util.to_bool(employee),
-                'users.venue_id':       venue_id}
+                'users.venue_id':       venue_id,
+                'users.country':        country,
+                'users.language':       language}
         columns = []
         values = []
         for key, val in data.iteritems():
             if val:
                 columns.append(key)
                 values.append(val)
-        if country:
-            subqry = {'select':   'id',
-                      'table':    'countries',
-                      'where':    'countries.code = ?',
-                      'order_by': 'id',
-                      'limit':    1}
-            cursor.execute(util.query(**subqry), (country.lower(),))
-            subres = cursor.fetchone()
-            if subres:
-                columns.append('users.country_id')
-                values.append(subres['id'])
-        if language:
-            lang = language.split('_')
-            subqry = {'select':   'id',
-                      'table':    'countries',
-                      'where':    'countries.code = ?',
-                      'order_by': 'id',
-                      'limit':    1}
-            cursor.execute(util.query(**subqry), (lang[1].lower(),))
-            subres = cursor.fetchone()
-            if subres:
-                subqry = {'select':   'id',
-                          'table':    'languages',
-                          'where':    ('languages.code = ?',
-                                       'languages.country_id = ?'),
-                          'order_by': 'id',
-                          'limit':    1}
-                cursor.execute(util.query(**subqry), (lang[0].lower(),
-                                                      subres['id']))
-                subres = cursor.fetchone()
-                if subres:
-                    columns.append('users.language_id')
-                    values.append(subres['id'])
         values.append(facebook_token)
         if res:
             qry = {'update':     'users',

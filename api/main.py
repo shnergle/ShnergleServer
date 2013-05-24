@@ -15,7 +15,7 @@ class Ranking:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, user_id=None, thresholds=None):
+    def get(self, cursor=None, user_id=None, thresholds=None, **kwargs):
         if util.to_bool(thresholds):
             return self.thresholds()
         else:

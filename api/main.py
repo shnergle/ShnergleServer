@@ -39,9 +39,10 @@ class Ranking:
         thresholds = []
         for percent in (0.8, 0.95, 0.99):
             number = math.floor(percent * users)
-            thresholdqry = {'select':    'COUNT(posts.id) AS count',
+            thresholdqry = {'select':    ('COUNT(posts.id) AS count',
+                                          'posts.user_id'),
                             'table':     'posts',
-                            'group_by':  'posts.id',
+                            'group_by':  'posts.user_id',
                             'order_by':  'count',
                             'limit':     (number - 1, 1)}
             cursor.execute(util.query(**thresholdqry))

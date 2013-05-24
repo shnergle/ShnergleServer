@@ -42,8 +42,7 @@ class User:
                'table':      'users',
                'left_join': ('countries',
                              'posts'),
-               'on':        ('users.country_id = countries.id',
-                             'posts.user_id = users.id'),
+               'on':        ('posts.user_id = users.id'),
                'order_by':   'users.id'}
                              
         users = {'select': 'COUNT(users.id) AS count', 'table': 'users'}

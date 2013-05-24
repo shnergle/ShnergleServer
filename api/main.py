@@ -36,7 +36,9 @@ class User:
                              'users.joined',
                              'users.country',
                              'users.language',
-                             ],#'COUNT(posts.id) AS post_count'],
+                             'users.email',
+                             'users.top5'
+                             ], #'COUNT(posts.id) AS post_count'],
                'table':      'users',
                'left_join': ('countries',
                              'posts'),
@@ -96,7 +98,8 @@ class User:
             facebook=None, twitter=None, forename=None, surname=None, age=None,
             birth_day=None, birth_month=None, birth_year=None, gender=None,
             staff=None, manager=None, promotion_perm=None, employee=None,
-            venue_id=None, country=None, language=None, **kwargs):
+            venue_id=None, country=None, language=None, email=None, top5=None,
+            **kwargs):
         if not facebook_token:
             raise cherrypy.HTTPError(403)
         qry = {'select':   'COUNT(users.id) AS count',
@@ -123,7 +126,9 @@ class User:
                 'users.employee':       util.to_bool(employee),
                 'users.venue_id':       venue_id,
                 'users.country':        country,
-                'users.language':       language}
+                'users.language':       language,
+                'users.email':          email,
+                'users.top5':           util.to_bool(top5)}
         columns = []
         values = []
         for key, val in data.iteritems():

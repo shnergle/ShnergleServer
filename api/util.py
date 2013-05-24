@@ -137,3 +137,7 @@ def to_bool(value):
     if value in (0, False, None, '0'): return False
     if isinstance(value, str) and value in ('false', 'no', 'off'): return False
     return True
+
+def row_to_dict(cursor, row):
+    return {t[0]: val for t, val in zip(cursor.description, row)}
+    

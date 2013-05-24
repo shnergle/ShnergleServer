@@ -8,6 +8,49 @@ import cherrypy
 import util
 
 
+class Ranking:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, user_id=None, thresholds=None):
+        if util.to_bool(thresholds):
+            return self.thresholds()
+        else:
+            thresholds = self.thresholds()
+            posts = {'select': 'COUNT(posts.id) AS count',
+                     'table': 'posts',
+                     'where': 'users.id = ?'}
+            cursor.execute(util.query(**users), (user_id,))
+            posts = cursor.fetchone()['count']
+            for threshold in thresholds:
+                if posts < threshold:
+                    res = 0
+                    break
+            else:
+                res = len(thresholds)
+            return res
+            
+            
+    def thresholds(self):
+        users = {'select': 'COUNT(users.id) AS count', 'table': 'users'}
+        cursor.execute(util.query(**users))
+        users = cursor.fetchone()['count']
+        thresholds = []
+        for percent in (0.8, 0.95, 0.99):
+            number = math.floor(percent * users)
+            thresholdqry = {'select':    'COUNT(posts.id) AS count',
+                            'table':     'posts',
+                            'group_by':  'posts.id',
+                            'order_by':  'count',
+                            'limit':     (number - 1, 1)}
+            cursor.execute(util.query(**thresholdqry))
+            count = cursor.fetchone()
+            thresholds.append(count['count'] if count else 0)
+        return thresholds
+
 class User:
 
     @util.expose
@@ -38,55 +81,22 @@ class User:
                              'users.language',
                              'users.email',
                              'users.top5'
-                             ], #'COUNT(posts.id) AS post_count'],
+                             ],
                'table':     'users',
                'left_join': 'posts',
                'on':        'posts.user_id = users.id',
                'order_by':  'users.id'}
-                             
-        users = {'select': 'COUNT(users.id) AS count', 'table': 'users'}
-        cursor.execute(util.query(**users))
-        users = cursor.fetchone()['count']
-        thresholds = []
-        for percent in (0.8, 0.95, 0.99):
-            number = math.floor(percent * users)
-            thresholdqry = {'select':    'COUNT(posts.id) AS count',
-                            'table':     'posts',
-                            'group_by':  'posts.id',
-                            'order_by':  'count',
-                            'limit':     (number - 1, 1)}
-            cursor.execute(util.query(**thresholdqry))
-            count = cursor.fetchone()
-            thresholds.append(count['count'] if count else 0)
 
         if util.to_bool(getall):
             cursor.execute(util.query(**qry))
-            res = []
-            for row in cursor:
-                drow = {t[0]: val for t, val in zip(cursor.description, row)}
-                posts = 0 #row['post_count']
-                for threshold in thresholds:
-                    if posts < threshold:
-                        drow['ranking'] = 0
-                        break
-                else:
-                    drow['ranking'] = len(thresholds)
-                res.append(drow)
+            return [util.row_to_dict(cursor, row) for row in cursor]
         else:
             qry['select'].append('users.facebook_token')
             qry['select'].append('users.twitter_token')
             qry.update({'where': 'users.id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
-            res = {t[0]: val for t, val in zip(cursor.description, res)}
-            posts = 0 #res.pop['post_count']
-            for threshold in thresholds:
-                if posts < threshold:
-                    res['ranking'] = 0
-                    break
-            else:
-                res['ranking'] = len(thresholds)
-        return res
+            return util.row_to_dict(cursor, row)
         
     @util.expose
     @util.protect

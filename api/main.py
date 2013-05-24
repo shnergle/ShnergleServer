@@ -151,6 +151,8 @@ class User:
             cursor.execute(util.query(**qry), values)
         else:
             columns.append('users.facebook_token')
+            columns.append('users.joined')
+            values.append(datetime.datetime.utcnow())
             qry = {'insert_into': 'users',
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)

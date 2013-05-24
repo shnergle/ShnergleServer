@@ -20,7 +20,7 @@ class Ranking:
             return self.thresholds(cursor)
         posts = {'select': 'COUNT(posts.id) AS count',
                  'table': 'posts',
-                 'where': 'users.id = ?'}
+                 'where': 'posts.user_id = ?'}
         cursor.execute(util.query(**posts), (user_id,))
         posts = cursor.fetchone()['count']
         for threshold in self.thresholds(cursor):

@@ -50,6 +50,7 @@ class Ranking:
             thresholds.append(count['count'] if count else 0)
         return thresholds
 
+
 class User:
 
     @util.expose

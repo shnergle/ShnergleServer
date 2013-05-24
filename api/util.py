@@ -76,7 +76,7 @@ def db(func):
         try:
             res = func(*args, **kwargs)
         finally:
-            cnx.commit()
+            cursor.commit()
             cursor.close()
         return res
     return decorator

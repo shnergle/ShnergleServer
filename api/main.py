@@ -39,11 +39,10 @@ class User:
                              'users.email',
                              'users.top5'
                              ], #'COUNT(posts.id) AS post_count'],
-               'table':      'users',
-               'left_join': ('countries',
-                             'posts'),
-               'on':        ('posts.user_id = users.id'),
-               'order_by':   'users.id'}
+               'table':     'users',
+               'left_join': 'posts',
+               'on':        'posts.user_id = users.id',
+               'order_by':  'users.id'}
                              
         users = {'select': 'COUNT(users.id) AS count', 'table': 'users'}
         cursor.execute(util.query(**users))

@@ -16,25 +16,24 @@ class Ranking:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, user_id=None, thresholds=None, **kwargs):
+        thresholds = self.thresholds(cursor)
         if util.to_bool(thresholds):
-            return self.thresholds()
+            return thresholds
+        posts = {'select': 'COUNT(posts.id) AS count',
+                 'table': 'posts',
+                 'where': 'users.id = ?'}
+        cursor.execute(util.query(**users), (user_id,))
+        posts = cursor.fetchone()['count']
+        for threshold in thresholds:
+            if posts < threshold:
+                res = 0
+                break
         else:
-            thresholds = self.thresholds()
-            posts = {'select': 'COUNT(posts.id) AS count',
-                     'table': 'posts',
-                     'where': 'users.id = ?'}
-            cursor.execute(util.query(**users), (user_id,))
-            posts = cursor.fetchone()['count']
-            for threshold in thresholds:
-                if posts < threshold:
-                    res = 0
-                    break
-            else:
-                res = len(thresholds)
-            return res
+            res = len(thresholds)
+        return res
             
             
-    def thresholds(self):
+    def thresholds(self, cursor):
         users = {'select': 'COUNT(users.id) AS count', 'table': 'users'}
         cursor.execute(util.query(**users))
         users = cursor.fetchone()['count']

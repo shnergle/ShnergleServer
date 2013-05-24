@@ -134,8 +134,9 @@ def to_int(value):
     return int(value) if value else None
 
 def to_bool(value):
-    if value in (0, False, None, '0'): return False
-    if isinstance(value, str) and value in ('false', 'no', 'off'): return False
+    if not value: return False
+    if isinstance(value, str) and value in ('none', 'false', 'no', 'off', '0'):
+        return False
     return True
 
 def row_to_dict(cursor, row):

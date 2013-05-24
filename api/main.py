@@ -199,6 +199,7 @@ class UserSearch:
 
 
 class ShnergleServer:
+    rankings = Ranking()
     users = User()
     user_searches = UserSearch()
 

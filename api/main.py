@@ -59,7 +59,6 @@ class Ranking:
             res = 3
         return res
             
-            
     def thresholds(self, cursor):
         users = {'select': 'COUNT(id) AS count', 'table': 'users'}
         cursor.execute(util.query(**users))
@@ -112,7 +111,6 @@ class User:
                              ],
                'table':     'users',
                'order_by':  'id'}
-
         if util.to_bool(getall):
             cursor.execute(util.query(**qry))
             return [util.row_to_dict(cursor, row) for row in cursor]

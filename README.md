@@ -17,7 +17,7 @@ Setup
 -----
 
  * Add the directories app and site-packages to the python path.
- * Point the WSGI server to main.app and set the environment variable APP_SECRET to a random string and DATABASE to the connection string.
+ * Point the WSGI server to main.app and set the environment variable APP_SECRET to a random string, DATABASE to the connection string and BLOB_KEY to the blob storage account key.
 
 
 Structure

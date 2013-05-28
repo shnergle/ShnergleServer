@@ -5,9 +5,37 @@ import os
 
 import cherrypy
 
+import azure
 import util
 
 
+class Image:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    def get(self, entity=None, entity_id=None, **kwargs):
+        if not image_id:
+            raise cherrypy.HTTPError(404)
+        image = azure.retrieve(entity, entity_id)
+        if image:
+            cherrypy.response.headers['Content-Type'] = 'image/jpg'
+            return image
+        raise cherrypy.HTTPError(404)
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, image=None, entity=None, entity_id=None,
+            **kwargs):
+        if not entity_id or entity not in ('user', 'venue', 'post'):
+            return cherrypy.HTTPError(403)
+        return azure.store(image.file, entity, entity_id)
+        
+        
 class Ranking:
     
     @util.expose
@@ -203,6 +231,7 @@ class UserSearch:
 
 
 class ShnergleServer:
+    images = Image()
     rankings = Ranking()
     users = User()
     user_searches = UserSearch()

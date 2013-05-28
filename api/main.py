@@ -35,7 +35,7 @@ class Image:
             return cherrypy.HTTPError(403)
         return azure.store(image.file, entity, entity_id)
         
-        
+
 class Ranking:
     
     @util.expose
@@ -58,7 +58,7 @@ class Ranking:
         else:
             res = 3
         return res
-            
+    
     def thresholds(self, cursor):
         users = {'select': 'COUNT(id) AS count', 'table': 'users'}
         cursor.execute(util.query(**users))
@@ -79,7 +79,7 @@ class Ranking:
 
 
 class User:
-
+    
     @util.expose
     @util.protect
     @util.db
@@ -122,7 +122,7 @@ class User:
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
             return util.row_to_dict(cursor, row)
-        
+    
     @util.expose
     @util.protect
     @util.db
@@ -233,10 +233,10 @@ class ShnergleServer:
     rankings = Ranking()
     users = User()
     user_searches = UserSearch()
-
+    
     def __init__(self):
         self.v1 = self
-
+    
     @staticmethod
     def error(status, message, traceback, version):
         cherrypy.response.headers['Content-Type'] = 'application/json'

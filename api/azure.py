@@ -10,8 +10,8 @@ def store(image, entity, entity_id):
     name = '/' + entity + '/' + entity_id
     blob_service.put_blob('images', name, myblob, x_ms_blob_type='BlockBlob')
     return True
-	
-    
+
+
 def retrieve(entity, entity_id):
     blob_service = BlobService(account_name='shnergledata',
                                account_key=os.environ['BLOB_KEY'])

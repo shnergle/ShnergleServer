@@ -11,7 +11,7 @@ import pypyodbc
 
 def connect(thread_index):
     cherrypy.thread_data.db = pypyodbc.connect(os.environ['DATABASE'])
-    
+
 
 def dont_cache():
     cherrypy.response.headers['Expires'] = datetime.datetime.utcnow().strftime(
@@ -30,7 +30,7 @@ def protect(func):
             raise cherrypy.HTTPError(403)
         return func(*args, **kwargs)
     return decorator
-    
+
 
 def auth(func):
     @functools.wraps(func)

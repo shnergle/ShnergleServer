@@ -1,6 +1,6 @@
 import os
 
-from azure.storage import BlobService
+from azure.storage import *
 
 
 def store(image, entity, entity_id):

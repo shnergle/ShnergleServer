@@ -168,7 +168,7 @@ class User:
         columns = []
         values = []
         for key, val in data.iteritems():
-            if val:
+            if val is not None:
                 columns.append(key)
                 values.append(val)
         values.append(facebook_id)

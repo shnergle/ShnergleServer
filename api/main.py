@@ -121,7 +121,7 @@ class User:
             qry.update({'where': 'id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
-            return util.row_to_dict(cursor, row)
+            return util.row_to_dict(cursor, res)
     
     @util.expose
     @util.protect

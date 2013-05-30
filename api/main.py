@@ -5,7 +5,7 @@ import os
 
 import cherrypy
 
-import azure
+import azureutil
 import util
 
 
@@ -18,7 +18,7 @@ class Image:
     def get(self, entity=None, entity_id=None, **kwargs):
         if not image_id:
             raise cherrypy.HTTPError(404)
-        image = azure.retrieve(entity, entity_id)
+        image = azureutil.retrieve(entity, entity_id)
         if image:
             cherrypy.response.headers['Content-Type'] = 'image/jpg'
             return image
@@ -33,7 +33,7 @@ class Image:
             **kwargs):
         if not entity_id or entity not in ('user', 'venue', 'post'):
             return cherrypy.HTTPError(403)
-        return azure.store(image.file, entity, entity_id)
+        return azureutil.store(image.file, entity, entity_id)
         
 
 class Ranking:

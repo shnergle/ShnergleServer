@@ -7,7 +7,7 @@ Requirements
 ------------
 
  * Python 2.7, 3.0 or higher
- * azure (0.6.2 included)
+ * azure
  * CherryPy (3.2.4 included)
  * pypyodbc (1.1.2 included)
 

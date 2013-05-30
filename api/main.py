@@ -32,7 +32,7 @@ class Image:
     def set(self, cursor=None, image=None, entity=None, entity_id=None,
             **kwargs):
         if not entity_id or entity not in ('user', 'venue', 'post'):
-            return cherrypy.HTTPError(403)
+            raise cherrypy.HTTPError(403)
         return azureutil.store(image.file, entity, entity_id)
         
 

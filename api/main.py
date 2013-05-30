@@ -1,3 +1,4 @@
+import calendar
 import datetime
 import json
 import math
@@ -178,7 +179,8 @@ class User:
         else:
             columns.append('facebook_id')
             columns.append('joined')
-            values.append(datetime.datetime.utcnow())
+            values.append(calendar.timegm(
+                datetime.datetime.utcnow().utctimetuple()))
             qry = {'insert_into': 'users',
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)

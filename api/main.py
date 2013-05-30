@@ -137,9 +137,7 @@ class User:
             raise cherrypy.HTTPError(403)
         qry = {'select':   'COUNT(id) AS count',
                'table':    'users',
-               'where':    'facebook_id = ?',
-               'order_by': 'id',
-               'limit':    1}
+               'where':    'facebook_id = ?'}
         cursor.execute(util.query(**qry), (facebook_id,))
         res = cursor.fetchone()['count']
         data = {'twitter_id':            twitter_id,

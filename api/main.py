@@ -16,7 +16,7 @@ class Image:
     @util.db
     @util.auth
     def get(self, entity=None, entity_id=None, **kwargs):
-        if not image_id:
+        if not entity or not entity_id:
             raise cherrypy.HTTPError(404)
         image = azureutil.retrieve(entity, entity_id)
         if image:

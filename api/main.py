@@ -135,10 +135,10 @@ class User:
             twitter_id=None, twitter_token_secret=None, **kwargs):
         if not facebook_id:
             raise cherrypy.HTTPError(403)
-        qry = {'select':   'COUNT(id) AS count',
+        qry = {'select':   'COUNT(users.id) AS count',
                'table':    'users',
                'where':    'facebook_id = ?',
-               'order_by': 'id',
+               'order_by': 'users.id',
                'limit':    1}
         cursor.execute(util.query(**qry), (facebook_id,))
         res = cursor.fetchone()['count']

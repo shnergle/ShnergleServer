@@ -133,7 +133,7 @@ class User:
             birth_day=None, birth_month=None, birth_year=None, gender=None,
             staff=None, manager=None, promotion_perm=None, employee=None,
             venue_id=None, country=None, language=None, email=None, top5=None,
-            twitter_id=None, twitter_token_secret=None, **kwargs):
+            twitter_id=None, twitter_secret=None, **kwargs):
         if not facebook_id:
             raise cherrypy.HTTPError(403)
         qry = {'select':   'COUNT(id) AS count',
@@ -141,29 +141,28 @@ class User:
                'where':    'facebook_id = ?'}
         cursor.execute(util.query(**qry), (facebook_id,))
         res = cursor.fetchone()['count']
-        data = {'twitter_id':            twitter_id,
-                'twitter_token':         twitter_token,
-                'twitter_token_secret':  twitter_token_secret,
-                'facebook':              facebook,
-                'twitter':               twitter,
-                'forename':              forename,
-                'surname':               surname,
-                'age':                   util.to_int(age),
-                'birth_day':             util.to_int(birth_day),
-                'birth_month':           util.to_int(birth_month),
-                'birth_year':            util.to_int(birth_year),
-                'gender':                gender,
-                'staff':                 (datetime.datetime.utcnow()
-                                                if util.to_bool(staff) else
-                                                False),
-                'manager':               util.to_bool(manager),
-                'promotion_perm':        util.to_bool(promotion_perm),
-                'employee':              util.to_bool(employee),
-                'venue_id':              venue_id,
-                'country':               country,
-                'language':              language,
-                'email':                 email,
-                'top5':                  util.to_bool(top5)}
+        data = {'twitter_id':     twitter_id,
+                'twitter_token':  twitter_token,
+                'twitter_secret': twitter_secret,
+                'facebook':       facebook,
+                'twitter':        twitter,
+                'forename':       forename,
+                'surname':        surname,
+                'age':            util.to_int(age),
+                'birth_day':      util.to_int(birth_day),
+                'birth_month':    util.to_int(birth_month),
+                'birth_year':     util.to_int(birth_year),
+                'gender':         gender,
+                'staff':          (datetime.datetime.utcnow()
+                                   if util.to_bool(staff) else False),
+                'manager':        util.to_bool(manager),
+                'promotion_perm': util.to_bool(promotion_perm),
+                'employee':       util.to_bool(employee),
+                'venue_id':       venue_id,
+                'country':        country,
+                'language':       language,
+                'email':          email,
+                'top5':           util.to_bool(top5)}
         columns = []
         values = []
         for key, val in data.iteritems():

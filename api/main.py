@@ -182,6 +182,7 @@ class User:
                 datetime.datetime.utcnow().utctimetuple()))
             qry = {'insert_into': 'users',
                    'columns':     columns}
+            raise Exception(util.query(**qry))
             cursor.execute(util.query(**qry), values)
         return cursor.lastrowid
 

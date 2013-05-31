@@ -118,7 +118,7 @@ class User:
         else:
             qry['select'].append('twitter_id')
             qry['select'].append('twitter_token')
-            qry['select'].append('twitter_token_secret')
+            qry['select'].append('twitter_secret')
             qry.update({'where': 'id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()

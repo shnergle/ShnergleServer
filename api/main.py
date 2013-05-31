@@ -154,7 +154,7 @@ class User:
                 'birth_year':     util.to_int(birth_year),
                 'gender':         gender,
                 'staff':          (datetime.datetime.utcnow()
-                                   if util.to_bool(staff) else False),
+                                   if util.to_bool(staff) else None),
                 'manager':        util.to_bool(manager),
                 'promotion_perm': util.to_bool(promotion_perm),
                 'employee':       util.to_bool(employee),
@@ -182,7 +182,6 @@ class User:
                 datetime.datetime.utcnow().utctimetuple()))
             qry = {'insert_into': 'users',
                    'columns':     columns}
-            raise Exception(util.query(**qry))
             cursor.execute(util.query(**qry), values)
         return cursor.lastrowid
 

@@ -218,12 +218,14 @@ class UserSearch:
             qry = {'update':  'user_searches',
                    'columns': ('time'),
                    'where':   'user_id = ?'}
-            cursor.execute(util.query(**qry), (datetime.datetime.utcnow(),
+            cursor.execute(util.query(**qry), (calendar.timegm(
+                datetime.datetime.utcnow().utctimetuple()),
                                                user_id))
         else:
             qry = {'insert_into': 'user_searches',
-                   'columns':     ('user_id', 'term')}
-            cursor.execute(util.query(**qry), (user_id, term))
+                   'columns':     ('user_id', 'term', 'time')}
+            cursor.execute(util.query(**qry), (user_id, term, calendar.timegm(
+                datetime.datetime.utcnow().utctimetuple())))
         return cursor.lastrowid
 
 

@@ -88,7 +88,8 @@ def implode(glue, list):
 def query(select=None, table=None, left_join=None, on=None, where=None,
           group_by=None, order_by=None, limit=None,
           insert_into=None, columns=None,
-          update=None, set_values=None):
+          update=None, set_values=None,
+          last_id=False):
     if select:
         qry = 'SELECT ' + implode(', ', select)
         if table:
@@ -123,6 +124,8 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
             qry += ' SET ' + implode('=?, ', set_values) + '=?'
         if where:
             qry += ' WHERE ' + implode(' AND ', where)
+    if last_id:
+        qry += '; SELECT SCOPE_IDENTITY()'
     return qry
 
 

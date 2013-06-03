@@ -173,7 +173,8 @@ class User:
         if res:
             qry = {'update':     'users',
                    'set_values': columns,
-                   'where':      'facebook_id = ?'}
+                   'where':      'facebook_id = ?',
+                   'last_id':    True}
             cursor.execute(util.query(**qry), values)
         else:
             columns.append('facebook_id')
@@ -181,9 +182,10 @@ class User:
             values.append(calendar.timegm(
                 datetime.datetime.utcnow().utctimetuple()))
             qry = {'insert_into': 'users',
-                   'columns':     columns}
+                   'columns':     columns,
+                   'last_id':     True}
             cursor.execute(util.query(**qry), values)
-        return cursor.lastrowid
+        return cursor.fetchone()[0]
 
 
 class UserSearch:
@@ -217,16 +219,18 @@ class UserSearch:
         if res:
             qry = {'update':  'user_searches',
                    'columns': ('time'),
-                   'where':   'user_id = ?'}
+                   'where':   'user_id = ?',
+                   'last_id': True}
             cursor.execute(util.query(**qry), (calendar.timegm(
                 datetime.datetime.utcnow().utctimetuple()),
                                                user_id))
         else:
             qry = {'insert_into': 'user_searches',
-                   'columns':     ('user_id', 'term', 'time')}
+                   'columns':     ('user_id', 'term', 'time'),
+                   'last_id':     True}
             cursor.execute(util.query(**qry), (user_id, term, calendar.timegm(
                 datetime.datetime.utcnow().utctimetuple())))
-        return cursor.lastrowid
+        return cursor.fetchone()[0]
 
 
 class ShnergleServer:

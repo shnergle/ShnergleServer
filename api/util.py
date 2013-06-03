@@ -120,7 +120,7 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
     elif update:
         qry = 'UPDATE ' + update
         if set_values:
-            qry += ' SET ' + implode('=?, ', set_values) + '=?'
+            qry += ' SET ' + implode(' = ?, ', set_values) + ' = ?'
         if where:
             qry += ' WHERE ' + implode(' AND ', where)
     return qry

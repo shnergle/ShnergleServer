@@ -98,7 +98,6 @@ class User:
                              'birth_month',
                              'birth_year',
                              'gender',
-                             'image',
                              'staff',
                              'manager',
                              'venue_id',

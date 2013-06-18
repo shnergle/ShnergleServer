@@ -227,13 +227,38 @@ class UserSearch:
                 datetime.datetime.utcnow().utctimetuple())))
         return True
 
+class VenueSearch:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, id=None, **kwargs):
+        qry = {'select':   ('id', 'name'),
+            'table':    'venues',
+            'where':    '',
+            'order_by': 'id DESC'}
+        cursor.execute(util.query(**qry), (id,))
+        return [row for row in cursor]
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, term=None, **kwargs):
+        '''Make this work later.'''
+        return True
+
+
 
 class ShnergleServer:
     images = Image()
     rankings = Ranking()
     users = User()
     user_searches = UserSearch()
-    
+    venues = VenueSearch()
     def __init__(self):
         self.v1 = self
     

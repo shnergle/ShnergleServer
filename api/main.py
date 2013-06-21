@@ -264,7 +264,7 @@ class Venue:
     @util.auth
     @util.jsonp
     def set(self, cursor=None, venue_id=None, name=None, address=None, country_id=None, phone=None, email=None, email_verified=None, category_id=None, tooltip=None, tonight=None, website=None, facebook=None, twitter=None, facebook_token=None, twitter_token=None, lat=None, lon=None, timezone=None, image=None, official=None, verified=None, costumer_spend=None, authenticated=None, **kwargs):
-        '''Make this work later.'''
+        '''Make this work later.
         qry = {'select':    'id', 
                 'table':    'venues', 
                 'where':    'id = ?', 
@@ -276,6 +276,7 @@ class Venue:
             # UPDATE THE VENUE
         else:
             # TEST IF ANY OF THE FIELDS REQUIRED ARE 'None' - THEN INSERT
+       ''' 
         return True
 
 

@@ -227,7 +227,7 @@ class UserSearch:
                 datetime.datetime.utcnow().utctimetuple())))
         return True
 
-class VenueSearch:
+class Venue:
     
     @util.expose
     @util.protect
@@ -238,7 +238,7 @@ class VenueSearch:
         qry = {'select':   ('id', 'name'),
             'table':    'venues',
             'where':    '',
-            'order_by': 'id DESC'}
+            'order_by': 'name DESC'}
         cursor.execute(util.query(**qry), (id,))
         return [row for row in cursor]
     
@@ -247,8 +247,19 @@ class VenueSearch:
     @util.db
     @util.auth
     @util.jsonp
-    def set(self, cursor=None, user_id=None, term=None, **kwargs):
+    def set(self, cursor=None, venue_id=None, name=None, address=None, country_id=None, phone=None, email=None, email_verified=None, category_id=None, tooltip=None, tonight=None, website=None, facebook=None, twitter=None, facebook_token=None, twitter_token=None, lat=None, lon=None, timezone=None, image=None, official=None, verified=None, costumer_spend=None, authenticated=None, **kwargs):
         '''Make this work later.'''
+        qry = {'select':    'id', 
+                'table':    'venues', 
+                'where':    'id = ?', 
+                'order_by': 'id', 
+                'limit':    1}
+        cursor.execute(util.query(**qry),(venue_id))
+        res = cursor.fetchone()
+        if res:
+            # UPDATE THE VENUE
+        else:
+            # TEST IF ANY OF THE FIELDS REQUIRED ARE 'None' - THEN INSERT
         return True
 
 
@@ -257,8 +268,8 @@ class ShnergleServer:
     images = Image()
     rankings = Ranking()
     users = User()
+    venues = Venue()
     user_searches = UserSearch()
-    venues = VenueSearch()
     def __init__(self):
         self.v1 = self
     

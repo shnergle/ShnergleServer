@@ -238,7 +238,7 @@ class Category:
         qry = {'select':   ('id', 'type'),
             'table':    'venue_categories',
             'where':    '',
-            'order_by': 'type DESC'}
+            'order_by': 'type ASC'}
         cursor.execute(util.query(**qry), (id,))
         return [row for row in cursor]
     
@@ -255,7 +255,7 @@ class Venue:
         qry = {'select':   ('id', 'name'),
             'table':    'venues',
             'where':    '',
-            'order_by': 'name DESC'}
+            'order_by': 'name ASC'}
         cursor.execute(util.query(**qry), (id,))
         return [row for row in cursor]
     

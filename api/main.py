@@ -276,7 +276,7 @@ class Venue:
             # UPDATE THE VENUE
         else:
             # TEST IF ANY OF THE FIELDS REQUIRED ARE 'None' - THEN INSERT
-       ''' 
+        ''' 
         return True
 
 

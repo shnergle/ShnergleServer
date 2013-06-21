@@ -226,6 +226,22 @@ class UserSearch:
             cursor.execute(util.query(**qry), (user_id, term, calendar.timegm(
                 datetime.datetime.utcnow().utctimetuple())))
         return True
+class Category:
+
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, id=None, **kwargs):
+        qry = {'select':   ('id', 'type'),
+            'table':    'venue_categories',
+            'where':    '',
+            'order_by': 'type DESC'}
+        cursor.execute(util.query(**qry), (id,))
+        return [row for row in cursor]
+    
+
 
 class Venue:
     
@@ -270,6 +286,7 @@ class ShnergleServer:
     users = User()
     venues = Venue()
     user_searches = UserSearch()
+    categories = Category()
     def __init__(self):
         self.v1 = self
     

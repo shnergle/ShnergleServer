@@ -107,7 +107,8 @@ class User:
                              'country',
                              'language',
                              'email',
-                             'top5'
+                             'top5',
+                             'save_locally'
                              ],
                'table':     'users',
                'order_by':  'id'}
@@ -132,7 +133,7 @@ class User:
             birth_day=None, birth_month=None, birth_year=None, gender=None,
             staff=None, manager=None, promotion_perm=None, employee=None,
             venue_id=None, country=None, language=None, email=None, top5=None,
-            twitter_id=None, twitter_secret=None, **kwargs):
+            twitter_id=None, twitter_secret=None, save_locally=None, **kwargs):
         if not facebook_id:
             raise cherrypy.HTTPError(403)
         qry = {'select':   'COUNT(id) AS count',
@@ -161,7 +162,8 @@ class User:
                 'country':        country,
                 'language':       language,
                 'email':          email,
-                'top5':           util.to_bool(top5)}
+                'top5':           util.to_bool(top5),
+                'save_locally':   util.to_bool(save_locally)}
         columns = []
         values = []
         for key, val in data.iteritems():

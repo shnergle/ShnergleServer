@@ -275,12 +275,7 @@ class Venue:
     @util.db
     @util.auth
     @util.jsonp
-    def set(self, cursor=None, facebook_id=None, venue_id=None, name=None, address=None, country=None, phone=None, email=None, email_verified=None, category_id=None, tooltip=None, tonight=None, website=None, facebook=None, twitter=None, v_facebook_id=None, twitter_id=None, twitter_token=None, twitter_secret=None, lat=None, lon=None, timezone=None, offical=None, verified=None, customer_spend=None, authenticated=None, **kwargs):
-        qry = {'select':   'id',
-               'table':    'users',
-               'where':    'facebook_id = ?'}
-        cursor.execute(util.query(**qry), (facebook_id,))
-        res = cursor.fetchone()['id']
+    def set(self, cursor=None, facebook_id=None, user_id=None, venue_id=None, name=None, address=None, country=None, phone=None, email=None, email_verified=None, category_id=None, tooltip=None, tonight=None, website=None, facebook=None, twitter=None, v_facebook_id=None, twitter_id=None, twitter_token=None, twitter_secret=None, lat=None, lon=None, timezone=None, offical=None, verified=None, customer_spend=None, authenticated=None, **kwargs):
         data = {'name': name,
                 'address': address,
                 'country': country,
@@ -304,7 +299,7 @@ class Venue:
                 'verified': util.to_bool(offical),
                 'customer_spend': util.to_float(customer_spend),
                 'authenticated': util.to_bool(authenticated),
-                'creator':        res}
+                'creator':        user_id}
         columns = []
         values = []
         for key, val in data.iteritems():

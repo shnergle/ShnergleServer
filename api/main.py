@@ -258,7 +258,12 @@ class Venue:
             fields = ('id', 'name')
             where = ("name LIKE ?",)
         else:
-            fields = ('id', 'name', 'address', 'country', 'phone', 'email', 'email_verified', 'category_id', 'tooltip', 'tonight', 'website', 'facebook', 'twitter', 'facebook_id', 'twitter_id', 'twitter_token', 'twitter_secret', 'lat', 'lon', 'timezone', 'offical', 'verified', 'customer_spend', 'authenticated', 'creator')
+            fields = ('id', 'name', 'address', 'country', 'phone', 'email',
+                      'email_verified', 'category_id', 'tooltip', 'tonight',
+                      'website', 'facebook', 'twitter', 'facebook_id',
+                      'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
+                      'lon', 'timezone', 'offical', 'verified',
+                      'customer_spend', 'authenticated', 'creator')
             where = ''    
         qry = {'select':   fields,
             'table':    'venues',
@@ -275,30 +280,36 @@ class Venue:
     @util.db
     @util.auth
     @util.jsonp
-    def set(self, cursor=None, facebook_id=None, user_id=None, venue_id=None, name=None, address=None, country=None, phone=None, email=None, email_verified=None, category_id=None, tooltip=None, tonight=None, website=None, facebook=None, twitter=None, v_facebook_id=None, twitter_id=None, twitter_token=None, twitter_secret=None, lat=None, lon=None, timezone=None, offical=None, verified=None, customer_spend=None, authenticated=None, **kwargs):
-        data = {'name': name,
-                'address': address,
-                'country': country,
-                'phone': phone,
-                'email': email,
+    def set(self, cursor=None, facebook_id=None, user_id=None, venue_id=None,
+            name=None, address=None, country=None, phone=None, email=None,
+            email_verified=None, category_id=None, tooltip=None, tonight=None,
+            website=None, facebook=None, twitter=None, v_facebook_id=None,
+            twitter_id=None, twitter_token=None, twitter_secret=None, lat=None,
+            lon=None, timezone=None, offical=None, verified=None,
+            customer_spend=None, authenticated=None, **kwargs):
+        data = {'name':           name,
+                'address':        address,
+                'country':        country,
+                'phone':          phone,
+                'email':          email,
                 'email_verified': util.to_bool(email_verified),
-                'category_id': util.to_int(category_id),
-                'tooltip': tooltip,
-                'tonight': tonight,
-                'website': website,
-                'facebook': facebook,
-                'twitter': twitter,
-                'facebook_id': v_facebook_id,
-                'twitter_id': twitter_id,
-                'twitter_token': twitter_token,
+                'category_id':    util.to_int(category_id),
+                'tooltip':        tooltip,
+                'tonight':        tonight,
+                'website':        website,
+                'facebook':       facebook,
+                'twitter':        twitter,
+                'facebook_id':    v_facebook_id,
+                'twitter_id':     twitter_id,
+                'twitter_token':  twitter_token,
                 'twitter_secret': twitter_secret,
-                'lat': util.to_float(lat),
-                'lon': util.to_float(lon),
-                'timezone': util.to_int(timezone),
-                'offical': util.to_bool(offical),
-                'verified': util.to_bool(offical),
+                'lat':            util.to_float(lat),
+                'lon':            util.to_float(lon),
+                'timezone':       util.to_int(timezone),
+                'offical':        util.to_bool(offical),
+                'verified':       util.to_bool(offical),
                 'customer_spend': util.to_float(customer_spend),
-                'authenticated': util.to_bool(authenticated),
+                'authenticated':  util.to_bool(authenticated),
                 'creator':        user_id}
         columns = []
         values = []

@@ -258,7 +258,7 @@ class Venue:
             'table':    'venues',
             'where':    ("name LIKE ?",),
             'order_by': 'name ASC'}
-        cursor.execute(util.query(**qry), ("'%" + term + "%'",))
+        cursor.execute(util.query(**qry), ("%" + term + "%",))
         return [row for row in cursor]
     
 

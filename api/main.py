@@ -254,6 +254,7 @@ class Venue:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, term='', **kwargs):
+        raise Exception(term)
         qry = {'select':   ('id', 'name'),
             'table':    'venues',
             'where':    "name LIKE '%?%'",

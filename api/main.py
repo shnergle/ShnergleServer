@@ -275,7 +275,7 @@ class Venue:
     @util.db
     @util.auth
     @util.jsonp
-    def set(self, cursor=None, facebook_id=None, venue_id=None, name=None, address=None, country=None, phone=None, email=None, email_verified=None, category_id=None, tooltip=None, tonight=None, website=None, facebook=None, twitter=None, facebook_id=None, twitter_id=None, twitter_token=None, twitter_secret=None, lat=None, lon=None, timezone=None, offical=None, verified=None, customer_spend=None, authenticated=None, **kwargs):
+    def set(self, cursor=None, facebook_id=None, venue_id=None, name=None, address=None, country=None, phone=None, email=None, email_verified=None, category_id=None, tooltip=None, tonight=None, website=None, facebook=None, twitter=None, v_facebook_id=None, twitter_id=None, twitter_token=None, twitter_secret=None, lat=None, lon=None, timezone=None, offical=None, verified=None, customer_spend=None, authenticated=None, **kwargs):
         qry = {'select':   'id',
                'table':    'users',
                'where':    'facebook_id = ?'}
@@ -293,7 +293,7 @@ class Venue:
                 'website': website,
                 'facebook': facebook,
                 'twitter': twitter,
-                'facebook_id': facebook_id,
+                'facebook_id': v_facebook_id,
                 'twitter_id': twitter_id,
                 'twitter_token': twitter_token,
                 'twitter_secret': twitter_secret,

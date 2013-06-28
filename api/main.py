@@ -256,7 +256,7 @@ class Venue:
     def get(self, cursor=None, term='', **kwargs):
         qry = {'select':   ('id', 'name'),
             'table':    'venues',
-            'where':    'name LIKE \'%' + term + '%\'',
+            'where':    'name LIKE \'%c%\'',
             'order_by': 'name ASC'}
         cursor.execute(util.query(**qry))
         return [row for row in cursor]

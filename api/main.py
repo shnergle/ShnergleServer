@@ -253,14 +253,76 @@ class Venue:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, term='', **kwargs):
-        qry = {'select':   ('id', 'name'),
+    def get(self, cursor=None, term=None, **kwargs):
+        if term:
+            fields = ('id', 'name')
+            where = ("name LIKE ?",)
+        else:
+            fields = ('id', 'name', 'address', 'country', 'phone', 'email', 'email_verified', 'category_id', 'tooltip', 'tonight', 'website', 'facebook', 'twitter', 'facebook_id', 'twitter_id', 'twitter_token', 'twitter_secret', 'lat', 'lon', 'timezone', 'offical', 'verified', 'customer_spend', 'authenticated', 'creator')
+            where = ''    
+        qry = {'select':   fields,
             'table':    'venues',
-            'where':    ("name LIKE ?",),
+            'where':    where,
             'order_by': 'name ASC'}
-        cursor.execute(util.query(**qry), ("%" + term + "%",))
+        if term:
+            cursor.execute(util.query(**qry), ("%" + term + "%",))
+        else:
+            cursor.execute(util.query(**qry))
         return [row for row in cursor]
     
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, facebook_id=None, venue_id=None, name=None, address=None, country=None, phone=None, email=None, email_verified=None, category_id=None, tooltip=None, tonight=None, website=None, facebook=None, twitter=None, facebook_id=None, twitter_id=None, twitter_token=None, twitter_secret=None, lat=None, lon=None, timezone=None, offical=None, verified=None, customer_spend=None, authenticated=None, **kwargs):
+        qry = {'select':   'id',
+               'table':    'users',
+               'where':    'facebook_id = ?'}
+        cursor.execute(util.query(**qry), (facebook_id,))
+        res = cursor.fetchone()['id']
+        data = {'name': name,
+                'address': address,
+                'country': country,
+                'phone': phone,
+                'email': email,
+                'email_verified': util.to_bool(email_verified),
+                'category_id': util.to_int(category_id),
+                'tooltip': tooltip,
+                'tonight': tonight,
+                'website': website,
+                'facebook': facebook,
+                'twitter': twitter,
+                'facebook_id': facebook_id,
+                'twitter_id': twitter_id,
+                'twitter_token': twitter_token,
+                'twitter_secret': twitter_secret,
+                'lat': util.to_float(lat),
+                'lon': util.to_float(lon),
+                'timezone': util.to_int(timezone),
+                'offical': util.to_bool(offical),
+                'verified': util.to_bool(offical),
+                'customer_spend': util.to_float(customer_spend),
+                'authenticated': util.to_bool(authenticated),
+                'creator':        res}
+        columns = []
+        values = []
+        for key, val in data.iteritems():
+            if val != None:
+                columns.append(key)
+                values.append(val)
+        if venue_id:
+            qry = {'update':     'venues',
+                   'set_values': columns,
+                   'where':      'id = ?'}
+            values.append(venue_id)
+            cursor.execute(util.query(**qry), values)
+        else:
+            qry = {'insert_into': 'venues',
+                   'columns':     columns}
+            cursor.execute(util.query(**qry), values)
+        return True
+        
 
 class ShnergleServer:
     images = Image()

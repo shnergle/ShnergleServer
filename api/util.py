@@ -140,6 +140,9 @@ def to_bool(value):
     if isinstance(value, str) and value in ('none', 'false', 'no', 'off', '0'):
         return False
     return True
+    
+def to_float(value):
+    return float(value) if value else None
 
 def row_to_dict(cursor, row):
     return {t[0]: val for t, val in zip(cursor.description, row)}

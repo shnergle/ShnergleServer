@@ -229,6 +229,7 @@ class UserSearch:
                 datetime.datetime.utcnow().utctimetuple())))
         return True
 
+
 class Category:
 
     @util.expose
@@ -236,15 +237,14 @@ class Category:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, id=None, **kwargs):
+    def get(self, cursor=None, **kwargs):
         qry = {'select':   ('id', 'type'),
             'table':    'venue_categories',
             'where':    '',
             'order_by': 'type ASC'}
-        cursor.execute(util.query(**qry), (id,))
+        cursor.execute(util.query(**qry))
         return [row for row in cursor]
     
-
 
 class Venue:
     
@@ -253,14 +253,13 @@ class Venue:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, id=None, **kwargs):
+    def get(self, cursor=None, term='', **kwargs):
         qry = {'select':   ('id', 'name'),
             'table':    'venues',
-            'where':    '',
+            'where':    'name LIKE %' + term + '%',
             'order_by': 'name ASC'}
-        cursor.execute(util.query(**qry), (id,))
+        cursor.execute(util.query(**qry))
         return [row for row in cursor]
-    
     
 
 class ShnergleServer:
@@ -270,6 +269,7 @@ class ShnergleServer:
     venues = Venue()
     user_searches = UserSearch()
     categories = Category()
+
     def __init__(self):
         self.v1 = self
     

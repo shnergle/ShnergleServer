@@ -258,7 +258,6 @@ class Venue:
             'table':    'venues',
             'where':    ("name LIKE '%" + term + "%'",),
             'order_by': 'name ASC'}
-        raise Exception(util.query(**qry))
         cursor.execute(util.query(**qry))
         return [row for row in cursor]
     

@@ -21,7 +21,7 @@ class Image:
             raise cherrypy.HTTPError(404)
         image = azureutil.retrieve(entity, entity_id)
         if image:
-            cherrypy.response.headers['Content-Type'] = 'image/jpg'
+            cherrypy.response.headers['Content-Type'] = 'image/jpeg'
             return image
         raise cherrypy.HTTPError(404)
     

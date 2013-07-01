@@ -37,6 +37,22 @@ class Image:
         return azureutil.store(image.file, entity, entity_id)
         
 
+class PostShare:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, post_id=None, media_id=None,
+            **kwargs):
+        qry = {'insert_into': 'post_shares',
+               'columns':     ('user_id', 'post_id', 'media_id', 'time')}
+        cursor.execute(util.query(**qry), (user_id, venue_id, menu_id,
+            calendar.timegm(datetime.datetime.utcnow().utctimetuple())))
+        return True
+        
+        
 class Ranking:
     
     @util.expose
@@ -328,13 +344,31 @@ class Venue:
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
         return True
+    
+       
+class VenueShare:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, venue_id=None, media_id=None,
+            **kwargs):
+        qry = {'insert_into': 'venue_shares',
+               'columns':     ('user_id', 'venue_id', 'media_id', 'time')}
+        cursor.execute(util.query(**qry), (user_id, venue_id, menu_id,
+            calendar.timegm(datetime.datetime.utcnow().utctimetuple())))
+        return True
         
 
 class ShnergleServer:
     images = Image()
+    post_shares = PostShare()
     rankings = Ranking()
     users = User()
     venues = Venue()
+    venue_shares = VenueShare()
     user_searches = UserSearch()
     categories = Category()
 

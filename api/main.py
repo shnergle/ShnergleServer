@@ -280,7 +280,7 @@ class Venue:
                       'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
                       'lon', 'timezone', 'offical', 'verified',
                       'customer_spend', 'authenticated', 'creator')
-            where = ''    
+            where = ''
         qry = {'select':   fields,
             'table':    'venues',
             'where':    where,
@@ -289,6 +289,7 @@ class Venue:
             cursor.execute(util.query(**qry), ("%" + term + "%",))
         else:
             cursor.execute(util.query(**qry))
+        raise Exception([row.__repr__ for row in cursor].__repr__)
         return [row for row in cursor]
     
     @util.expose

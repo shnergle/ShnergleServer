@@ -55,7 +55,8 @@ def jsonp(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
         dont_cache()
-        res = json.dumps(func(*args, **kwargs), separators=(',', ':'))
+        res = json.dumps(func(*args, **kwargs), separators=(',', ':'),
+                         default=lambda o: str(o))
         callback = kwargs.pop('callback', False)
         if callback:
             cherrypy.response.headers['Content-Type'] = ('text/javascript; '

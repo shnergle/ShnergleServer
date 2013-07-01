@@ -289,7 +289,6 @@ class Venue:
             cursor.execute(util.query(**qry), ("%" + term + "%",))
         else:
             cursor.execute(util.query(**qry))
-        raise Exception([row.__repr__ for row in cursor])
         return [row for row in cursor]
     
     @util.expose

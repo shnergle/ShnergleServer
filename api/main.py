@@ -216,7 +216,7 @@ class UserSearch:
                'where':    'user_id = ?',
                'order_by': 'time DESC'}
         cursor.execute(util.query(**qry), (user_id,))
-        return [row for row in cursor]
+        return [util.row_to_dict(cursor, row) for row in cursor]
     
     @util.expose
     @util.protect
@@ -259,7 +259,7 @@ class Category:
             'where':    '',
             'order_by': 'type ASC'}
         cursor.execute(util.query(**qry))
-        return [row for row in cursor]
+        return [util.row_to_dict(cursor, row) for row in cursor]
     
 
 class Venue:
@@ -289,7 +289,7 @@ class Venue:
             cursor.execute(util.query(**qry), ("%" + term + "%",))
         else:
             cursor.execute(util.query(**qry))
-        return [row for row in cursor]
+        return [util.row_to_dict(cursor, row) for row in cursor]
     
     @util.expose
     @util.protect

@@ -32,10 +32,41 @@ class Image:
     @util.jsonp
     def set(self, cursor=None, image=None, entity=None, entity_id=None,
             **kwargs):
-        if not entity_id or entity not in ('user', 'venue', 'post'):
+        if not entity_id or entity != 'post':
             raise cherrypy.HTTPError(403)
         return azureutil.store(image.file, entity, entity_id)
-        
+     
+
+class Post:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, venue_id=None, **kwargs):
+        qry = {'select':   ('id', 'user_id', 'venue_id', 'lat', 'lon',
+                            'caption', 'time'),
+               'table':    'posts',
+               'where':    'venue_id = ?',
+               'order_by': 'time DESC'}
+        cursor.execute(util.query(**qry), (user_id,))
+        return [util.row_to_dict(cursor, row) for row in cursor]
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, venue_id=None, lat=None, lon=None,
+            caption=None, **kwargs):
+        qry = {'insert_into': 'posts',
+               'columns':     ('user_id', 'venue_id', 'lat', 'lon', 'caption',
+                               'time')}
+        cursor.execute(util.query(**qry), (user_id, venue_id, lat, lon, caption,
+            calendar.timegm(datetime.datetime.utcnow().utctimetuple())))
+        return True
+           
 
 class PostShare:
     
@@ -364,6 +395,7 @@ class VenueShare:
 
 class ShnergleServer:
     images = Image()
+    posts = Post()
     post_shares = PostShare()
     rankings = Ranking()
     users = User()

@@ -50,7 +50,7 @@ class Post:
                'table':    'posts',
                'where':    'venue_id = ?',
                'order_by': 'time DESC'}
-        cursor.execute(util.query(**qry), (user_id,))
+        cursor.execute(util.query(**qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]
     
     @util.expose

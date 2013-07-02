@@ -1,5 +1,3 @@
-import calendar
-import datetime
 import json
 import math
 import os
@@ -64,7 +62,7 @@ class Post:
                'columns':     ('user_id', 'venue_id', 'lat', 'lon', 'caption',
                                'time')}
         cursor.execute(util.query(**qry), (user_id, venue_id, lat, lon, caption,
-            calendar.timegm(datetime.datetime.utcnow().utctimetuple())))
+                                           util.now()))
         return True
            
 
@@ -80,7 +78,7 @@ class PostShare:
         qry = {'insert_into': 'post_shares',
                'columns':     ('user_id', 'post_id', 'media_id', 'time')}
         cursor.execute(util.query(**qry), (user_id, venue_id, menu_id,
-            calendar.timegm(datetime.datetime.utcnow().utctimetuple())))
+                                           util.now()))
         return True
         
         
@@ -200,8 +198,7 @@ class User:
                 'birth_month':    util.to_int(birth_month),
                 'birth_year':     util.to_int(birth_year),
                 'gender':         gender,
-                'staff':          (datetime.datetime.utcnow()
-                                   if util.to_bool(staff) else None),
+                'staff':          (util.now() if util.to_bool(staff) else None),
                 'manager':        util.to_bool(manager),
                 'promotion_perm': util.to_bool(promotion_perm),
                 'employee':       util.to_bool(employee),
@@ -226,8 +223,7 @@ class User:
         else:
             columns.append('facebook_id')
             columns.append('joined')
-            values.append(calendar.timegm(
-                datetime.datetime.utcnow().utctimetuple()))
+            values.append(util.now())
             qry = {'insert_into': 'users',
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
@@ -266,14 +262,11 @@ class UserSearch:
             qry = {'update':  'user_searches',
                    'columns': ('time'),
                    'where':   'user_id = ?'}
-            cursor.execute(util.query(**qry), (calendar.timegm(
-                datetime.datetime.utcnow().utctimetuple()),
-                                               user_id))
+            cursor.execute(util.query(**qry), (util.now(), user_id))
         else:
             qry = {'insert_into': 'user_searches',
                    'columns':     ('user_id', 'term', 'time')}
-            cursor.execute(util.query(**qry), (user_id, term, calendar.timegm(
-                datetime.datetime.utcnow().utctimetuple())))
+            cursor.execute(util.query(**qry), (user_id, term, util.now()))
         return True
 
 
@@ -389,7 +382,7 @@ class VenueShare:
         qry = {'insert_into': 'venue_shares',
                'columns':     ('user_id', 'venue_id', 'media_id', 'time')}
         cursor.execute(util.query(**qry), (user_id, venue_id, menu_id,
-            calendar.timegm(datetime.datetime.utcnow().utctimetuple())))
+                                           util.now()))
         return True
         
 

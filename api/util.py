@@ -1,3 +1,4 @@
+import calendar
 import datetime
 import functools
 import json
@@ -133,6 +134,7 @@ expose = cherrypy.expose
 def to_int(value):
     return int(value) if value else None
 
+
 def to_bool(value):
     if value is None:
         return None
@@ -142,9 +144,14 @@ def to_bool(value):
         return False
     return True
     
+    
 def to_float(value):
     return float(value) if value else None
 
+
 def row_to_dict(cursor, row):
     return {t[0]: val for t, val in zip(cursor.description, row)}
-    
+
+
+def now():
+    return calendar.timegm(datetime.datetime.utcnow().utctimetuple())

@@ -64,11 +64,12 @@ class Post:
         qry = {'insert_into': 'posts',
                'columns':     ('user_id', 'venue_id', 'lat', 'lon', 'caption',
                                'time')}
-        cursor.execute(util.query(last_id=True, **qry), (user_id, venue_id, lat,
-                                                        lon, caption,
-                                                        util.now()))
-        res = [util.row_to_dict(cursor, row) for row in cursor]
-        return row[-1]['identity']
+        cursor.execute(util.query(**qry), (user_id, venue_id, lat, lon, caption,
+                                           util.now()))
+        for row in cursor:
+            pass
+        cursor.execute(util.query(last_id=True)
+        return cursor.fetchone()['identity']
            
 
 class PostShare:

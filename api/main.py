@@ -228,6 +228,7 @@ class User:
             qry = {'update':     'users',
                    'set_values': columns,
                    'where':      'facebook_id = ?'}
+            raise Exception(util.query(**qry))
             cursor.execute(util.query(**qry), values)
         else:
             columns.append('facebook_id')

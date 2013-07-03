@@ -331,7 +331,7 @@ class Venue:
                                   'creator'),
                      'table':    'promotions',
                      'where':    'venue_id = ?',
-                     'order_by': 'time DESC'}
+                     'order_by': 'id DESC'}
         cursor.execute(util.query(**promo_qry), (row['id'],))
         row['promotion'] = util.row_to_dict(cursor.fetchone())
         return row

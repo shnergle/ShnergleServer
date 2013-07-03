@@ -66,8 +66,6 @@ class Post:
                                'time')}
         cursor.execute(util.query(**qry), (user_id, venue_id, lat, lon, caption,
                                            util.now()))
-        for row in cursor:
-            pass
         cursor.execute(util.query(last_id=True))
         return cursor.fetchone()['identity']
            

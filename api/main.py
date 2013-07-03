@@ -168,7 +168,7 @@ class User:
                'order_by':  'id'}
         if util.to_bool(getall):
             cursor.execute(util.query(**qry))
-            return [self.promo(util.row_to_dict(cursor, row)) for row in cursor]
+            return [util.row_to_dict(cursor, row) for row in cursor]
         else:
             qry['select'].append('twitter_id')
             qry['select'].append('twitter_token')
@@ -176,19 +176,7 @@ class User:
             qry.update({'where': 'id = ?', 'limit': 1})
             cursor.execute(util.query(**qry), (user_id,))
             res = cursor.fetchone()
-            return self.promo(util.row_to_dict(cursor, res))
-    
-    def promo(self, row):
-        promo_qry = {'select':   ('TOP(1) id', 'title', 'description',
-                                  'passcode', 'start', 'end', 'maximum',
-                                  'creator'),
-                     'table':    'promotions',
-                     'where':    'venue_id = ?',
-                     'order_by': 'time DESC'}
-        cursor.execute(util.query(**qry), (row['id'],))
-        raise Exception(cursor.fetchone())
-        row['promotion'] = util.row_to_dict(cursor.fetchone())
-        return row
+            return util.row_to_dict(cursor, res)
     
     @util.expose
     @util.protect
@@ -332,9 +320,21 @@ class Venue:
             'order_by': 'name ASC'}
         if term:
             cursor.execute(util.query(**qry), ("%" + term + "%",))
+            return [util.row_to_dict(cursor, row) for row in cursor]
         else:
             cursor.execute(util.query(**qry))
-        return [util.row_to_dict(cursor, row) for row in cursor]
+            return [self.promo(util.row_to_dict(cursor, row)) for row in cursor]
+    
+    def promo(self, row):
+        promo_qry = {'select':   ('TOP(1) id', 'title', 'description',
+                                  'passcode', 'start', 'end', 'maximum',
+                                  'creator'),
+                     'table':    'promotions',
+                     'where':    'venue_id = ?',
+                     'order_by': 'time DESC'}
+        cursor.execute(util.query(**qry), (row['id'],))
+        row['promotion'] = util.row_to_dict(cursor.fetchone())
+        return row
     
     @util.expose
     @util.protect

@@ -68,7 +68,7 @@ class Post:
                                            util.now()))
         for row in cursor:
             pass
-        cursor.execute(util.query(last_id=True)
+        cursor.execute(util.query(last_id=True))
         return cursor.fetchone()['identity']
            
 

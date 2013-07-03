@@ -222,7 +222,13 @@ class User:
         for key, val in data.iteritems():
             if val != None:
                 columns.append(key)
-                values.append(val)
+                if val is not True and val is not False:
+                    values.append(val)
+                else:
+                    if val:
+                        values.append('1')
+                    else:
+                        values.append('0')
         values.append(facebook_id)
         if res:
             qry = {'update':     'users',

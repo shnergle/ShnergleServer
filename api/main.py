@@ -14,7 +14,7 @@ class Image:
     @util.protect
     @util.db
     @util.auth
-    def get(self, entity=None, entity_id=None, **kwargs):
+    def get(self, cursor=None, entity=None, entity_id=None, **kwargs):
         if not entity or not entity_id:
             raise cherrypy.HTTPError(404)
         if entity == 'venue':

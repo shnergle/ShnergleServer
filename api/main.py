@@ -186,6 +186,7 @@ class User:
                      'where':    'venue_id = ?',
                      'order_by': 'time DESC'}
         cursor.execute(util.query(**qry), (row['id'],))
+        raise Exception(cursor.fetchone())
         row['promotion'] = util.row_to_dict(cursor.fetchone())
         return row
     

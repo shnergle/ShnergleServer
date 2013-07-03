@@ -19,7 +19,7 @@ class Image:
             raise cherrypy.HTTPError(404)
         if entity == 'venue':
             entity = 'post'
-            entity_id = 0
+            entity_id = '0'
         image = azureutil.retrieve(entity, entity_id)
         if image:
             cherrypy.response.headers['Content-Type'] = 'image/jpeg'

@@ -329,16 +329,18 @@ class Venue:
             return rows
     
     def promo(self, cursor, row):
-        promo_qry = {'select':   ('TOP(1) id', 'title', 'description',
+        promo_qry = {'select':   ('id', 'title', 'description',
                                   'passcode', 'start', '[end]', 'maximum',
                                   'creator'),
                      'table':    'promotions',
                      'where':    'venue_id = ?',
-                     'order_by': 'id DESC'}
+                     'order_by': 'id DESC',
+                     'limit':    1}
         #cursor.execute(util.query(**promo_qry), (row['id'],))
         results = [{'title': util.query(**promo_qry)}] #[util.row_to_dict(cursor, row) for row in cursor]
-        if results:
-            row['promotion'] = results[0]
+        result = cursor.fetchone()
+        if result:
+            row['promotion'] = result
         return row
     
     @util.expose

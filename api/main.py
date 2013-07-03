@@ -61,9 +61,10 @@ class Post:
         qry = {'insert_into': 'posts',
                'columns':     ('user_id', 'venue_id', 'lat', 'lon', 'caption',
                                'time')}
-        cursor.execute(util.query(**qry), (user_id, venue_id, lat, lon, caption,
-                                           util.now()))
-        return True
+        cursor.execute(util.query(last_id=True, **qry), (user_id, venue_id, lat,
+                                                        lon, caption,
+                                                        util.now()))
+        return cursor.fetchone()['identity']
            
 
 class PostShare:

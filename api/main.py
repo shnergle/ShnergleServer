@@ -336,7 +336,7 @@ class Venue:
                      'where':    'venue_id = ?',
                      'order_by': 'id DESC',
                      'limit':    1}
-        #cursor.execute(util.query(**promo_qry), (row['id'],))
+        cursor.execute(util.query(**promo_qry), (row['id'],))
         results = [{'title': util.query(**promo_qry)}] #[util.row_to_dict(cursor, row) for row in cursor]
         result = cursor.fetchone()
         if result:

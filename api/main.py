@@ -215,8 +215,8 @@ class User:
                 'country':        country,
                 'language':       language,
                 'email':          email,
-                'top5':           1 if util.to_bool(top5) else 0,
-                'save_locally':   1 if util.to_bool(save_locally) else 0}
+                'top5':           util.to_bool(top5),
+                'save_locally':   util.to_bool(save_locally)}
         columns = []
         values = []
         for key, val in data.iteritems():
@@ -228,7 +228,7 @@ class User:
             qry = {'update':     'users',
                    'set_values': columns,
                    'where':      'facebook_id = ?'}
-            raise Exception(util.query(**qry))
+            raise Exception(util.query(**qry) + ' || ' + str(values))
             cursor.execute(util.query(**qry), values)
         else:
             columns.append('facebook_id')

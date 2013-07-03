@@ -323,7 +323,10 @@ class Venue:
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
             cursor.execute(util.query(**qry))
-            return [self.promo(cursor, util.row_to_dict(cursor, row)) for row in cursor]
+            rows = [util.row_to_dict(cursor, row)) for row in cursor]
+            for row in rows:
+                row = self.promo(cursor, row)
+            return rows
     
     def promo(self, cursor, row):
         promo_qry = {'select':   ('TOP(1) id', 'title', 'description',

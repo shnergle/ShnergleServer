@@ -127,7 +127,7 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
         if where:
             qry += ' WHERE ' + implode(' AND ', where)
     elif last_id:
-        qry += 'SELECT SCOPE_IDENTITY() AS [identity]'
+        qry = 'SELECT SCOPE_IDENTITY() AS [identity]'
     return qry
 
 

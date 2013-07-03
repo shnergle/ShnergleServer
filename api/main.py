@@ -67,7 +67,7 @@ class Post:
         cursor.execute(util.query(**qry), (user_id, venue_id, lat, lon, caption,
                                            util.now()))
         cursor.execute(util.query(last_id=True))
-        return cursor.fetchone()['identity']
+        return int(cursor.fetchone()['identity'])
            
 
 class PostShare:

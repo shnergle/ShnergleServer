@@ -336,10 +336,10 @@ class Venue:
                      'where':    'venue_id = ?',
                      'order_by': 'id DESC',
                      'limit':    1}
-        cursor.execute(util.query(**promo_qry), (row['id'],))
-        result = cursor.fetchall()
+        #cursor.execute(util.query(**promo_qry), (row['id'],))
+        result = cursor.fetchone()
         if result:
-            row['promotion'] = result[0]
+            row['promotion'] = result
         return row
     
     @util.expose

@@ -327,7 +327,7 @@ class Venue:
     
     def promo(self, cursor, row):
         promo_qry = {'select':   ('TOP(1) id', 'title', 'description',
-                                  'passcode', 'start', 'end', 'maximum',
+                                  'passcode', 'start', '[end]', 'maximum',
                                   'creator'),
                      'table':    'promotions',
                      'where':    'venue_id = ?',

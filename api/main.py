@@ -336,7 +336,9 @@ class Venue:
                      'where':    'venue_id = ?',
                      'order_by': 'id DESC'}
         cursor.execute(util.query(**promo_qry), (row['id'],))
-        row['promotion'] = cursor.fetchone()
+        results = [util.row_to_dict(cursor, row) for row in cursor]
+        if results:
+            row['promotion'] = results[0]
         return row
     
     @util.expose

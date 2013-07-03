@@ -323,7 +323,7 @@ class Venue:
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
             cursor.execute(util.query(**qry))
-            rows = [util.row_to_dict(cursor, row)) for row in cursor]
+            rows = [util.row_to_dict(cursor, row) for row in cursor]
             for row in rows:
                 row = self.promo(cursor, row)
             return rows

@@ -427,6 +427,7 @@ class VenueFavourite:
                'limit':     1}
         cursor.execute(util.query(**qry), (user_id, venue_id))
         res = cursor.fetchone()
+        raise Exception(util.to_bool(following))
         if util.to_bool(following) and not res:
             qry = {'insert_into': 'venue_favourites',
                    'columns':      ('user_id', 'venue_id')}

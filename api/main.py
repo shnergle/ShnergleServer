@@ -429,8 +429,7 @@ class VenueFavourite:
         res = cursor.fetchone()
         if util.to_bool(following) and not res:
             qry = {'insert_into': 'venue_favourites',
-                   'columns':      ('user_id, venue_id')}
-            raise Exception(util.query(**qry))
+                   'columns':      ('user_id', 'venue_id')}
             cursor.execute(util.query(**qry), (user_id, venue_id))
         elif not util.to_bool(following) and res:
             #delete

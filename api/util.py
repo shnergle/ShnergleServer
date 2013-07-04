@@ -88,6 +88,7 @@ def implode(glue, list):
 
 
 def query(select=None, table=None, left_join=None, on=None, where=None,
+          delete=None, where=None,
           group_by=None, order_by=None, limit=None,
           insert_into=None, columns=None,
           update=None, set_values=None,
@@ -115,6 +116,8 @@ def query(select=None, table=None, left_join=None, on=None, where=None,
             else:
                 qry += (' OFFSET ' + str(int(limit[0])) + ' ROWS FETCH NEXT ' +
                         str(int(limit[1])) + ' ROWS ONLY')
+    elif delete:
+        qry = 'DELETE FROM ' + delete + ' WHERE ' + implode(' AND ', where)
     elif insert_into:
         qry = 'INSERT INTO ' + insert_into
         if columns:

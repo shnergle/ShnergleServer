@@ -420,11 +420,13 @@ class VenueFavourite:
     @util.jsonp
     def set(self, cursor=None, user_id=None, venue_id=None, following=None,
             **kwargs):
-        qry = {'select': 'COUNT(id) AS count',
-               'table': 'venue_favourites',
-               'where': ('user_id = ?', 'venue_id = ?')}
+        qry = {'select':   'id',
+               'table':    'venue_favourites',
+               'where':    ('user_id = ?', 'venue_id = ?'),
+               'order_by': 'id',
+               'limit':     1}
         cursor.execute(util.query(**qry), (user_id, venue_id))
-        res = cursor.fetchone()['count']
+        res = cursor.fetchone()
         if util.to_bool(following) and not res:
             qry = {'insert_into': 'venue_favourites',
                    'columns':      ('user_id, venue_id')}

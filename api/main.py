@@ -418,7 +418,8 @@ class VenueFavourite:
     @util.db
     @util.auth
     @util.jsonp
-    def set(self, user_id=None, venue_id=None, following=None, **kwargs):
+    def set(self, cursor=None, user_id=None, venue_id=None, following=None,
+            **kwargs):
         qry = {'select': 'COUNT(id) AS count',
                'table': 'venue_favourites',
                'where': ('user_id = ?', 'venue_id = ?')}

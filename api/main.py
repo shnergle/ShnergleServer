@@ -430,6 +430,7 @@ class VenueFavourite:
             cursor.execute(util.query(**qry), (user_id, venue_id))
         elif not util.to_bool(following) and res:
             #delete
+            pass
         return True      
 
 

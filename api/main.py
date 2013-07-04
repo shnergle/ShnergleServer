@@ -405,7 +405,34 @@ class Venue:
             cursor.execute(util.query(**qry), values)
         return True
     
-       
+ 
+class VenueFavourite:
+    
+    @util.expose
+    @util.jsonp
+    def get(self, **kwargs):
+        return None
+        
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, user_id=None, venue_id=None, following=None, **kwargs):
+        qry = {'select': 'COUNT(id) AS count',
+               'table': 'venue_favourites',
+               'where': ('user_id = ?', 'venue_id = ?')}
+        cursor.execute(util.query(**qry, (user_id, venue_id))
+        res = cursor.fetchone()['count']
+        if util.to_bool(following) and not res:
+            qry = {'insert_into': 'venue_favourites',
+                   'columns':      ('user_id, venue_id')}
+            cursor.execute(util.query(**qry), (user_id, venue_id))
+        elif not util.to_bool(following) and res:
+            #delete
+        return True      
+
+
 class VenueShare:
     
     @util.expose
@@ -429,6 +456,7 @@ class ShnergleServer:
     rankings = Ranking()
     users = User()
     venues = Venue()
+    venue_favourites = VenueFavourite()
     venue_shares = VenueShare()
     user_searches = UserSearch()
     categories = Category()

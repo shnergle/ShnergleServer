@@ -51,11 +51,14 @@ class Post:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, **kwargs):
-        qry = {'select':   ('id', 'user_id', 'venue_id', 'lat', 'lon',
-                            'caption', 'time'),
-               'table':    'posts',
-               'where':    'venue_id = ?',
-               'order_by': 'time DESC'}
+        qry = {'select':   ('posts.id', 'user_id', 'venue_id', 'lat', 'lon',
+                            'caption', 'time', 'users.forename', 
+                            'users.surname'),
+               'left_join': 'users',
+               'on':        'posts.user_id = users.id',
+               'table':     'posts',
+               'where':     'venue_id = ?',
+               'order_by':  'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]
     

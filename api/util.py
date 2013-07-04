@@ -88,7 +88,7 @@ def implode(glue, list):
 
 
 def query(select=None, table=None, left_join=None, on=None, where=None,
-          delete=None, where=None,
+          delete=None,
           group_by=None, order_by=None, limit=None,
           insert_into=None, columns=None,
           update=None, set_values=None,

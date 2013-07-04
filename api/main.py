@@ -424,12 +424,12 @@ class VenueFavourite:
                'table': 'venue_favourites',
                'where': ('user_id = ?', 'venue_id = ?')}
         cursor.execute(util.query(**qry), (user_id, venue_id))
-        res = cursor.fetchone()
-        if util.to_bool(following) and not res[0]:
+        res = cursor.fetchone()['count']
+        if util.to_bool(following) and not res:
             qry = {'insert_into': 'venue_favourites',
                    'columns':      ('user_id, venue_id')}
             cursor.execute(util.query(**qry), (user_id, venue_id))
-        elif not util.to_bool(following) and res[0]:
+        elif not util.to_bool(following) and res:
             #delete
             pass
         return True      

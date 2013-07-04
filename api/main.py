@@ -51,8 +51,8 @@ class Post:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, **kwargs):
-        qry = {'select':   ('posts.id', 'user_id', 'venue_id', 'lat', 'lon',
-                            'caption', 'time', 'users.forename', 
+        qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'lat',
+                            'lon', 'caption', 'time', 'users.forename', 
                             'users.surname'),
                'left_join': 'users',
                'on':        'posts.user_id = users.id',

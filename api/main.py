@@ -423,8 +423,8 @@ class VenueFavourite:
         qry = {'select': 'COUNT(id) AS count',
                'table': 'venue_favourites',
                'where': ('user_id = ?', 'venue_id = ?')}
-        raise Exception(util.query(**qry) + ' || ' + str(user_id) + ' | ' + str(venue_id))
         cursor.execute(util.query(**qry), (user_id, venue_id))
+        raise Exception(cursor.fetchone())
         res = cursor.fetchone()['count']
         if util.to_bool(following) and not res:
             qry = {'insert_into': 'venue_favourites',

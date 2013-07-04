@@ -146,7 +146,7 @@ def to_bool(value):
         return None
     if not value:
         return False
-    if isinstance(value, str) and value in ('none', 'false', 'no', 'off', '0'):
+    if value in ('none', 'false', 'no', 'off', '0'):
         return False
     return True
     

@@ -422,7 +422,7 @@ class VenueFavourite:
         qry = {'select': 'COUNT(id) AS count',
                'table': 'venue_favourites',
                'where': ('user_id = ?', 'venue_id = ?')}
-        cursor.execute(util.query(**qry, (user_id, venue_id))
+        cursor.execute(util.query(**qry), (user_id, venue_id))
         res = cursor.fetchone()['count']
         if util.to_bool(following) and not res:
             qry = {'insert_into': 'venue_favourites',

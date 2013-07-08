@@ -312,16 +312,15 @@ class Venue:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, term=None, **kwargs):
+        fields = ('id', 'name', 'address', 'country', 'phone', 'email',
+                  'email_verified', 'category_id', 'tooltip', 'tonight',
+                  'website', 'facebook', 'twitter', 'facebook_id',
+                  'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
+                  'lon', 'timezone', 'offical', 'verified',
+                  'customer_spend', 'authenticated', 'creator')
         if term:
-            fields = ('id', 'name')
             where = ("name LIKE ?",)
         else:
-            fields = ('id', 'name', 'address', 'country', 'phone', 'email',
-                      'email_verified', 'category_id', 'tooltip', 'tonight',
-                      'website', 'facebook', 'twitter', 'facebook_id',
-                      'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
-                      'lon', 'timezone', 'offical', 'verified',
-                      'customer_spend', 'authenticated', 'creator')
             where = ''
         qry = {'select':   fields,
             'table':    'venues',

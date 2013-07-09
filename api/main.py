@@ -143,8 +143,10 @@ class User:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, user_id=None, getall=None, facebook_id=None,
-            **kwargs):
+    def get(self, cursor=None, user_id=None, getall=None, **kwargs):
+        return self.retrieve(cursor=cursor, user_id=user_id, getall=getall)
+            
+    def retrieve(self, cursor=None, user_id=None, getall=None):
         qry = {'select':    ['id',
                              'facebook',
                              'twitter',
@@ -245,7 +247,7 @@ class User:
             qry = {'insert_into': 'users',
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
-        return True
+        return self.retrieve(cursor=cursor, user_id=user_id)
 
 
 class UserSearch:

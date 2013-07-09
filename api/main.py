@@ -330,12 +330,13 @@ class Venue:
                   'website', 'facebook', 'twitter', 'facebook_id',
                   'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
                   'lon', 'timezone', 'offical', 'verified',
-                  'customer_spend', 'authenticated', 'creator',
-                  "(" + util.query(**subqry) + ") AS following")
+                  'customer_spend', 'authenticated', 'creator')
+        if not util.to_bool(following_only):
+            fields += ("(" + util.query(**subqry) + ") AS following",)
         if term:
             where = ("name LIKE ?",)
         elif util.to_bool(following_only):
-            where = ('following > 0')
+            where = ("(" + util.query(**subqry) + ") > 0")
         else:
             where = ''
         qry = {'select':   fields,

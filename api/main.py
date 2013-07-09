@@ -320,7 +320,8 @@ class Venue:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, user_id=None, term=None, **kwargs):
+    def get(self, cursor=None, user_id=None, term=None, following_only=None,
+            **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_favourites',
                   'where':    ('user_id = ?', 'venue_id = venues.id')}
@@ -333,6 +334,8 @@ class Venue:
                   "(" + util.query(**subqry) + ") AS following")
         if term:
             where = ("name LIKE ?",)
+        elif util.to_bool(following_only):
+            where = ('following > 0')
         else:
             where = ''
         qry = {'select':   fields,
@@ -419,12 +422,7 @@ class Venue:
     
  
 class VenueFavourite:
-    
-    @util.expose
-    @util.jsonp
-    def get(self, **kwargs):
-        return None
-        
+
     @util.expose
     @util.protect
     @util.db

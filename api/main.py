@@ -247,6 +247,13 @@ class User:
             qry = {'insert_into': 'users',
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
+        qry = {'select':   'id',
+               'table':    'users',
+               'where':    'facebook_id = ?',
+               'order_by': 'id',
+               'limit':    1}
+        cursor.execute(query(**qry), (kwargs['facebook_id'],))
+        user_id = cursor.fetchone()['id']
         return self.retrieve(cursor=cursor, user_id=user_id)
 
 

@@ -323,9 +323,7 @@ class Venue:
     def get(self, cursor=None, user_id=None, term=None, **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_favourites',
-                  'where':    ('user_id = ?', 'venue_id = venues.id'),
-                  'order_by': 'id',
-                  'limit':     1}
+                  'where':    ('user_id = ?', 'venue_id = venues.id')}
         fields = ('id', 'name', 'address', 'country', 'phone', 'email',
                   'email_verified', 'category_id', 'tooltip', 'tonight',
                   'website', 'facebook', 'twitter', 'facebook_id',

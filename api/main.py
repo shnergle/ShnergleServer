@@ -320,13 +320,19 @@ class Venue:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, term=None, **kwargs):
+    def get(self, cursor=None, user_id=None, term=None, **kwargs):
+        subqry = {'select':   'COUNT(id)',
+                  'table':    'venue_favourites',
+                  'where':    ('user_id = ?', 'venue_id = venues.id'),
+                  'order_by': 'id',
+                  'limit':     1}
         fields = ('id', 'name', 'address', 'country', 'phone', 'email',
                   'email_verified', 'category_id', 'tooltip', 'tonight',
                   'website', 'facebook', 'twitter', 'facebook_id',
                   'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
                   'lon', 'timezone', 'offical', 'verified',
-                  'customer_spend', 'authenticated', 'creator')
+                  'customer_spend', 'authenticated', 'creator',
+                  "(" + util.query(**subqry) + ") AS following")
         if term:
             where = ("name LIKE ?",)
         else:
@@ -336,10 +342,10 @@ class Venue:
             'where':    where,
             'order_by': 'name ASC'}
         if term:
-            cursor.execute(util.query(**qry), ("%" + term + "%",))
+            cursor.execute(util.query(**qry), (user_id, "%" + term + "%",))
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
-            cursor.execute(util.query(**qry))
+            cursor.execute(util.query(**qry), (user_id,))
             rows = [util.row_to_dict(cursor, row) for row in cursor]
             for row in rows:
                 row = self.promo(cursor, row)

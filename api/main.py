@@ -77,7 +77,7 @@ class Post:
             qry = {'update':     'posts',
                    'set_values': ('hidden'),
                    'where':      'id = ?'}
-            cursor.execute(util.query(**qry), ('1', post_id)))
+            cursor.execute(util.query(**qry), ('1', post_id))
         else:
             qry = {'insert_into': 'posts',
                    'columns':     ('user_id', 'venue_id', 'caption', 'time')}

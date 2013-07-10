@@ -72,7 +72,7 @@ class Post:
     @util.auth
     @util.jsonp
     def set(self, cursor=None, user_id=None, venue_id=None, caption=None,
-            hide=None, **kwargs):
+            hide=None, post_id=None, **kwargs):
         if post_id and util.to_bool(hide):
             qry = {'update':     'posts',
                    'set_values': ('hidden'),

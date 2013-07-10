@@ -78,13 +78,14 @@ class Post:
                    'set_values': ('hidden'),
                    'where':      'id = ?'}
             cursor.execute(util.query(**qry), ('1', post_id))
+            return post_id
         else:
             qry = {'insert_into': 'posts',
                    'columns':     ('user_id', 'venue_id', 'caption', 'time')}
             cursor.execute(util.query(**qry), (user_id, venue_id, caption,
                                                util.now()))
-        cursor.execute(util.query(last_id=True))
-        return int(cursor.fetchone()['identity'])
+            cursor.execute(util.query(last_id=True))
+            return int(cursor.fetchone()['identity'])
 
 
 class PostReport:

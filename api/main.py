@@ -317,8 +317,8 @@ class Venue:
                   'email_verified', 'category_id', 'headline', 'tonight',
                   'website', 'facebook', 'twitter', 'facebook_id',
                   'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
-                  'lon', 'timezone', 'offical', 'verified',
-                  'customer_spend', 'authenticated', 'creator')
+                  'lon', 'offical', 'verified', 'customer_spend',
+                  'authenticated', 'creator')
         if not util.to_bool(following_only):
             fields += ("(" + util.query(**subqry) + ") AS following",)
         if term:

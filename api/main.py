@@ -63,6 +63,7 @@ class Post:
                'where':     ('posts.venue_id = ?', 'hidden = 0',
                              '(' + util.query(**subqry) + ') < 3'),
                'order_by':  'time DESC'}
+        raise Exception(util.query(**qry))
         cursor.execute(util.query(**qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]
     

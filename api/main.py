@@ -60,7 +60,7 @@ class Post:
                'left_join': 'users',
                'on':        'posts.user_id = users.id',
                'table':     'posts',
-               'where':     ('posts.venue_id = ?', #'hidden = 0',
+               'where':     ('posts.venue_id = ?', 'hidden = 0',
                              '(' + util.query(**subqry) + ') < 3'),
                'order_by':  'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))

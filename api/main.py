@@ -54,7 +54,7 @@ class Post:
         subqry = {'select':   'COUNT(id)',
                   'table':    'post_reports',
                   'where':    ('post_reports.post_id = posts.id')}
-        cursor.execute(util.query(**qry), (venue_id,))
+        cursor.execute(util.query(**subqry))
         raise Exception(cursor.fetchone())
         qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'caption',
                             'time', 'hidden', 'users.forename',

@@ -53,9 +53,7 @@ class Post:
     def get(self, cursor=None, venue_id=None, **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'post_reports',
-                  'where':    ('post_reports.post_id = posts.id')}
-        cursor.execute(util.query(**subqry))
-        raise Exception(cursor.fetchone())
+                  'where':    ('post_id = posts.id')}
         qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'caption',
                             'time', 'hidden', 'users.forename',
                             'users.surname'),

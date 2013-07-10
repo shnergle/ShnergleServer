@@ -56,7 +56,7 @@ class Post:
                   'where':    ('post_id = posts.id')}
         qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'caption',
                             'time', 'hidden', 'users.forename',
-                            'users.surname', '(' + util.query(**subqry) + ')'),
+                            'users.surname', '(' + util.query(**subqry) + ') AS countReports'),
                'left_join': 'users',
                'on':        'posts.user_id = users.id',
                'table':     'posts',

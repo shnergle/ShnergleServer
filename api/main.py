@@ -19,9 +19,13 @@ class Image:
             raise cherrypy.HTTPError(404)
         if entity == 'venue':
             entity = 'post'
+            subqry = {'select':   'COUNT(id)',
+                      'table':    'post_reports',
+                      'where':    ('post_id = posts.id')}
             qry = {'select':   ('id', 'venue_id', 'time'),
                    'table':    'posts',
-                   'where':    'venue_id = ?',
+                   'where':    ('venue_id = ?', 'hidden = 0',
+                                '(' + util.query(**subqry) + ') < 3'),
                    'order_by': 'time DESC'}
             cursor.execute(util.query(**qry), (entity_id,))
             entity_id = str(cursor.fetchone()['id'])

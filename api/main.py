@@ -51,12 +51,17 @@ class Post:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, **kwargs):
+        subqry = {'select':   'COUNT(id)',
+                  'table':    'post_reports',
+                  'where':    ('post_reports.post_id = posts.post_id')}
         qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'caption',
-                            'time', 'users.forename', 'users.surname'),
+                            'time', 'hidden', 'users.forename',
+                            'users.surname'),
                'left_join': 'users',
                'on':        'posts.user_id = users.id',
                'table':     'posts',
-               'where':     'posts.venue_id = ?',
+               'where':     ('posts.venue_id = ?', 'hidden = 0',
+                             '(' + util.query(**subqry) + ') < 3'),
                'order_by':  'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]

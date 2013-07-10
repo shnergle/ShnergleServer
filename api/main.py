@@ -66,11 +66,11 @@ class Post:
     @util.db
     @util.auth
     @util.jsonp
-    def set(self, cursor=None, user_id=None, venue_id=None, lat=None, lon=None,
-            caption=None, **kwargs):
+    def set(self, cursor=None, user_id=None, venue_id=None, caption=None,
+            **kwargs):
         qry = {'insert_into': 'posts',
                'columns':     ('user_id', 'venue_id', 'caption', 'time')}
-        cursor.execute(util.query(**qry), (user_id, venue_id, lat, lon, caption,
+        cursor.execute(util.query(**qry), (user_id, venue_id, caption,
                                            util.now()))
         cursor.execute(util.query(last_id=True))
         return int(cursor.fetchone()['identity'])

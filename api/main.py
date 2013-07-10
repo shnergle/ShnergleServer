@@ -51,9 +51,8 @@ class Post:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, **kwargs):
-        qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'lat',
-                            'lon', 'caption', 'time', 'users.forename', 
-                            'users.surname'),
+        qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'caption',
+                            'time', 'users.forename', 'users.surname'),
                'left_join': 'users',
                'on':        'posts.user_id = users.id',
                'table':     'posts',
@@ -70,8 +69,7 @@ class Post:
     def set(self, cursor=None, user_id=None, venue_id=None, lat=None, lon=None,
             caption=None, **kwargs):
         qry = {'insert_into': 'posts',
-               'columns':     ('user_id', 'venue_id', 'lat', 'lon', 'caption',
-                               'time')}
+               'columns':     ('user_id', 'venue_id', 'caption', 'time')}
         cursor.execute(util.query(**qry), (user_id, venue_id, lat, lon, caption,
                                            util.now()))
         cursor.execute(util.query(last_id=True))
@@ -88,9 +86,8 @@ class PostShare:
     def set(self, cursor=None, user_id=None, post_id=None, media_id=None,
             **kwargs):
         qry = {'insert_into': 'post_shares',
-               'columns':     ('user_id', 'post_id', 'media_id', 'time')}
-        cursor.execute(util.query(**qry), (user_id, venue_id, menu_id,
-                                           util.now()))
+               'columns':     ('user_id', 'post_id', 'media_id')}
+        cursor.execute(util.query(**qry), (user_id, venue_id, menu_id))
         return True
         
         
@@ -157,10 +154,6 @@ class User:
                              'birth_month',
                              'birth_year',
                              'gender',
-                             'staff',
-                             'manager',
-                             'venue_id',
-                             'promotion_perm',
                              'employee',
                              'joined',
                              'country',
@@ -190,8 +183,7 @@ class User:
     def set(self, cursor=None, facebook_id=None, twitter_token=None,
             facebook=None, twitter=None, forename=None, surname=None, age=None,
             birth_day=None, birth_month=None, birth_year=None, gender=None,
-            staff=None, manager=None, promotion_perm=None, employee=None,
-            venue_id=None, country=None, language=None, email=None, top5=None,
+            employee=None, country=None, language=None, email=None, top5=None,
             twitter_id=None, twitter_secret=None, save_locally=None, **kwargs):
         if not facebook_id:
             raise cherrypy.HTTPError(403)
@@ -212,11 +204,7 @@ class User:
                 'birth_month':    util.to_int(birth_month),
                 'birth_year':     util.to_int(birth_year),
                 'gender':         gender,
-                'staff':          (util.now() if util.to_bool(staff) else None),
-                'manager':        util.to_bool(manager),
-                'promotion_perm': util.to_bool(promotion_perm),
                 'employee':       util.to_bool(employee),
-                'venue_id':       venue_id,
                 'country':        country,
                 'language':       language,
                 'email':          email,
@@ -323,10 +311,10 @@ class Venue:
     def get(self, cursor=None, user_id=None, term=None, following_only=None,
             **kwargs):
         subqry = {'select':   'COUNT(id)',
-                  'table':    'venue_favourites',
+                  'table':    'venue_followers',
                   'where':    ('user_id = ?', 'venue_id = venues.id')}
         fields = ('id', 'name', 'address', 'country', 'phone', 'email',
-                  'email_verified', 'category_id', 'tooltip', 'tonight',
+                  'email_verified', 'category_id', 'headline', 'tonight',
                   'website', 'facebook', 'twitter', 'facebook_id',
                   'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
                   'lon', 'timezone', 'offical', 'verified',
@@ -374,11 +362,11 @@ class Venue:
     @util.jsonp
     def set(self, cursor=None, facebook_id=None, user_id=None, venue_id=None,
             name=None, address=None, country=None, phone=None, email=None,
-            email_verified=None, category_id=None, tooltip=None, tonight=None,
+            email_verified=None, category_id=None, headline=None, tonight=None,
             website=None, facebook=None, twitter=None, v_facebook_id=None,
             twitter_id=None, twitter_token=None, twitter_secret=None, lat=None,
-            lon=None, timezone=None, offical=None, verified=None,
-            customer_spend=None, authenticated=None, **kwargs):
+            lon=None, official=None, verified=None, customer_spend=None,
+            authenticated=None, **kwargs):
         data = {'name':           name,
                 'address':        address,
                 'country':        country,
@@ -386,7 +374,7 @@ class Venue:
                 'email':          email,
                 'email_verified': util.to_bool(email_verified),
                 'category_id':    util.to_int(category_id),
-                'tooltip':        tooltip,
+                'headline':       headline,
                 'tonight':        tonight,
                 'website':        website,
                 'facebook':       facebook,
@@ -397,9 +385,8 @@ class Venue:
                 'twitter_secret': twitter_secret,
                 'lat':            util.to_float(lat),
                 'lon':            util.to_float(lon),
-                'timezone':       util.to_int(timezone),
-                'offical':        util.to_bool(offical),
-                'verified':       util.to_bool(offical),
+                'official':       util.to_bool(official),
+                'verified':       util.to_bool(verified),
                 'customer_spend': util.to_float(customer_spend),
                 'authenticated':  util.to_bool(authenticated),
                 'creator':        user_id}
@@ -422,7 +409,7 @@ class Venue:
         return True
     
  
-class VenueFavourite:
+class VenueFollower:
 
     @util.expose
     @util.protect
@@ -432,18 +419,18 @@ class VenueFavourite:
     def set(self, cursor=None, user_id=None, venue_id=None, following=None,
             **kwargs):
         qry = {'select':   'id',
-               'table':    'venue_favourites',
+               'table':    'venue_followers',
                'where':    ('user_id = ?', 'venue_id = ?'),
                'order_by': 'id',
                'limit':     1}
         cursor.execute(util.query(**qry), (user_id, venue_id))
         res = cursor.fetchone()
         if util.to_bool(following) and not res:
-            qry = {'insert_into': 'venue_favourites',
+            qry = {'insert_into': 'venue_followers',
                    'columns':      ('user_id', 'venue_id')}
             cursor.execute(util.query(**qry), (user_id, venue_id))
         elif not util.to_bool(following) and res:
-            qry = {'delete': 'venue_favourites',
+            qry = {'delete': 'venue_followers',
                    'where': ('user_id = ?', 'venue_id = ?')}
             cursor.execute(util.query(**qry), (user_id, venue_id))
         return True      
@@ -472,7 +459,7 @@ class ShnergleServer:
     rankings = Ranking()
     users = User()
     venues = Venue()
-    venue_favourites = VenueFavourite()
+    venue_followers = VenueFollower()
     venue_shares = VenueShare()
     user_searches = UserSearch()
     categories = Category()

@@ -56,12 +56,11 @@ class Post:
                   'where':    ('post_id = posts.id')}
         qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'caption',
                             'time', 'hidden', 'users.forename',
-                            'users.surname'),
+                            'users.surname', '(' + util.query(**subqry) + ')'),
                'left_join': 'users',
                'on':        'posts.user_id = users.id',
                'table':     'posts',
-               'where':     ('posts.venue_id = ?', 'hidden = 0',
-                             '(' + util.query(**subqry) + ') < 3'),
+               'where':     ('posts.venue_id = ?', 'hidden = 0'),
                'order_by':  'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]

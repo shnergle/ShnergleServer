@@ -67,13 +67,41 @@ class Post:
     @util.auth
     @util.jsonp
     def set(self, cursor=None, user_id=None, venue_id=None, caption=None,
-            **kwargs):
-        qry = {'insert_into': 'posts',
-               'columns':     ('user_id', 'venue_id', 'caption', 'time')}
-        cursor.execute(util.query(**qry), (user_id, venue_id, caption,
-                                           util.now()))
+            hide=None, **kwargs):
+        if post_id and util.to_bool(hide):
+            qry = {'update':     'posts',
+                   'set_values': ('hidden'),
+                   'where':      'id = ?'}
+            cursor.execute(util.query(**qry), ('1', post_id)))
+        else:
+            qry = {'insert_into': 'posts',
+                   'columns':     ('user_id', 'venue_id', 'caption', 'time')}
+            cursor.execute(util.query(**qry), (user_id, venue_id, caption,
+                                               util.now()))
         cursor.execute(util.query(last_id=True))
         return int(cursor.fetchone()['identity'])
+
+
+class PostReport:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, post_id=None, **kwargs):
+        qry = {'select':   'id',
+               'table':    'post_reports',
+               'where':    ('user_id = ?', 'post_id = ?'),
+               'order_by': 'id',
+               'limit':     1}
+        cursor.execute(util.query(**qry), (user_id, post_id))
+        res = cursor.fetchone()
+        if not res:
+            qry = {'insert_into': 'post_reports',
+                   'columns':     ('user_id', 'post_id')}
+            cursor.execute(util.query(**qry), (user_id, post_id))
+        return True
            
 
 class PostShare:
@@ -455,6 +483,7 @@ class VenueShare:
 class ShnergleServer:
     images = Image()
     posts = Post()
+    post_reports = PostReport()
     post_shares = PostShare()
     rankings = Ranking()
     users = User()

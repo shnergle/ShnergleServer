@@ -165,8 +165,8 @@ class PostView:
     @util.jsonp
     def set(self, cursor=None, user_id=None, post_id=None, **kwargs):
         qry = {'insert_into': 'post_views',
-               'columns':     ('user_id', 'post_id', 'time')}
-        cursor.execute(util.query(**qry), (user_id, post_id, util.now()))
+               'columns':     ('user_id', 'post_id')}
+        cursor.execute(util.query(**qry), (user_id, post_id))
         return True
         
         

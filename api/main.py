@@ -156,6 +156,20 @@ class PostShare:
         return True
         
         
+class PostView:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, post_id=None, **kwargs):
+        qry = {'insert_into': 'post_views',
+               'columns':     ('user_id', 'post_id', 'time')}
+        cursor.execute(util.query(**qry), (user_id, post_id, util.now()))
+        return True
+        
+        
 class Ranking:
     
     @util.expose
@@ -543,6 +557,7 @@ class ShnergleServer:
     post_likes = PostLike()
     post_reports = PostReport()
     post_shares = PostShare()
+    post_views = PostView()
     rankings = Ranking()
     users = User()
     venues = Venue()

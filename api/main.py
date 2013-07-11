@@ -377,8 +377,8 @@ class Venue:
         else:
             values = (user_id,)
             if my_lat and my_lon and distance:
-                values += (int(my_lat), int(my_lat), int(my_lon), int(my_lon),
-                           int(distance), int(distance))
+                values += (float(my_lat), float(my_lat), float(my_lon),
+                           float(my_lon), float(distance), float(distance))
             cursor.execute(util.query(**qry), values)
             rows = [util.row_to_dict(cursor, row) for row in cursor]
             for row in rows:

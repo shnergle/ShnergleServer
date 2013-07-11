@@ -152,7 +152,7 @@ class PostShare:
             **kwargs):
         qry = {'insert_into': 'post_shares',
                'columns':     ('user_id', 'post_id', 'media_id')}
-        cursor.execute(util.query(**qry), (user_id, venue_id, menu_id))
+        cursor.execute(util.query(**qry), (user_id, post_id, menu_id))
         return True
         
         

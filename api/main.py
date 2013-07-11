@@ -92,6 +92,28 @@ class Post:
             return int(cursor.fetchone()['identity'])
 
 
+class PostLike:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, post_id=None, **kwargs):
+        qry = {'select':   'id',
+               'table':    'post_likes',
+               'where':    ('user_id = ?', 'post_id = ?'),
+               'order_by': 'id',
+               'limit':     1}
+        cursor.execute(util.query(**qry), (user_id, post_id))
+        res = cursor.fetchone()
+        if not res:
+            qry = {'insert_into': 'post_likes',
+                   'columns':     ('user_id', 'post_id')}
+            cursor.execute(util.query(**qry), (user_id, post_id))
+        return True
+        
+
 class PostReport:
     
     @util.expose
@@ -499,6 +521,7 @@ class VenueShare:
 class ShnergleServer:
     images = Image()
     posts = Post()
+    post_likes = PostLike()
     post_reports = PostReport()
     post_shares = PostShare()
     rankings = Ranking()

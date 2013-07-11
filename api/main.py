@@ -14,7 +14,8 @@ class Image:
     @util.protect
     @util.db
     @util.auth
-    def get(self, cursor=None, entity=None, entity_id=None, **kwargs):
+    def get(self, cursor=None, user_id=None, entity=None, entity_id=None,
+            **kwargs):
         if not entity or not entity_id:
             raise cherrypy.HTTPError(404)
         if entity == 'venue':
@@ -29,6 +30,9 @@ class Image:
                    'order_by': 'time DESC'}
             cursor.execute(util.query(**qry), (entity_id,))
             entity_id = str(cursor.fetchone()['id'])
+            qry = {'insert_into': 'venue_loads',
+                   'columns':     ('user_id', 'venue_id', 'time')}
+            cursor.execute(util.query(**qry), (user_id, entity_id, util.now()))
         image = azureutil.retrieve(entity, entity_id)
         if image:
             cherrypy.response.headers['Content-Type'] = 'image/jpeg'

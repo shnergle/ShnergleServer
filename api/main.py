@@ -20,6 +20,7 @@ class Image:
             raise cherrypy.HTTPError(404)
         if entity == 'venue':
             entity = 'post'
+            venue_id = entity_id
             subqry = {'select':   'COUNT(id)',
                       'table':    'post_reports',
                       'where':    ('post_id = posts.id')}
@@ -32,7 +33,7 @@ class Image:
             entity_id = str(cursor.fetchone()['id'])
             qry = {'insert_into': 'venue_loads',
                    'columns':     ('user_id', 'venue_id', 'time')}
-            cursor.execute(util.query(**qry), (user_id, entity_id, util.now()))
+            cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
         image = azureutil.retrieve(entity, entity_id)
         if image:
             cherrypy.response.headers['Content-Type'] = 'image/jpeg'

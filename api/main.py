@@ -177,21 +177,34 @@ class Ranking:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, user_id=None, thresholds=None, **kwargs):
-        if util.to_bool(thresholds):
-            return self.thresholds(cursor)
+    def get(self, cursor=None, user_id=None, **kwargs):
+        t = self.thresholds(cursor)
         posts = {'select': 'COUNT(id) AS count',
                  'table': 'posts',
                  'where': 'user_id = ?'}
         cursor.execute(util.query(**posts), (user_id,))
         posts = cursor.fetchone()['count']
-        for threshold in self.thresholds(cursor):
+        following = {'select': 'COUNT(id) AS count',
+                     'table': 'venue_followers',
+                     'where': 'user_id = ?'}
+        cursor.execute(util.query(**following), (user_id,))
+        following = cursor.fetchone()['count']
+        redemptions = {'select': 'COUNT(id) AS count',
+                       'table': 'promotion_redemptions',
+                       'where': 'user_id = ?'}
+        cursor.execute(util.query(**redemptions), (user_id,))
+        redemptions = cursor.fetchone()['count']
+        for threshold in t:
             if posts < threshold:
                 res = 0
                 break
         else:
             res = 3
-        return res
+        return {'thresholds': t,
+                'level': res,
+                'posts': posts,
+                'following': following,
+                'redemptions': redemptions}
     
     def thresholds(self, cursor):
         users = {'select': 'COUNT(id) AS count', 'table': 'users'}

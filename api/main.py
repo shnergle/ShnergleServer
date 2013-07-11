@@ -347,7 +347,7 @@ class Venue:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, user_id=None, term=None, following_only=None,
-            **kwargs):
+            my_lat=None, my_lon=None, distance=None, **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_followers',
                   'where':    ('user_id = ?', 'venue_id = venues.id')}
@@ -363,17 +363,22 @@ class Venue:
             where = ("name LIKE ?",)
         elif util.to_bool(following_only):
             where = ("(" + util.query(**subqry) + ") > 0")
+        elif my_lat and my_lon and distance:
+            where = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) <= ? * ?')
         else:
             where = ''
         qry = {'select':   fields,
-            'table':    'venues',
-            'where':    where,
-            'order_by': 'name ASC'}
+               'table':    'venues',
+               'where':    where,
+               'order_by': 'name ASC'}
         if term:
             cursor.execute(util.query(**qry), (user_id, "%" + term + "%",))
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
-            cursor.execute(util.query(**qry), (user_id,))
+            values = (user_id,)
+            if my_lat and my_lon and distance:
+                values += (my_lat, my_lat, my_lon, my_lon, distance, distance)
+            cursor.execute(util.query(**qry), values)
             rows = [util.row_to_dict(cursor, row) for row in cursor]
             for row in rows:
                 row = self.promo(cursor, row)

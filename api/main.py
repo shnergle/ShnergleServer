@@ -522,6 +522,20 @@ class VenueShare:
                                            util.now()))
         return True
         
+        
+class VenueView:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, venue_id=None, **kwargs):
+        qry = {'insert_into': 'venue_views',
+               'columns':     ('user_id', 'venue_id', 'time')}
+        cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
+        return True
+        
 
 class ShnergleServer:
     images = Image()
@@ -534,6 +548,7 @@ class ShnergleServer:
     venues = Venue()
     venue_followers = VenueFollower()
     venue_shares = VenueShare()
+    venue_views = VenueView()
     user_searches = UserSearch()
     categories = Category()
 

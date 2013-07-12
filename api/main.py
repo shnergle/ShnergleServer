@@ -405,12 +405,22 @@ class Venue:
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_followers',
                   'where':    ('user_id = ?', 'venue_id = venues.id')}
+        managerqry = {'select':   'COUNT(id)',
+                      'table':    'venue_managers',
+                      'where':    ('user_id = ' + user_id,
+                                  'venue_id = venues.id')}
+        staffqry =  {'select':   'COUNT(id)',
+                     'table':    'venue_staff',
+                     'where':    ('user_id = ' + user_id,
+                                  'venue_id = venues.id')}
         fields = ('id', 'name', 'address', 'country', 'phone', 'email',
                   'email_verified', 'category_id', 'headline', 'tonight',
                   'website', 'facebook', 'twitter', 'facebook_id',
                   'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
                   'lon', 'official', 'verified', 'customer_spend',
-                  'authenticated', 'creator')
+                  'authenticated', 'creator',
+                  '(' + util.qry(**managerqry) + ') AS manager',
+                  '(' + util.qry(**staffqry) + ') AS staff')
         if not util.to_bool(following_only):
             fields += ("(" + util.query(**subqry) + ") AS following",)
         if term:

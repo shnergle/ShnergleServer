@@ -407,11 +407,11 @@ class Venue:
                   'where':    ('user_id = ?', 'venue_id = venues.id')}
         managerqry = {'select':   'COUNT(id)',
                       'table':    'venue_managers',
-                      'where':    ('user_id = ' + user_id,
+                      'where':    ('user_id = ' + str(user_id),
                                   'venue_id = venues.id')}
         staffqry =  {'select':   'COUNT(id)',
                      'table':    'venue_staff',
-                     'where':    ('user_id = ' + user_id,
+                     'where':    ('user_id = ' + str(user_id),
                                   'venue_id = venues.id')}
         fields = ('id', 'name', 'address', 'country', 'phone', 'email',
                   'email_verified', 'category_id', 'headline', 'tonight',

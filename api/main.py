@@ -419,8 +419,8 @@ class Venue:
                   'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
                   'lon', 'official', 'verified', 'customer_spend',
                   'authenticated', 'creator',
-                  '(' + util.qry(**managerqry) + ') AS manager',
-                  '(' + util.qry(**staffqry) + ') AS staff')
+                  '(' + util.query(**managerqry) + ') AS manager',
+                  '(' + util.query(**staffqry) + ') AS staff')
         if not util.to_bool(following_only):
             fields += ("(" + util.query(**subqry) + ") AS following",)
         if term:

@@ -579,13 +579,19 @@ class VenueStaff:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, **kwargs):
-        qry = {'select':   ('id', 'user_id', 'promo_perm', 'time'),
+        nameqry = {'select': ('CONCAT(forename, " ", surname)',)
+                   'table':  'users'}
+        nameqry['where'] = ('users.id = venue_staff.user_id',)
+        qry = {'select':   ('id', 'user_id', 'promo_perm', 'time',
+                            '(' + util.query(**nameqry) + ') AS name'),
                'table':    'venue_staff',
                'where':    'venue_id = ?',
                'order_by': 'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))
         staff = [util.row_to_dict(cursor, row) for row in cursor]
-        qry = {'select':   ('id', 'user_id', 'time'),
+        nameqry['where'] = ('users.id = venue_managers.user_id',)
+        qry = {'select':   ('id', 'user_id', 'time',
+                            '(' + util.query(**nameqry) + ') AS name'),
                'table':    'venue_managers',
                'where':    'venue_id = ?',
                'order_by': 'time DESC'}

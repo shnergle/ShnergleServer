@@ -581,17 +581,23 @@ class VenueStaff:
     def get(self, cursor=None, venue_id=None, **kwargs):
         nameqry = {'select': ('CONCAT(forename, \' \', surname)',),
                    'table':  'users'}
+        fbidqry = {'select': ('facebook_id',),
+                   'table':  'users'}
         nameqry['where'] = ('users.id = venue_staff.user_id',)
+        fbidqry['where'] = nameqry['where']
         qry = {'select':   ('id', 'user_id', 'promo_perm', 'time',
-                            '(' + util.query(**nameqry) + ') AS name'),
+                            '(' + util.query(**nameqry) + ') AS name',
+                            '(' + util.query(**fbidqry) + ') AS facebook_id'),
                'table':    'venue_staff',
                'where':    'venue_id = ?',
                'order_by': 'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))
         staff = [util.row_to_dict(cursor, row) for row in cursor]
         nameqry['where'] = ('users.id = venue_managers.user_id',)
+        fbidqry['where'] = nameqry['where']
         qry = {'select':   ('id', 'user_id', 'time',
-                            '(' + util.query(**nameqry) + ') AS name'),
+                            '(' + util.query(**nameqry) + ') AS name',
+                            '(' + util.query(**fbidqry) + ') AS facebook_id'),
                'table':    'venue_managers',
                'where':    'venue_id = ?',
                'order_by': 'time DESC'}

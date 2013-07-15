@@ -558,6 +558,22 @@ class VenueShare:
         cursor.execute(util.query(**qry), (user_id, venue_id, media_id,
                                            util.now()))
         return True
+
+
+class VenueStaff:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, venue_id **kwargs):
+        qry = {'select':   ('id', 'user_id', 'promo_perm', 'time'),
+               'table':    'venue_staff',
+               'where':    'venue_id = ?',
+               'order_by': 'time DESC'}
+        cursor.execute(util.query(**qry), (venue_id,))
+        return [util.row_to_dict(cursor, row) for row in cursor]
         
         
 class VenueView:
@@ -586,6 +602,7 @@ class ShnergleServer:
     venues = Venue()
     venue_followers = VenueFollower()
     venue_shares = VenueShare()
+    venue_staff = VenueStaff()
     venue_views = VenueView()
     user_searches = UserSearch()
     categories = Category()

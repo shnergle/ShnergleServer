@@ -194,6 +194,16 @@ class Ranking:
                        'where': 'user_id = ?'}
         cursor.execute(util.query(**redemptions), (user_id,))
         redemptions = cursor.fetchone()['count']
+        share_venue = {'select': 'COUNT(id) AS count',
+                       'table': 'venue_shares',
+                       'where': 'user_id = ?'}
+        cursor.execute(util.query(**share_venue), (user_id,))
+        share = cursor.fetchone()['count']
+        share_posts = {'select': 'COUNT(id) AS count',
+                       'table': 'post_shares',
+                       'where': 'user_id = ?'}
+        cursor.execute(util.query(**share_posts), (user_id,))
+        share = cursor.fetchone()['count']
         for threshold in t:
             if posts < threshold:
                 res = 0
@@ -204,8 +214,9 @@ class Ranking:
                 'level': res,
                 'posts': posts,
                 'following': following,
-                'redemptions': redemptions}
-    
+                'redemptions': redemptions,
+                'share': share_posts + share_venue}
+
     def thresholds(self, cursor):
         users = {'select': 'COUNT(id) AS count', 'table': 'users'}
         cursor.execute(util.query(**users))

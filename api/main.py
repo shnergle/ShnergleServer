@@ -591,7 +591,7 @@ class VenueStaff:
                'order_by': 'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))
         managers = [util.row_to_dict(cursor, row) for row in cursor]
-        return {'staff': staff, 'manager': manager}
+        return {'staff': staff, 'managers': managers}
         
         
 class VenueView:

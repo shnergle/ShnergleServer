@@ -198,12 +198,12 @@ class Ranking:
                        'table': 'venue_shares',
                        'where': 'user_id = ?'}
         cursor.execute(util.query(**share_venue), (user_id,))
-        share = cursor.fetchone()['count']
+        share_venue = cursor.fetchone()['count']
         share_posts = {'select': 'COUNT(id) AS count',
                        'table': 'post_shares',
                        'where': 'user_id = ?'}
         cursor.execute(util.query(**share_posts), (user_id,))
-        share = cursor.fetchone()['count']
+        share_posts = cursor.fetchone()['count']
         for threshold in t:
             if posts < threshold:
                 res = 0

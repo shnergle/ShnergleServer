@@ -584,7 +584,14 @@ class VenueStaff:
                'where':    'venue_id = ?',
                'order_by': 'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))
-        return [util.row_to_dict(cursor, row) for row in cursor]
+        staff = [util.row_to_dict(cursor, row) for row in cursor]
+        qry = {'select':   ('id', 'user_id', 'time'),
+               'table':    'venue_managers',
+               'where':    'venue_id = ?',
+               'order_by': 'time DESC'}
+        cursor.execute(util.query(**qry), (venue_id,))
+        managers = [util.row_to_dict(cursor, row) for row in cursor]
+        return {'staff': staff, 'manager': manager}
         
         
 class VenueView:

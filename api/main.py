@@ -31,9 +31,9 @@ class Image:
                    'order_by': 'time DESC'}
             cursor.execute(util.query(**qry), (entity_id,))
             entity_id = str(cursor.fetchone()['id'])
-            #qry = {'insert_into': 'venue_loads',
-            #       'columns':     ('user_id', 'venue_id', 'time')}
-            #cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
+            qry = {'insert_into': 'venue_loads',
+                   'columns':     ('user_id', 'venue_id', 'time')}
+            cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
         image = azureutil.retrieve(entity, entity_id)
         if image:
             cherrypy.response.headers['Content-Type'] = 'image/jpeg'

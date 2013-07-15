@@ -567,7 +567,7 @@ class VenueStaff:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, venue_id **kwargs):
+    def get(self, cursor=None, venue_id=None, **kwargs):
         qry = {'select':   ('id', 'user_id', 'promo_perm', 'time'),
                'table':    'venue_staff',
                'where':    'venue_id = ?',

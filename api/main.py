@@ -579,7 +579,7 @@ class VenueStaff:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, **kwargs):
-        nameqry = {'select': ('CONCAT(forename, " ", surname)',),
+        nameqry = {'select': ('CONCAT(forename, \' \', surname)',),
                    'table':  'users'}
         nameqry['where'] = ('users.id = venue_staff.user_id',)
         qry = {'select':   ('id', 'user_id', 'promo_perm', 'time',

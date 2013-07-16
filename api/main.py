@@ -555,6 +555,25 @@ class VenueFollower:
         return True      
 
 
+class VenueManager:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, venue_id=None, **kwargs):
+        qry = {'insert_into': 'venue_managers',
+               'columns':     ('user_id', 'venue_id', 'time')}
+        cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
+        qry = {'update':     'venues',
+               'set_values': ('official'),
+               'where':      'id = ?'}
+        values.append(venue_id)
+        cursor.execute(util.query(**qry), (1, venue_id))
+        return True
+
+
 class VenueShare:
     
     @util.expose
@@ -631,6 +650,7 @@ class ShnergleServer:
     users = User()
     venues = Venue()
     venue_followers = VenueFollower()
+    venue_managers = VenueManager()
     venue_shares = VenueShare()
     venue_staff = VenueStaff()
     venue_views = VenueView()

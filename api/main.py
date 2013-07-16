@@ -573,8 +573,7 @@ class VenueManager:
         if not res:
             qry = {'insert_into': 'venue_managers',
                    'columns':     ('user_id', 'venue_id', 'time')}
-                   cursor.execute(util.query(**qry), (user_id, venue_id,
-                   util.now()))
+            cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
             qry = {'update':     'venues',
                    'set_values': ('official'),
                    'where':      'id = ?'}

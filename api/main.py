@@ -412,7 +412,7 @@ class Venue:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, user_id=None, term=None, following_only=None,
-            my_lat=None, my_lon=None, distance=None, **kwargs):
+            my_lat=None, my_lon=None, distance=None, own=None, **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_followers',
                   'where':    ('user_id = ?', 'venue_id = venues.id')}
@@ -431,13 +431,14 @@ class Venue:
                   'lon', 'official', 'verified', 'customer_spend',
                   'authenticated', 'creator',
                   '(' + util.query(**managerqry) + ') AS manager',
-                  '(' + util.query(**staffqry) + ') AS staff')
-        if not util.to_bool(following_only):
-            fields += ("(" + util.query(**subqry) + ") AS following",)
+                  '(' + util.query(**staffqry) + ') AS staff',
+                  "(" + util.query(**subqry) + ") AS following")
         if term:
             where = ("name LIKE ?",)
         elif util.to_bool(following_only):
             where = ("(" + util.query(**subqry) + ") > 0")
+        elif own:
+            where = ('(' + util.query(**managerqry) + ') = 1 OR (' + util.query(**staffqry) + ') = 1')
         elif my_lat and my_lon and distance:
             where = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) <= ? * ?')
         else:

@@ -294,7 +294,7 @@ class User:
                'table':    'users',
                'where':    'facebook_id = ?'}
         cursor.execute(util.query(**qry), (facebook_id,))
-        res = cursor.fetchone()['count']
+        res = cursor.fetchone().count
         data = {'twitter_id':     twitter_id,
                 'twitter_token':  twitter_token,
                 'twitter_secret': twitter_secret,

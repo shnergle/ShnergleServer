@@ -232,7 +232,7 @@ class Ranking:
                             'limit':     (number - 1, 1)}
             cursor.execute(util.query(**thresholdqry))
             count = cursor.fetchone()
-            thresholds.append(count['count'] if count else 0)
+            thresholds.append(count.count if count else 0)
         return thresholds
 
 

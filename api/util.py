@@ -6,11 +6,11 @@ import os
 import time
 
 import cherrypy
-import pypyodbc
+import pyodbc
 
 
 def connect(thread_index):
-    cherrypy.thread_data.db = pypyodbc.connect(os.environ['DATABASE'])
+    cherrypy.thread_data.db = pyodbc.connect(os.environ['DATABASE'])
 
 
 def dont_cache():

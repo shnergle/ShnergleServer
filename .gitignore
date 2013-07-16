@@ -37,3 +37,7 @@ nosetests.xml
 # Custom
 .DS_Store
 *.swp
+site-packages/cherrypy/scaffold/*
+site-packages/cherrypy/test/*
+site-packages/cherrypy/tutorial/*
+site-packages/cherrypy/wsgiserver/*

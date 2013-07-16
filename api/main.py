@@ -30,7 +30,7 @@ class Image:
                                 '(' + util.query(**subqry) + ') < 3'),
                    'order_by': 'time DESC'}
             cursor.execute(util.query(**qry), (entity_id,))
-            entity_id = str(cursor.fetchone()['id'])
+            entity_id = str(cursor.fetchone().id)
             qry = {'insert_into': 'venue_loads',
                    'columns':     ('user_id', 'venue_id', 'time')}
             cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
@@ -94,7 +94,7 @@ class Post:
             cursor.execute(util.query(**qry), (user_id, venue_id, caption,
                                                util.now()))
             cursor.execute(util.query(last_id=True))
-            return int(cursor.fetchone()['identity'])
+            return int(cursor.fetchone().identity)
 
 
 class PostLike:
@@ -183,27 +183,27 @@ class Ranking:
                  'table': 'posts',
                  'where': 'user_id = ?'}
         cursor.execute(util.query(**posts), (user_id,))
-        posts = cursor.fetchone()['count']
+        posts = cursor.fetchone().count
         following = {'select': 'COUNT(id) AS count',
                      'table': 'venue_followers',
                      'where': 'user_id = ?'}
         cursor.execute(util.query(**following), (user_id,))
-        following = cursor.fetchone()['count']
+        following = cursor.fetchone().count
         redemptions = {'select': 'COUNT(id) AS count',
                        'table': 'promotion_redemptions',
                        'where': 'user_id = ?'}
         cursor.execute(util.query(**redemptions), (user_id,))
-        redemptions = cursor.fetchone()['count']
+        redemptions = cursor.fetchone().count
         share_venue = {'select': 'COUNT(id) AS count',
                        'table': 'venue_shares',
                        'where': 'user_id = ?'}
         cursor.execute(util.query(**share_venue), (user_id,))
-        share_venue = cursor.fetchone()['count']
+        share_venue = cursor.fetchone().count
         share_posts = {'select': 'COUNT(id) AS count',
                        'table': 'post_shares',
                        'where': 'user_id = ?'}
         cursor.execute(util.query(**share_posts), (user_id,))
-        share_posts = cursor.fetchone()['count']
+        share_posts = cursor.fetchone().count
         for threshold in t:
             if posts < threshold:
                 res = 0
@@ -220,7 +220,7 @@ class Ranking:
     def thresholds(self, cursor):
         users = {'select': 'COUNT(id) AS count', 'table': 'users'}
         cursor.execute(util.query(**users))
-        users = cursor.fetchone()['count']
+        users = cursor.fetchone().count
         thresholds = []
         for percent in (0.8, 0.95, 0.99):
             number = math.floor(percent * users)
@@ -344,7 +344,7 @@ class User:
                'order_by': 'id',
                'limit':    1}
         cursor.execute(util.query(**qry), (facebook_id,))
-        user_id = cursor.fetchone()['id']
+        user_id = cursor.fetchone().id
         return self.retrieve(cursor=cursor, user_id=user_id)
 
 

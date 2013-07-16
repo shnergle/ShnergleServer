@@ -44,7 +44,7 @@ def auth(func):
                'order_by': 'id',
                'limit':    1}
         cursor.execute(query(**qry), (kwargs['facebook_id'],))
-        res = cursor.fetchone()['id']
+        res = cursor.fetchone().id
         if not res:
             raise cherrypy.HTTPError(403)
         kwargs.update(user_id=res)

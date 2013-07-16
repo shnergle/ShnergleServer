@@ -449,7 +449,7 @@ class Venue:
                'where':    where,
                'order_by': 'name ASC'}
         if term:
-            cursor.execute(util.query(**qry), (user_id, "%" + term + "%",))
+            cursor.execute(util.query(**qry), ("%" + term + "%",))
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
             values = tuple()

@@ -563,14 +563,22 @@ class VenueManager:
     @util.auth
     @util.jsonp
     def set(self, cursor=None, user_id=None, venue_id=None, **kwargs):
-        qry = {'insert_into': 'venue_managers',
-               'columns':     ('user_id', 'venue_id', 'time')}
-        cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
-        qry = {'update':     'venues',
-               'set_values': ('official'),
-               'where':      'id = ?'}
-        values.append(venue_id)
-        cursor.execute(util.query(**qry), (1, venue_id))
+        qry = {'select':   'id',
+               'table':    'venue_managers',
+               'where':    ('user_id = ?', 'venue_id = ?'),
+               'order_by': 'id',
+               'limit':     1}
+        cursor.execute(util.query(**qry), (user_id, venue_id))
+        res = cursor.fetchone()
+        if not res:
+            qry = {'insert_into': 'venue_managers',
+                   'columns':     ('user_id', 'venue_id', 'time')}
+                   cursor.execute(util.query(**qry), (user_id, venue_id,
+                   util.now()))
+            qry = {'update':     'venues',
+                   'set_values': ('official'),
+                   'where':      'id = ?'}
+            cursor.execute(util.query(**qry), (1, venue_id))
         return True
 
 

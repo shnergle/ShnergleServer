@@ -415,7 +415,8 @@ class Venue:
             my_lat=None, my_lon=None, distance=None, own=None, **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_followers',
-                  'where':    ('user_id = ?', 'venue_id = venues.id')}
+                  'where':    ('user_id = ' + str(user_id),
+                               'venue_id = venues.id')}
         managerqry = {'select':   'COUNT(id)',
                       'table':    'venue_managers',
                       'where':    ('user_id = ' + str(user_id),

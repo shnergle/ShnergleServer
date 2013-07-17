@@ -725,7 +725,7 @@ class ShnergleServer:
     venues = Venue()
     venue_followers = VenueFollower()
     venue_managers = VenueManager()
-    venue_rsvps = VenueRsvps()
+    venue_rsvps = VenueRsvp()
     venue_shares = VenueShare()
     venue_staff = VenueStaff()
     venue_views = VenueView()

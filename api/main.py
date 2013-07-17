@@ -528,6 +528,43 @@ class Venue:
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
         return True
+        
+
+class VenueComment:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, venue_id=None, **kwargs):
+        nameqry = {'select': ('CONCAT(forename, \' \', surname)',),
+                   'table':  'users',
+                   'where':  ('users.id = venue_comments.user_id',)}
+        fbidqry = {'select': ('facebook_id',),
+                   'table':  'users',
+                   'where':  ('users.id = venue_comments.user_id',)}
+        qry = {'select':   ('id', 'user_id', 'venue_id', 'time', 'comment',
+                            '(' + util.query(**nameqry) + ') AS name',
+                            '(' + util.query(**fbidqry) + ') AS facebook_id')),
+               'table':    'venue_comments',
+               'where':    ('venue_id = ?',),
+               'order_by': 'time DESC'}
+        cursor.execute(util.query(**qry), (venue_id,))
+        return [util.row_to_dict(cursor, row) for row in cursor]
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, venue_id=None, comment=None,
+            **kwargs):
+        qry = {'insert_into': 'venue_comments',
+               'columns':     ('user_id', 'venue_id', 'time', 'comment')}
+        cursor.execute(util.query(**qry), (user_id, venue_id, util.now(),
+                                           comment))
+        return True
  
 
 class VenueFollower:
@@ -646,6 +683,7 @@ class VenueRsvp:
             qry = {'insert_into': 'venue_rsvps',
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
+        return True
 
 
 class VenueShare:
@@ -723,6 +761,7 @@ class ShnergleServer:
     rankings = Ranking()
     users = User()
     venues = Venue()
+    venue_comments = VenueComment()
     venue_followers = VenueFollower()
     venue_managers = VenueManager()
     venue_rsvps = VenueRsvp()

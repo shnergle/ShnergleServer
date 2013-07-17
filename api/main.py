@@ -50,7 +50,7 @@ class Image:
         if not entity_id or entity != 'post':
             raise cherrypy.HTTPError(403)
         return azureutil.store(image.file, entity, entity_id)
-     
+
 
 class Post:
     
@@ -117,7 +117,7 @@ class PostLike:
                    'columns':     ('user_id', 'post_id')}
             cursor.execute(util.query(**qry), (user_id, post_id))
         return True
-        
+
 
 class PostReport:
     
@@ -139,7 +139,7 @@ class PostReport:
                    'columns':     ('user_id', 'post_id')}
             cursor.execute(util.query(**qry), (user_id, post_id))
         return True
-           
+
 
 class PostShare:
     
@@ -155,7 +155,7 @@ class PostShare:
         cursor.execute(util.query(**qry), (user_id, post_id, media_id))
         return True
         
-        
+
 class PostView:
     
     @util.expose
@@ -169,7 +169,7 @@ class PostView:
         cursor.execute(util.query(**qry), (user_id, post_id))
         return True
         
-        
+
 class Ranking:
     
     @util.expose
@@ -216,7 +216,7 @@ class Ranking:
                 'following': following,
                 'redemptions': redemptions,
                 'share': share_posts + share_venue}
-
+    
     def thresholds(self, cursor):
         users = {'select': 'COUNT(id) AS count', 'table': 'users'}
         cursor.execute(util.query(**users))
@@ -245,7 +245,7 @@ class User:
     @util.jsonp
     def get(self, cursor=None, user_id=None, getall=None, **kwargs):
         return self.retrieve(cursor=cursor, user_id=user_id, getall=getall)
-            
+    
     def retrieve(self, cursor=None, user_id=None, getall=None):
         qry = {'select':    ['id',
                              'facebook',
@@ -389,7 +389,7 @@ class UserSearch:
 
 
 class Category:
-
+    
     @util.expose
     @util.protect
     @util.db
@@ -402,7 +402,7 @@ class Category:
             'order_by': 'type ASC'}
         cursor.execute(util.query(**qry))
         return [util.row_to_dict(cursor, row) for row in cursor]
-    
+
 
 class Venue:
     
@@ -528,10 +528,10 @@ class Venue:
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
         return True
-    
  
-class VenueFollower:
 
+class VenueFollower:
+    
     @util.expose
     @util.protect
     @util.db
@@ -554,7 +554,7 @@ class VenueFollower:
             qry = {'delete': 'venue_followers',
                    'where': ('user_id = ?', 'venue_id = ?')}
             cursor.execute(util.query(**qry), (user_id, venue_id))
-        return True      
+        return True
 
 
 class VenueManager:
@@ -581,6 +581,71 @@ class VenueManager:
                    'where':      'id = ?'}
             cursor.execute(util.query(**qry), (1, venue_id))
         return True
+
+
+class VenueRsvp:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, venue_id=None, from_time=None, until_time=None,
+            **kwargs):
+        qry = {'select':   'COUNT(id) AS count',
+               'table':    'venue_rsvps',
+               'where':    ('venue_id = ?', 'maybe = 1', 'going = 0',
+                            'time >= ?', 'time < ?')}
+        cursor.execute(util.query(**qry), (venue_id, from_time, until_time))
+        maybe = cursor.fetchone().count
+        qry = {'select':   'COUNT(id) AS count',
+               'table':    'venue_rsvps',
+               'where':    ('venue_id = ?', 'going = 1',
+                            'time >= ?', 'time < ?')}
+        cursor.execute(util.query(**qry), (venue_id, from_time, until_time))
+        going = cursor.fetchone().count
+        return {'maybe': maybe, 'going': going}
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, venue_id=None, maybe=None,
+            going=None, **kwargs):
+        qry = {'select':   'id',
+               'table':    'venue_rsvps',
+               'where':    ('user_id = ?', 'venue_id = ?'),
+               'order_by': 'id',
+               'limit':     1}
+        cursor.execute(util.query(**qry), (user_id, venue_id))
+        res = cursor.fetchone()
+        if res:
+            values = []
+            columns = []
+            if maybe:
+                values.append(maybe)
+                columns.append('maybe')
+            if going:
+                values.append(going)
+                columns.append('going')
+            values.append(res.id)
+            qry = {'update':     'venues',
+                   'set_values': columns,
+                   'where':      'id = ?'}
+            cursor.execute(util.query(**qry), values)
+        else:
+            values = [user_id, venue_id, util.now()]
+            columns = ['user_id', 'venue_id', 'time']
+            if maybe:
+                values.append(maybe)
+                columns.append('maybe')
+            if going:
+                values.append(going)
+                columns.append('going')
+            qry = {'insert_into': 'venue_rsvps',
+                   'columns':     columns}
+            cursor.execute(util.query(**qry), values)
 
 
 class VenueShare:
@@ -633,7 +698,7 @@ class VenueStaff:
         managers = [util.row_to_dict(cursor, row) for row in cursor]
         return {'staff': staff, 'managers': managers}
         
-        
+
 class VenueView:
     
     @util.expose
@@ -646,7 +711,7 @@ class VenueView:
                'columns':     ('user_id', 'venue_id', 'time')}
         cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
         return True
-        
+
 
 class ShnergleServer:
     images = Image()
@@ -660,12 +725,13 @@ class ShnergleServer:
     venues = Venue()
     venue_followers = VenueFollower()
     venue_managers = VenueManager()
+    venue_rsvps = VenueRsvps()
     venue_shares = VenueShare()
     venue_staff = VenueStaff()
     venue_views = VenueView()
     user_searches = UserSearch()
     categories = Category()
-
+    
     def __init__(self):
         self.v1 = self
     

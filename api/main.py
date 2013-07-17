@@ -546,7 +546,7 @@ class VenueComment:
                    'where':  ('users.id = venue_comments.user_id',)}
         qry = {'select':   ('id', 'user_id', 'venue_id', 'time', 'comment',
                             '(' + util.query(**nameqry) + ') AS name',
-                            '(' + util.query(**fbidqry) + ') AS facebook_id')),
+                            '(' + util.query(**fbidqry) + ') AS facebook_id'),
                'table':    'venue_comments',
                'where':    ('venue_id = ?',),
                'order_by': 'time DESC'}

@@ -388,22 +388,6 @@ class UserSearch:
         return True
 
 
-class Category:
-    
-    @util.expose
-    @util.protect
-    @util.db
-    @util.auth
-    @util.jsonp
-    def get(self, cursor=None, **kwargs):
-        qry = {'select':   ('id', 'type'),
-            'table':    'venue_categories',
-            'where':    '',
-            'order_by': 'type ASC'}
-        cursor.execute(util.query(**qry))
-        return [util.row_to_dict(cursor, row) for row in cursor]
-
-
 class Venue:
     
     @util.expose
@@ -532,6 +516,22 @@ class Venue:
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
         return True
+
+
+class VenueCategory:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, **kwargs):
+        qry = {'select':   ('id', 'type'),
+            'table':    'venue_categories',
+            'where':    '',
+            'order_by': 'type ASC'}
+        cursor.execute(util.query(**qry))
+        return [util.row_to_dict(cursor, row) for row in cursor]
         
 
 class VenueComment:
@@ -767,6 +767,7 @@ class ShnergleServer:
     rankings = Ranking()
     users = User()
     venues = Venue()
+    venue_categories = VenueCategory()
     venue_comments = VenueComment()
     venue_followers = VenueFollower()
     venue_managers = VenueManager()
@@ -775,7 +776,6 @@ class ShnergleServer:
     venue_staff = VenueStaff()
     venue_views = VenueView()
     user_searches = UserSearch()
-    categories = Category()
     
     def __init__(self):
         self.v1 = self

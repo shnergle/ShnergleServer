@@ -663,10 +663,10 @@ class VenueRsvp:
             values = []
             columns = []
             if maybe:
-                values.append(maybe)
+                values.append(util.to_bool(maybe))
                 columns.append('maybe')
             if going:
-                values.append(going)
+                values.append(util.to_bool(going))
                 columns.append('going')
             values.append(res.id)
             qry = {'update':     'venues',
@@ -677,10 +677,10 @@ class VenueRsvp:
             values = [user_id, venue_id, util.now()]
             columns = ['user_id', 'venue_id', 'time']
             if maybe:
-                values.append(maybe)
+                values.append(util.to_bool(maybe))
                 columns.append('maybe')
             if going:
-                values.append(going)
+                values.append(util.to_bool(going))
                 columns.append('going')
             qry = {'insert_into': 'venue_rsvps',
                    'columns':     columns}

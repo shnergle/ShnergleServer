@@ -649,13 +649,15 @@ class VenueRsvp:
     @util.auth
     @util.jsonp
     def set(self, cursor=None, user_id=None, venue_id=None, maybe=None,
-            going=None, **kwargs):
+            going=None, from_time=None, until_time=None, **kwargs):
         qry = {'select':   'id',
                'table':    'venue_rsvps',
-               'where':    ('user_id = ?', 'venue_id = ?'),
+               'where':    ('user_id = ?', 'venue_id = ?',
+                            'time >= ?', 'time < ?'),
                'order_by': 'id',
                'limit':     1}
-        cursor.execute(util.query(**qry), (user_id, venue_id))
+        cursor.execute(util.query(**qry), (user_id, venue_id, from_time,
+                       until_time))
         res = cursor.fetchone()
         if res:
             values = []

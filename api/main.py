@@ -457,7 +457,9 @@ class Venue:
             values = tuple()
             if my_lat and my_lon and distance:
                 values += (float(my_lat), float(my_lat), float(my_lon),
-                           float(my_lon), float(distance), float(distance))
+                           float(my_lon), float(distance), float(distance),
+                           float(my_lat), float(my_lat), float(my_lon),
+                           float(my_lon))
             cursor.execute(util.query(**qry), values)
             rows = [util.row_to_dict(cursor, row) for row in cursor]
             for row in rows:

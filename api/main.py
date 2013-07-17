@@ -669,7 +669,7 @@ class VenueRsvp:
                 values.append(util.to_bool(going))
                 columns.append('going')
             values.append(res.id)
-            qry = {'update':     'venues',
+            qry = {'update':     'venue_rsvps',
                    'set_values': columns,
                    'where':      'id = ?'}
             cursor.execute(util.query(**qry), values)

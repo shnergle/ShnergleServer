@@ -448,6 +448,8 @@ class Venue:
                'table':    'venues',
                'where':    where,
                'order_by': 'name ASC'}
+        if my_lat and my_lon and distance:
+            qry['order_by'] = '((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) ASC'
         if term:
             cursor.execute(util.query(**qry), ("%" + term + "%",))
             return [util.row_to_dict(cursor, row) for row in cursor]

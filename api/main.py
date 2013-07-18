@@ -452,7 +452,8 @@ class Venue:
             where = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) <= ? * ?',)
             if util.to_bool(quiet) or util.to_bool(trending):
                 fields[0] = 'TOP(12) id'
-                where += ('time >= ?', 'time < ?',)
+                maybe['where'] += ('time >= ?', 'time < ?',)
+                going['where'] += ('time >= ?', 'time < ?',)
         else:
             where = ''
         qry = {'select':   fields,

@@ -464,6 +464,7 @@ class Venue:
             cursor.execute(util.query(**qry), ("%" + term + "%",))
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
+            raise Exception(util.query(**qry))
             values = tuple()
             if my_lat and my_lon and distance:
                 values += (float(my_lat), float(my_lat), float(my_lon),

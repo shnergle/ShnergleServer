@@ -439,10 +439,12 @@ class Venue:
         elif my_lat and my_lon and distance:
             maybe = {'select':   'COUNT(id)',
                      'table':    'venue_rsvps',
-                     'where':    ('maybe = 1', 'venue_id = venues.id', 'going = 0')}
+                     'where':    ('maybe = 1', 'venue_id = venues.id',
+                                  'going = 0', 'time >= ?', 'time < ?')}
             going = {'select':   'COUNT(id)',
                      'table':    'venue_rsvps',
-                     'where':    ('going = 1', 'venue_id = venues.id')}
+                     'where':    ('going = 1', 'venue_id = venues.id',
+                                  'time >= ?', 'time < ?')}
             if util.to_bool(quiet):
                 order_by = ('(' + util.query(**maybe) +') + (' + util.query(**going) +') * 2 ASC',)
             elif util.to_bool(trending):
@@ -452,8 +454,6 @@ class Venue:
             where = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) <= ? * ?',)
             if util.to_bool(quiet) or util.to_bool(trending):
                 fields[0] = 'TOP(12) id'
-                maybe['where'] += ('time >= ?', 'time < ?',)
-                going['where'] += ('time >= ?', 'time < ?',)
         else:
             where = ''
         qry = {'select':   fields,

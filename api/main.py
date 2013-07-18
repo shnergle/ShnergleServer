@@ -455,7 +455,7 @@ class Venue:
             if my_lat and my_lon and distance:
                 values += (float(my_lat), float(my_lat), float(my_lon),
                            float(my_lon), float(distance), float(distance))
-            if not util.to_bool(quiet) and not util.to_bool(trending):
+            if util.to_bool(quiet) is None and util.to_bool(trending) is None:
                 values += (float(my_lat), float(my_lat), float(my_lon),
                            float(my_lon))
             cursor.execute(util.query(**qry), values)

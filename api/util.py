@@ -6,11 +6,11 @@ import os
 import time
 
 import cherrypy
-import pypyodbc
+import pyodbc
 
 
 def connect(thread_index):
-    cherrypy.thread_data.db = pypyodbc.connect(os.environ['DATABASE'])
+    cherrypy.thread_data.db = pyodbc.connect(os.environ['DATABASE'])
 
 
 def dont_cache():
@@ -44,7 +44,7 @@ def auth(func):
                'order_by': 'id',
                'limit':    1}
         cursor.execute(query(**qry), (kwargs['facebook_id'],))
-        res = cursor.fetchone()['id']
+        res = cursor.fetchone().id
         if not res:
             raise cherrypy.HTTPError(403)
         kwargs.update(user_id=res)

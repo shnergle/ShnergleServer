@@ -455,9 +455,9 @@ class Venue:
             if my_lat and my_lon and distance:
                 values += (float(my_lat), float(my_lat), float(my_lon),
                            float(my_lon), float(distance), float(distance))
-            if util.to_bool(quiet) is None and util.to_bool(trending) is None:
-                values += (float(my_lat), float(my_lat), float(my_lon),
-                           float(my_lon))
+                if util.to_bool(quiet) is None and util.to_bool(trending) is None:
+                    values += (float(my_lat), float(my_lat), float(my_lon),
+                               float(my_lon))
             cursor.execute(util.query(**qry), values)
             rows = [util.row_to_dict(cursor, row) for row in cursor]
             for row in rows:

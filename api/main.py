@@ -434,9 +434,10 @@ class Venue:
                      'table':    'venue_rsvps',
                      'where':    ('going = 1', 'venue_id = venues.id')}
             if util.to_bool(quiet):
-                
+                fields[0] = 'TOP(12) id'
                 order_by = ('(' + util.query(**maybe) +') + (' + util.query(**going) +') * 2 ASC',)
             elif util.to_bool(trending):
+                fields[0] = 'TOP(12) id'
                 order_by = ('(' + util.query(**maybe) +') + (' + util.query(**going) +') * 2 DESC',)
             else:
                 order_by = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) ASC',)

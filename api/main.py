@@ -59,21 +59,30 @@ class Post:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, venue_id=None, **kwargs):
-        subqry = {'select':   'COUNT(id)',
-                  'table':    'post_reports',
-                  'where':    ('post_id = posts.id')}
-        qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'caption',
-                            'time', 'hidden', 'users.forename',
-                            'users.surname'),
-               'left_join': 'users',
-               'on':        'posts.user_id = users.id',
-               'table':     'posts',
-               'where':     ('posts.venue_id = ?', 'hidden = 0',
-                             '(' + util.query(**subqry) + ') < 3',
-                             'time > ' + str(util.now() - 691200)),
-               'order_by':  'time DESC'}
-        cursor.execute(util.query(**qry), (venue_id,))
+    def get(self, cursor=None, user_id=None, venue_id=None, **kwargs):
+        if (venue_id):
+            subqry = {'select':   'COUNT(id)',
+                      'table':    'post_reports',
+                      'where':    ('post_id = posts.id')}
+            qry = {'select':   ('posts.id', 'user_id', 'posts.venue_id', 'caption',
+                                'time', 'hidden', 'users.forename',
+                                'users.surname'),
+                   'left_join': 'users',
+                   'on':        'posts.user_id = users.id',
+                   'table':     'posts',
+                   'where':     ('posts.venue_id = ?', 'hidden = 0',
+                                 '(' + util.query(**subqry) + ') < 3',
+                                 'time > ' + str(util.now() - 691200)),
+                   'order_by':  'time DESC'}
+            cursor.execute(util.query(**qry), (venue_id,))
+        else:
+            qry = {'select':   ('posts.id', 'venues.name', 'posts.time'),
+                   'left_join': 'venues',
+                   'on':        'posts.venue_id = venues.id',
+                   'table':     'posts',
+                   'where':     ('posts.user_id = ?'),
+                   'order_by':  'time DESC'}
+            cursor.execute(util.query(**qry), (user_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]
     
     @util.expose

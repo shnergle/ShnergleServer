@@ -70,7 +70,8 @@ class Post:
                'on':        'posts.user_id = users.id',
                'table':     'posts',
                'where':     ('posts.venue_id = ?', 'hidden = 0',
-                             '(' + util.query(**subqry) + ') < 3'),
+                             '(' + util.query(**subqry) + ') < 3',
+                             'time < ' + (util.now() - 691200)),
                'order_by':  'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]
@@ -527,9 +528,9 @@ class VenueCategory:
     @util.jsonp
     def get(self, cursor=None, **kwargs):
         qry = {'select':   ('id', 'type'),
-            'table':    'venue_categories',
-            'where':    '',
-            'order_by': 'type ASC'}
+               'table':    'venue_categories',
+               'where':    '',
+               'order_by': 'type ASC'}
         cursor.execute(util.query(**qry))
         return [util.row_to_dict(cursor, row) for row in cursor]
         
@@ -741,6 +742,30 @@ class VenueStaff:
         cursor.execute(util.query(**qry), (venue_id,))
         managers = [util.row_to_dict(cursor, row) for row in cursor]
         return {'staff': staff, 'managers': managers}
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, staff_user_id=None, venue_id=None,
+            manager=None, **kwargs):
+        qry = {'select':   'id',
+               'table':    'venue_staff',
+               'where':    ('user_id = ?', 'venue_id = ?'),
+               'order_by': 'id',
+               'limit':     1}
+        cursor.execute(util.query(**qry), (user_id, venue_id))
+        res = cursor.fetchone()
+        if not res:
+            qry = {'insert_into': 'venue_managers',
+                   'columns':     ('user_id', 'venue_id', 'time')}
+            cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
+            qry = {'update':     'venues',
+                   'set_values': ('official'),
+                   'where':      'id = ?'}
+            cursor.execute(util.query(**qry), (1, venue_id))
+        return True
         
 
 class VenueView:

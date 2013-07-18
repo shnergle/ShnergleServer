@@ -412,7 +412,7 @@ class Venue:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, user_id=None, term=None, following_only=None,
-            my_lat=None, my_lon=None, distance=None, **kwargs):
+            my_lat=None, my_lon=None, distance=None, quiet=None, trending=None, **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_followers',
                   'where':    ('user_id = ?', 'venue_id = venues.id')}
@@ -432,6 +432,7 @@ class Venue:
                   'authenticated', 'creator',
                   '(' + util.query(**managerqry) + ') AS manager',
                   '(' + util.query(**staffqry) + ') AS staff')
+        order_by = 'name ASC'
         if not util.to_bool(following_only):
             fields += ("(" + util.query(**subqry) + ") AS following",)
         if term:
@@ -439,13 +440,24 @@ class Venue:
         elif util.to_bool(following_only):
             where = ("(" + util.query(**subqry) + ") > 0")
         elif my_lat and my_lon and distance:
+            maybe = {'select':   'COUNT(id)',
+                     'table':    'venue_rsvps',
+                     'where':    ('maybe = 1', 'venue_id = venues.id', 'going = 0')}
+            going = {'select':   'COUNT(id)',
+                     'table':    'venue_rsvps',
+                     'where':    ('going = 1', 'venue_id = venues.id')}
+            if util.to_bool(quiet):
+                
+                order_by = ('(' + util.query(**maybe) +') + (' + util.query(**going) +') * 2 ASC',)
+            elif util.to_bool(trending):
+                order_by = ('(' + util.query(**maybe) +') + (' + util.query(**going) +') * 2 DESC',)
             where = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) <= ? * ?')
         else:
             where = ''
         qry = {'select':   fields,
                'table':    'venues',
                'where':    where,
-               'order_by': 'name ASC'}
+               'order_by': order_by}
         if term:
             cursor.execute(util.query(**qry), (user_id, "%" + term + "%",))
             return [util.row_to_dict(cursor, row) for row in cursor]

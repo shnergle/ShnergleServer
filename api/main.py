@@ -397,7 +397,8 @@ class Venue:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, user_id=None, term=None, following_only=None,
-            my_lat=None, my_lon=None, distance=None, own=None, quiet=None, trending=None, **kwargs):
+            my_lat=None, my_lon=None, distance=None, own=None, quiet=None,
+            trending=None, from_time=None, until_time=None, **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_followers',
                   'where':    ('user_id = ' + str(user_id),
@@ -434,14 +435,15 @@ class Venue:
                      'table':    'venue_rsvps',
                      'where':    ('going = 1', 'venue_id = venues.id')}
             if util.to_bool(quiet):
-                fields[0] = 'TOP(12) id'
                 order_by = ('(' + util.query(**maybe) +') + (' + util.query(**going) +') * 2 ASC',)
             elif util.to_bool(trending):
-                fields[0] = 'TOP(12) id'
                 order_by = ('(' + util.query(**maybe) +') + (' + util.query(**going) +') * 2 DESC',)
             else:
                 order_by = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) ASC',)
             where = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) <= ? * ?')
+            if util.to_bool(quiet) or util.to_bool(trending):
+                fields[0] = 'TOP(12) id'
+                where += ('time >= ?', 'time < ?',)
         else:
             where = ''
         qry = {'select':   fields,
@@ -459,6 +461,8 @@ class Venue:
                 if util.to_bool(quiet) is None and util.to_bool(trending) is None:
                     values += (float(my_lat), float(my_lat), float(my_lon),
                                float(my_lon))
+                else:
+                    values += (from_time, until_time)
             cursor.execute(util.query(**qry), values)
             rows = [util.row_to_dict(cursor, row) for row in cursor]
             for row in rows:

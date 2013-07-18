@@ -534,7 +534,8 @@ class Venue:
             qry = {'insert_into': 'venues',
                    'columns':     columns}
             cursor.execute(util.query(**qry), values)
-        return True
+        cursor.execute(util.query(last_id=True))
+        return int(cursor.fetchone().identity)
 
 
 class VenueCategory:

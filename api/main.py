@@ -449,7 +449,7 @@ class Venue:
                 order_by = ('(' + util.query(**maybe) +') + (' + util.query(**going) +') * 2 DESC',)
             else:
                 order_by = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) ASC',)
-            where = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) <= ? * ?')
+            where = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) <= ? * ?',)
             if util.to_bool(quiet) or util.to_bool(trending):
                 fields[0] = 'TOP(12) id'
                 where += ('time >= ?', 'time < ?',)

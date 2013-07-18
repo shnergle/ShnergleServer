@@ -71,7 +71,7 @@ class Post:
                'table':     'posts',
                'where':     ('posts.venue_id = ?', 'hidden = 0',
                              '(' + util.query(**subqry) + ') < 3',
-                             'time < ' + str(util.now() - 691200)),
+                             'time > ' + str(util.now() - 691200)),
                'order_by':  'time DESC'}
         cursor.execute(util.query(**qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]

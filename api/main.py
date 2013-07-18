@@ -420,7 +420,7 @@ class Venue:
                      'table':    'venue_staff',
                      'where':    ('user_id = ' + str(user_id),
                                   'venue_id = venues.id')}
-        fields = ('id', 'name', 'address', 'country', 'phone', 'email',
+        fields = ['id', 'name', 'address', 'country', 'phone', 'email',
                   'email_verified', 'category_id', 'headline', 'tonight',
                   'website', 'facebook', 'twitter', 'facebook_id',
                   'twitter_id', 'twitter_token', 'twitter_secret', 'lat',
@@ -428,7 +428,7 @@ class Venue:
                   'authenticated', 'creator',
                   '(' + util.query(**managerqry) + ') AS manager',
                   '(' + util.query(**staffqry) + ') AS staff',
-                  "(" + util.query(**subqry) + ") AS following")
+                  "(" + util.query(**subqry) + ") AS following"]
         order_by = 'name ASC'
         if term:
             where = ("name LIKE ?",)

@@ -745,6 +745,62 @@ class VenueStaff:
     @util.db
     @util.auth
     @util.jsonp
+    def set(self, cursor=None, user_id=None, staff_user_id=None, venue_id=None,
+            manager=None, promo_perm=None, delete=None, **kwargs):
+        if util.to_bool(delete):
+            qry = {'delete':   'venue_staff',
+                   'where':    ('user_id = ?', 'venue_id = ?')}
+            cursor.execute(util.query(**qry), (staff_user_id, venue_id))
+            qry = {'delete':   'venue_managers',
+                   'where':    ('user_id = ?', 'venue_id = ?')}
+            cursor.execute(util.query(**qry), (staff_user_id, venue_id))
+        elif util.to_bool(manager):
+            qry = {'select':   'id',
+                   'table':    'venue_managers',
+                   'where':    ('user_id = ?', 'venue_id = ?'),
+                   'order_by': 'id',
+                   'limit':     1}
+            cursor.execute(util.query(**qry), (staff_user_id, venue_id))
+            res = cursor.fetchone()
+            if not res:
+                qry = {'delete':   'venue_staff',
+                       'where':    ('user_id = ?', 'venue_id = ?')}
+                cursor.execute(util.query(**qry), (staff_user_id, venue_id))
+                qry = {'insert_into': 'venue_managers',
+                       'columns':     ('user_id', 'venue_id', 'time')}
+                cursor.execute(util.query(**qry), (staff_user_id, venue_id,
+                                                   util.now()))
+        else:
+            qry = {'select':   'id',
+                   'table':    'venue_staff',
+                   'where':    ('user_id = ?', 'venue_id = ?'),
+                   'order_by': 'id',
+                   'limit':     1}
+            cursor.execute(util.query(**qry), (staff_user_id, venue_id))
+            res = cursor.fetchone()
+            if not res:
+                qry = {'delete':   'venue_managers',
+                       'where':    ('user_id = ?', 'venue_id = ?')}
+                cursor.execute(util.query(**qry), (staff_user_id, venue_id))
+                qry = {'insert_into': 'venue_staff',
+                       'columns':     ('user_id', 'venue_id', 'time',
+                                       'promo_perm')}
+                cursor.execute(util.query(**qry), (staff_user_id, venue_id,
+                                                   util.now(),
+                                                   util.to_bool(promo_perm)))
+            else:
+                qry = {'update':     'venue_staff',
+                       'set_values': ('promo_perm'),
+                       'where':      ('staff_id = ?', 'venue_id = ?')}
+                cursor.execute(util.query(**qry), (util.to_bool(promo_perm),
+                                                   staff_user_id, venue_id))
+        return True
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
     def get(self, cursor=None, venue_id=None, **kwargs):
         nameqry = {'select': ('CONCAT(forename, \' \', surname)',),
                    'table':  'users'}
@@ -771,30 +827,6 @@ class VenueStaff:
         cursor.execute(util.query(**qry), (venue_id,))
         managers = [util.row_to_dict(cursor, row) for row in cursor]
         return {'staff': staff, 'managers': managers}
-    
-    @util.expose
-    @util.protect
-    @util.db
-    @util.auth
-    @util.jsonp
-    def set(self, cursor=None, user_id=None, staff_user_id=None, venue_id=None,
-            manager=None, **kwargs):
-        qry = {'select':   'id',
-               'table':    'venue_staff',
-               'where':    ('user_id = ?', 'venue_id = ?'),
-               'order_by': 'id',
-               'limit':     1}
-        cursor.execute(util.query(**qry), (user_id, venue_id))
-        res = cursor.fetchone()
-        if not res:
-            qry = {'insert_into': 'venue_managers',
-                   'columns':     ('user_id', 'venue_id', 'time')}
-            cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
-            qry = {'update':     'venues',
-                   'set_values': ('official'),
-                   'where':      'id = ?'}
-            cursor.execute(util.query(**qry), (1, venue_id))
-        return True
         
 
 class VenueView:

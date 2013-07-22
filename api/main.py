@@ -253,34 +253,42 @@ class User:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, user_id=None, getall=None, **kwargs):
-        return self.retrieve(cursor=cursor, user_id=user_id, getall=getall)
+    def get(self, cursor=None, user_id=None, term=None, **kwargs):
+        return self.retrieve(cursor=cursor, user_id=user_id, term=term)
     
-    def retrieve(self, cursor=None, user_id=None, getall=None):
-        qry = {'select':    ['id',
-                             'facebook',
-                             'twitter',
-                             'forename',
-                             'surname',
-                             'age',
-                             'birth_day',
-                             'birth_month',
-                             'birth_year',
-                             'gender',
-                             'employee',
-                             'joined',
-                             'country',
-                             'language',
-                             'email',
-                             'top5',
-                             'save_locally'
-                             ],
-               'table':     'users',
-               'order_by':  'id'}
-        if util.to_bool(getall):
-            cursor.execute(util.query(**qry))
+    def retrieve(self, cursor=None, user_id=None, term=None):
+        if util.to_bool(term):
+            qry = {'select':    ['id',
+                                 'facebook_id',
+                                 'forename',
+                                 'surname'
+                                 ],
+                   'table':     'users',
+                   'where':     ("name LIKE ?",)
+                   'order_by':  'surname ASC, forename ASC'}
+            cursor.execute(util.query(**qry), ("%" + term + "%",))
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
+            qry = {'select':    ['id',
+                                 'facebook',
+                                 'twitter',
+                                 'forename',
+                                 'surname',
+                                 'age',
+                                 'birth_day',
+                                 'birth_month',
+                                 'birth_year',
+                                 'gender',
+                                 'employee',
+                                 'joined',
+                                 'country',
+                                 'language',
+                                 'email',
+                                 'top5',
+                                 'save_locally'
+                                 ],
+                   'table':     'users',
+                   'order_by':  'id'}
             qry['select'].append('twitter_id')
             qry['select'].append('twitter_token')
             qry['select'].append('twitter_secret')

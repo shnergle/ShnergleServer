@@ -264,7 +264,7 @@ class User:
                                  'surname'
                                  ],
                    'table':     'users',
-                   'where':     ("name LIKE ?",)
+                   'where':     ("name LIKE ?",),
                    'order_by':  'surname ASC, forename ASC'}
             cursor.execute(util.query(**qry), ("%" + term + "%",))
             return [util.row_to_dict(cursor, row) for row in cursor]

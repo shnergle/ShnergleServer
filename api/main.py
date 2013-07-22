@@ -91,7 +91,7 @@ class Post:
     @util.auth
     @util.jsonp
     def set(self, cursor=None, user_id=None, venue_id=None, caption=None,
-            hide=None, post_id=None, **kwargs):
+            hide=None, post_id=None, image=None, **kwargs):
         if post_id and util.to_bool(hide):
             qry = {'update':     'posts',
                    'set_values': ('hidden'),
@@ -104,7 +104,10 @@ class Post:
             cursor.execute(util.query(**qry), (user_id, venue_id, caption,
                                                util.now()))
             cursor.execute(util.query(last_id=True))
-            return int(cursor.fetchone().identity)
+            post_added = int(cursor.fetchone().identity)
+            Image().set(cursor=cursor, image=image, entity='post',
+                        entity_id=post_added)
+            return post_added
 
 
 class PostLike:

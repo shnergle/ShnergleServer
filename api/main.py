@@ -799,7 +799,7 @@ class VenueStaff:
             else:
                 qry = {'update':     'venue_staff',
                        'set_values': ('promo_perm'),
-                       'where':      ('staff_id = ?', 'venue_id = ?')}
+                       'where':      ('user_id = ?', 'venue_id = ?')}
                 cursor.execute(util.query(**qry), (1 if util.to_bool(promo_perm) else 0,
                                                    staff_user_id, venue_id))
         return True

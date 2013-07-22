@@ -106,7 +106,7 @@ class Post:
             cursor.execute(util.query(last_id=True))
             post_added = int(cursor.fetchone().identity)
             Image().set(cursor=cursor, image=image, entity='post',
-                        entity_id=post_added)
+                        entity_id=str(post_added))
             return post_added
 
 

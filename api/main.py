@@ -264,9 +264,9 @@ class User:
                                  'surname'
                                  ],
                    'table':     'users',
-                   'where':     ("name LIKE ?",),
+                   'where':     ("CONCAT(forename, \' \', surname) LIKE ?",),
                    'order_by':  'surname ASC, forename ASC'}
-            cursor.execute(util.query(**qry), ("%" + term + "%",))
+            cursor.execute(util.query(**qry), ("%" + term.replace(' ', "%") + "%",))
             return [util.row_to_dict(cursor, row) for row in cursor]
         else:
             qry = {'select':    ['id',

@@ -784,7 +784,7 @@ class VenueStaff:
                    'where':    ('user_id = ?', 'venue_id = ?'),
                    'order_by': 'id',
                    'limit':     1}
-            cursor.execute(util.query(**qry), (staff_user_id, venue_id))
+            cursor.execute(util.query(**qry), (int(staff_user_id), int(venue_id)))
             res = cursor.fetchone()
             if not res:
                 qry = {'delete':   'venue_managers',

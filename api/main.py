@@ -395,9 +395,9 @@ class UserSearch:
         cursor.execute(util.query(**qry), (user_id, term))
         res = cursor.fetchone()
         if res:
-            qry = {'update':  'user_searches',
-                   'columns': ('time'),
-                   'where':   'user_id = ?'}
+            qry = {'update':     'user_searches',
+                   'set_values': ('time'),
+                   'where':      'user_id = ?'}
             cursor.execute(util.query(**qry), (util.now(), user_id))
         else:
             qry = {'insert_into': 'user_searches',

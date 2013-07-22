@@ -178,7 +178,26 @@ class PostView:
                'columns':     ('user_id', 'post_id')}
         cursor.execute(util.query(**qry), (user_id, post_id))
         return True
-        
+     
+     
+class Promotion:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, venue_id=None):
+        promo_qry = {'select':   ('id', 'title', 'description',
+                                  'passcode', 'start', '[end]', 'maximum',
+                                  'creator'),
+                     'table':    'promotions',
+                     'where':    'venue_id = ?',
+                     'order_by': 'id DESC',
+                     'limit':    1}
+        cursor.execute(util.query(**promo_qry), (venue_id,))
+        return cursor.fetchone()
+
 
 class Ranking:
     
@@ -420,6 +439,9 @@ class Venue:
                   'table':    'venue_followers',
                   'where':    ('user_id = ' + str(user_id),
                                'venue_id = venues.id')}
+        promoqry = {'select':   'COUNT(id)',
+                    'table':    'promotions',
+                    'where':    ('venue_id = venues.id')}
         managerqry = {'select':   'COUNT(id)',
                       'table':    'venue_managers',
                       'where':    ('user_id = ' + str(user_id),
@@ -436,7 +458,8 @@ class Venue:
                   'authenticated', 'creator',
                   '(' + util.query(**managerqry) + ') AS manager',
                   '(' + util.query(**staffqry) + ') AS staff',
-                  "(" + util.query(**subqry) + ") AS following"]
+                  "(" + util.query(**subqry) + ") AS following",
+                  '(' + util.query(**promoqry) + ') AS promotions']
         order_by = 'name ASC'
         if term:
             where = ("name LIKE ?",)
@@ -482,24 +505,7 @@ class Venue:
                 else:
                     values += (from_time, until_time, from_time, until_time)
             cursor.execute(util.query(**qry), values)
-            rows = [util.row_to_dict(cursor, row) for row in cursor]
-            for row in rows:
-                row = self.promo(cursor, row)
-            return rows
-    
-    def promo(self, cursor, row):
-        promo_qry = {'select':   ('id', 'title', 'description',
-                                  'passcode', 'start', '[end]', 'maximum',
-                                  'creator'),
-                     'table':    'promotions',
-                     'where':    'venue_id = ?',
-                     'order_by': 'id DESC',
-                     'limit':    1}
-        #cursor.execute(util.query(**promo_qry), (row['id'],))
-        result = cursor.fetchone()
-        if result:
-            row['promotion'] = result
-        return row
+            return [util.row_to_dict(cursor, row) for row in cursor]
     
     @util.expose
     @util.protect
@@ -858,6 +864,7 @@ class ShnergleServer:
     post_reports = PostReport()
     post_shares = PostShare()
     post_views = PostView()
+    promotions = Promotion()
     rankings = Ranking()
     users = User()
     venues = Venue()

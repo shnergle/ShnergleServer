@@ -177,7 +177,7 @@ class Promotion:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, venue_id=None):
+    def get(self, cursor=None, venue_id=None, **kwargs):
         promo_qry = {'select':   ('id', 'title', 'description',
                                   'passcode', 'start', '[end]', 'maximum',
                                   'creator'),

@@ -581,7 +581,7 @@ class VenueComment:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, **kwargs):
-        nameqry = {'select': ('CONCAT(forename, \' \', surname)',),
+        nameqry = {'select': ('CONCAT(forename, \' \', SUBSTRING(surname, 0, 1))',),
                    'table':  'users',
                    'where':  ('users.id = venue_comments.user_id',)}
         fbidqry = {'select': ('facebook_id',),

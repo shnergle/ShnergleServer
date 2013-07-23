@@ -592,7 +592,8 @@ class VenueComment:
                             '(' + util.query(**fbidqry) + ') AS facebook_id'),
                'table':    'venue_comments',
                'where':    ('venue_id = ?',),
-               'order_by': 'time DESC'}
+               'order_by': 'time DESC',
+               'limit':    10}
         cursor.execute(util.query(**qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]
     

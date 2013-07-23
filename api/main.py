@@ -186,7 +186,7 @@ class Promotion:
                      'order_by': 'id DESC',
                      'limit':    1}
         cursor.execute(util.query(**promo_qry), (venue_id,))
-        return cursor.fetchone()
+        return util.row_to_dict(cursor.fetchone())
 
 
 class Ranking:

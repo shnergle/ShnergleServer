@@ -440,6 +440,10 @@ class Venue:
                      'table':    'venue_staff',
                      'where':    ('user_id = ' + str(user_id),
                                   'venue_id = venues.id')}
+        staffppqry =  {'select':   'SUM(promo_perm)',
+                       'table':    'venue_staff',
+                       'where':    ('user_id = ' + str(user_id),
+                                    'venue_id = venues.id')}
         fields = ['id', 'name', 'address', 'country', 'phone', 'email',
                   'email_verified', 'category_id', 'headline', 'tonight',
                   'website', 'facebook', 'twitter', 'facebook_id',
@@ -448,6 +452,7 @@ class Venue:
                   'authenticated', 'creator',
                   '(' + util.query(**managerqry) + ') AS manager',
                   '(' + util.query(**staffqry) + ') AS staff',
+                  '(' + util.query(**staffppqry) + ') AS promo_perm',
                   "(" + util.query(**subqry) + ") AS following",
                   '(' + util.query(**promoqry) + ') AS promotions']
         order_by = 'name ASC'

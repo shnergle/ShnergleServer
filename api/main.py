@@ -39,17 +39,6 @@ class Image:
             cherrypy.response.headers['Content-Type'] = 'image/jpeg'
             return image
         raise cherrypy.HTTPError(404)
-    
-    @util.expose
-    @util.protect
-    @util.db
-    @util.auth
-    @util.jsonp
-    def set(self, cursor=None, image=None, entity=None, entity_id=None,
-            **kwargs):
-        if not entity_id or entity != 'post':
-            raise cherrypy.HTTPError(403)
-        return azureutil.store(image.file, entity, entity_id)
 
 
 class Post:
@@ -105,9 +94,7 @@ class Post:
                                                util.now()))
             cursor.execute(util.query(last_id=True))
             post_added = int(cursor.fetchone().identity)
-            Image().set(cursor=cursor, image=image, entity='post',
-                        entity_id=str(post_added))
-            return post_added
+            return azureutil.store(image.file, 'post', post_added)
 
 
 class PostLike:

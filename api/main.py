@@ -94,7 +94,7 @@ class Post:
                                                util.now()))
             cursor.execute(util.query(last_id=True))
             post_added = int(cursor.fetchone().identity)
-            return azureutil.store(image.file, 'post', post_added)
+            return azureutil.store(image.file, 'post', str(post_added))
 
 
 class PostLike:

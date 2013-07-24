@@ -203,6 +203,21 @@ class Ranking:
                  'where': 'user_id = ?'}
         cursor.execute(util.query(**posts), (user_id,))
         posts = cursor.fetchone().count
+        rsvps = {'select': 'COUNT(id) AS count',
+                 'table': 'venue_rsvps',
+                 'where': 'user_id = ?'}
+        cursor.execute(util.query(**rsvps), (user_id,))
+        rsvps = cursor.fetchone().count
+        comments = {'select': 'COUNT(id) AS count',
+                    'table': 'venue_comments',
+                    'where': 'user_id = ?'}
+        cursor.execute(util.query(*comments), (user_id,))
+        comments = cursor.fetchone().count
+        likes = {'select': 'COUNT(id) AS count',
+                 'table': 'post_likes',
+                 'where': 'user_id = ?'}
+        cursor.execute(util.query(*likes), (user_id,))
+        likes = cursor.fetchone().count
         following = {'select': 'COUNT(id) AS count',
                      'table': 'venue_followers',
                      'where': 'user_id = ?'}
@@ -234,7 +249,10 @@ class Ranking:
                 'posts': posts,
                 'following': following,
                 'redemptions': redemptions,
-                'share': share_posts + share_venue}
+                'share': share_posts + share_venue},
+                'rsvps': rsvps,
+                'comments': comments,
+                'likes': likes}
     
     def thresholds(self, cursor):
         users = {'select': 'COUNT(id) AS count', 'table': 'users'}

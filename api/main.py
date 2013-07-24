@@ -178,16 +178,45 @@ class Promotion:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, venue_id=None, **kwargs):
+    def get(self, cursor=None, venue_id=None, getall=None, **kwargs):
         promo_qry = {'select':   ('id', 'title', 'description',
                                   'passcode', 'start', '[end]', 'maximum',
                                   'creator'),
                      'table':    'promotions',
                      'where':    'venue_id = ?',
-                     'order_by': 'id DESC',
-                     'limit':    1}
+                     'order_by': 'id DESC'}
         cursor.execute(util.query(**promo_qry), (venue_id,))
-        return util.row_to_dict(cursor, cursor.fetchone())
+        if not util.to_bool(getall):
+            promo_qry['limit'] = 1
+            return util.row_to_dict(cursor, cursor.fetchone())
+        return [util.row_to_dict(cursor, row) for row in cursor]
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, venue_id=None, delete=None,
+            promotion_id=None, title=None, description=None, start=None,
+            end=None, maximum=None, **kwargs):
+        if util.to_bool(delete) and promotion_id:
+            qry = {'delete': 'promotions',
+                   'where':  ('promotion_id = ?')}
+            cursor.execute(util.query(**qry), (promotion_id))
+        elif promotion_id:
+            qry = {'update':     'promotions',
+                   'set_values': ('title', 'description', 'start', '[end]',
+                                  'maximum'),
+                   'where':      'id = ?'}
+            cursor.execute(util.query(**qry), (title, description, start, end,
+                                               maximum, promotion_id))
+        else:
+            qry = {'insert_into': 'promotions',
+                   'columns':      ('title', 'description', 'start', '[end]',
+                                    'maximum', 'creator')}
+            cursor.execute(util.query(**qry), (title, description, start, end,
+                                               maximum, user_id))
+        return True
 
 
 class Ranking:

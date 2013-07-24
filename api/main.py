@@ -263,21 +263,28 @@ class Ranking:
         thresholds = []
         for percent in (0.8, 0.95, 0.99):
             number = math.floor(percent * users)
-            thresholdqry = {'select':    ('''((COUNT(venue_shares.id) + COUNT(post_shares.id)) * 5 +
-                                              COUNT(posts.id) * 4 +
-                                              COUNT(venue_rsvps.id) * 3 +
-                                              COUNT(venue_comments.id) * 2 +
-                                              COUNT(post_likes.id)) AS count''',
-                                          'posts.user_id'),
+            rsvps = {'select': 'COUNT(id)',
+                     'table': 'venue_rsvps',
+                     'where': 'user_id = post.user_id'}
+            venue_shares = {'select': 'COUNT(id)',
+                            'table': 'venue_shares',
+                            'where': 'user_id = post.user_id'}
+            post_shares = {'select': 'COUNT(id)',
+                           'table': 'post_shares',
+                           'where': 'user_id = post.user_id'}
+            comments = {'select': 'COUNT(id)',
+                        'table': 'venue_comments',
+                        'where': 'user_id = post.user_id'}
+            likes = {'select': 'COUNT(id)',
+                     'table': 'post_likes',
+                     'where': 'user_id = post.user_id'}
+            thresholdqry = {'select':    ('((' + util.query(**venue_shares) + ') * 5 + ' +
+            '(' + util.query(**post_shares) + ') * 5 + ' +
+            'COUNT(id) * 4 + ' +
+            '(' + util.query(**rsvps) + ') * 3 + ' +
+            '(' + util.query(**comments) + ') * 2 + ' +
+            '(' + util.query(**likes) + ')) AS count',),
                             'table':     'posts',
-                            'left_join': ('venue_shares', 'venue_rsvps',
-                                          'venue_comments', 'post_likes',
-                                          'post_shares'),
-                            'on':        ('posts.user_id = venue_shares.user_id',
-                                          'posts.user_id = venue_rsvps.user_id',
-                                          'posts.user_id = venue_comments.user_id',
-                                          'posts.user_id = post_likes.user_id',
-                                          'posts.user_id = post_shares.user_id'),
                             'group_by':  'posts.user_id',
                             'order_by':  'count',
                             'limit':     (number - 1, 1)}

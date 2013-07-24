@@ -265,19 +265,19 @@ class Ranking:
             number = math.floor(percent * users)
             rsvps = {'select': 'COUNT(id)',
                      'table': 'venue_rsvps',
-                     'where': 'user_id = post.user_id'}
+                     'where': 'user_id = posts.user_id'}
             venue_shares = {'select': 'COUNT(id)',
                             'table': 'venue_shares',
-                            'where': 'user_id = post.user_id'}
+                            'where': 'user_id = posts.user_id'}
             post_shares = {'select': 'COUNT(id)',
                            'table': 'post_shares',
-                           'where': 'user_id = post.user_id'}
+                           'where': 'user_id = posts.user_id'}
             comments = {'select': 'COUNT(id)',
                         'table': 'venue_comments',
-                        'where': 'user_id = post.user_id'}
+                        'where': 'user_id = posts.user_id'}
             likes = {'select': 'COUNT(id)',
                      'table': 'post_likes',
-                     'where': 'user_id = post.user_id'}
+                     'where': 'user_id = posts.user_id'}
             thresholdqry = {'select':    ('((' + util.query(**venue_shares) + ') * 5 + ' +
             '(' + util.query(**post_shares) + ') * 5 + ' +
             'COUNT(id) * 4 + ' +

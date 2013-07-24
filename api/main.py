@@ -218,6 +218,35 @@ class Promotion:
             cursor.execute(util.query(**qry), (title, description, start, end,
                                                maximum, user_id, passcode))
         return True
+        
+        
+class PromotionRedemption:
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def get(self, cursor=None, user_id=None, **kwargs):
+        qry = {'select':   ('venues.name', 'posts.time'),
+               'left_join': ('promotions', 'venues'),
+               'on':        ('promotion_redemptions.promotion_id = promotions.id', 'venues.id = promotions.venue_id'),
+               'table':     'promotion_redemptions',
+               'where':     ('promotion_redemptions.user_id = ?'),
+               'order_by':  'time DESC'}
+            cursor.execute(util.query(**qry), (user_id,))
+        return [util.row_to_dict(cursor, row) for row in cursor]
+    
+    @util.expose
+    @util.protect
+    @util.db
+    @util.auth
+    @util.jsonp
+    def set(self, cursor=None, user_id=None, promotion_id=None **kwargs):
+        qry = {'insert_into': 'promotion_redemptions',
+               'columns':     ('user_id', 'promotion_id', 'time')}
+        cursor.execute(util.query(**qry), (user_id, promotion_id, util.now()))
+        return True
 
 
 class Ranking:
@@ -956,6 +985,7 @@ class ShnergleServer:
     post_shares = PostShare()
     post_views = PostView()
     promotions = Promotion()
+    promotion_redemptions = PromotionRedemption()
     rankings = Ranking()
     users = User()
     venues = Venue()

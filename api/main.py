@@ -274,7 +274,7 @@ class Ranking:
                                           'posts.user_id = venue_rsvps.user_id',
                                           'posts.user_id = venue_comments.user_id',
                                           'posts.user_id = post_likes.user_id'),
-                            'group_by':  'user_id',
+                            'group_by':  'posts.user_id',
                             'order_by':  'count',
                             'limit':     (number - 1, 1)}
             cursor.execute(util.query(**thresholdqry))

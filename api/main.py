@@ -114,8 +114,8 @@ class PostLike:
         res = cursor.fetchone()
         if not res:
             qry = {'insert_into': 'post_likes',
-                   'columns':     ('user_id', 'post_id')}
-            cursor.execute(util.query(**qry), (user_id, post_id))
+                   'columns':     ('user_id', 'post_id', 'time')}
+            cursor.execute(util.query(**qry), (user_id, post_id, util.now()))
         return True
 
 
@@ -151,8 +151,9 @@ class PostShare:
     def set(self, cursor=None, user_id=None, post_id=None, media_id=None,
             **kwargs):
         qry = {'insert_into': 'post_shares',
-               'columns':     ('user_id', 'post_id', 'media_id')}
-        cursor.execute(util.query(**qry), (user_id, post_id, media_id))
+               'columns':     ('user_id', 'post_id', 'media_id', 'time')}
+        cursor.execute(util.query(**qry), (user_id, post_id, media_id,
+                                           util.now()))
         return True
         
 

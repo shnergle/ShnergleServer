@@ -199,6 +199,21 @@ class Ranking:
     @util.jsonp
     def get(self, cursor=None, user_id=None, **kwargs):
         t = self.thresholds(cursor)
+        posts_total = {'select': 'COUNT(id) AS count',
+                       'table': 'posts',
+                       'where': 'user_id = ?'}
+        cursor.execute(util.query(**posts_total), (user_id,))
+        posts_total = cursor.fetchone().count
+        following_total = {'select': 'COUNT(id) AS count',
+                           'table': 'venue_followers',
+                           'where': 'user_id = ?'}
+        cursor.execute(util.query(**following_total), (user_id,))
+        following_total = cursor.fetchone().count
+        redemptions_total = {'select': 'COUNT(id) AS count',
+                             'table': 'promotion_redemptions',
+                             'where': 'user_id = ?'}
+        cursor.execute(util.query(**redemptions_total), (user_id,))
+        redemptions_total = cursor.fetchone().count
         posts = {'select': 'COUNT(id) AS count',
                  'table': 'posts',
                  'where': 'user_id = ?'}
@@ -248,6 +263,9 @@ class Ranking:
             res = 3
         return {'thresholds': t,
                 'level': res,
+                'posts_total': posts_total,
+                'following_total': following_total,
+                'redemptions_total': redemptions_total,
                 'posts': posts,
                 'following': following,
                 'redemptions': redemptions,

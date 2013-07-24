@@ -211,12 +211,12 @@ class Ranking:
         comments = {'select': 'COUNT(id) AS count',
                     'table': 'venue_comments',
                     'where': 'user_id = ?'}
-        cursor.execute(util.query(*comments), (user_id,))
+        cursor.execute(util.query(**comments), (user_id,))
         comments = cursor.fetchone().count
         likes = {'select': 'COUNT(id) AS count',
                  'table': 'post_likes',
                  'where': 'user_id = ?'}
-        cursor.execute(util.query(*likes), (user_id,))
+        cursor.execute(util.query(**likes), (user_id,))
         likes = cursor.fetchone().count
         following = {'select': 'COUNT(id) AS count',
                      'table': 'venue_followers',

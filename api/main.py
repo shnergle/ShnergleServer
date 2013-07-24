@@ -235,12 +235,6 @@ class Ranking:
                  'where': ('user_id = ?', 'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**likes), (user_id,))
         likes = cursor.fetchone().count
-        following = {'select': 'COUNT(id) AS count',
-                     'table': 'venue_followers',
-                     'where': ('user_id = ?',
-                               'time >' + str(util.now() - 2592000))}
-        cursor.execute(util.query(**following), (user_id,))
-        following = cursor.fetchone().count
         redemptions = {'select': 'COUNT(id) AS count',
                        'table': 'promotion_redemptions',
                        'where': ('user_id = ?',
@@ -272,7 +266,6 @@ class Ranking:
                 'following_total': following_total,
                 'redemptions_total': redemptions_total,
                 'posts': posts,
-                'following': following,
                 'redemptions': redemptions,
                 'share': share_posts + share_venue,
                 'rsvps': rsvps,

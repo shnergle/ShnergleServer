@@ -266,23 +266,23 @@ class Ranking:
             rsvps = {'select': 'COUNT(id)',
                      'table': 'venue_rsvps',
                      'where': ('user_id = posts.user_id',
-                               'time > ' + util.now() - 2592000)}
+                               'time > ' + str(util.now() - 2592000))}
             venue_shares = {'select': 'COUNT(id)',
                             'table': 'venue_shares',
                             'where': ('user_id = posts.user_id',
-                                      'time > ' + util.now() - 2592000)}
+                                      'time > ' + str(util.now() - 2592000))}
             post_shares = {'select': 'COUNT(id)',
                            'table': 'post_shares',
                            'where': ('user_id = posts.user_id',
-                                     'time > ' + util.now() - 2592000)}
+                                     'time > ' + str(util.now() - 2592000))}
             comments = {'select': 'COUNT(id)',
                         'table': 'venue_comments',
                         'where': ('user_id = posts.user_id',
-                                  'time > ' + util.now() - 2592000)}
+                                  'time > ' + str(util.now() - 2592000))}
             likes = {'select': 'COUNT(id)',
                      'table': 'post_likes',
                      'where': ('user_id = posts.user_id',
-                               'time > ' + util.now() - 2592000)}
+                               'time > ' + str(util.now() - 2592000))}
             thresholdqry = {'select':    ('((' + util.query(**venue_shares) + ') * 5 + ' +
             '(' + util.query(**post_shares) + ') * 5 + ' +
             'COUNT(id) * 4 + ' +
@@ -292,7 +292,7 @@ class Ranking:
                             'table':     'posts',
                             'group_by':  'posts.user_id',
                             'order_by':  'count',
-                            'where':     'time > ' + util.now() - 2592000,
+                            'where':     'time > ' + str(util.now() - 2592000),
                             'limit':     (number - 1, 1)}
             cursor.execute(util.query(**thresholdqry))
             count = cursor.fetchone()

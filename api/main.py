@@ -209,7 +209,8 @@ class Promotion:
                                   'maximum', 'passcode'),
                    'where':      'id = ?'}
             cursor.execute(util.query(**qry), (title, description, start, end,
-                                               maximum, promotion_id, passcode))
+                                               maximum, passcode, 
+                                               promotion_id))
         else:
             qry = {'insert_into': 'promotions',
                    'columns':      ('title', 'description', 'start', '[end]',

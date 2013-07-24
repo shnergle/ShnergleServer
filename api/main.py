@@ -273,7 +273,7 @@ class Ranking:
                                       'time > ' + str(util.now() - 2592000))}
             post_shares = {'select': 'COUNT(id)',
                            'table': 'post_shares',
-                           'where': ('user_id = userss.user_id',
+                           'where': ('user_id = users.user_id',
                                      'time > ' + str(util.now() - 2592000))}
             comments = {'select': 'COUNT(id)',
                         'table': 'venue_comments',

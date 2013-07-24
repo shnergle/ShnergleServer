@@ -201,7 +201,7 @@ class Promotion:
             end=None, maximum=None, passcode=None, **kwargs):
         if util.to_bool(delete) and promotion_id:
             qry = {'delete': 'promotions',
-                   'where':  ('promotion_id = ?')}
+                   'where':  ('id = ?')}
             cursor.execute(util.query(**qry), (promotion_id))
         elif promotion_id:
             qry = {'update':     'promotions',

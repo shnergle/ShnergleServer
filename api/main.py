@@ -238,8 +238,9 @@ class Ranking:
                        'where': 'user_id = ?'}
         cursor.execute(util.query(**share_posts), (user_id,))
         share_posts = cursor.fetchone().count
+        score = ((share_posts + share_venue) * 5 + posts * 4 + rsvps * 3 + comments * 2 + likes)
         for threshold in t:
-            if ((share_posts + share_venue) * 5 + posts * 4 + rsvps * 3 + comments * 2 + likes) < threshold:
+            if score < threshold:
                 res = 0
                 break
         else:
@@ -252,7 +253,8 @@ class Ranking:
                 'share': share_posts + share_venue,
                 'rsvps': rsvps,
                 'comments': comments,
-                'likes': likes}
+                'likes': likes,
+                'score': score}
     
     def thresholds(self, cursor):
         users = {'select': 'COUNT(id) AS count', 'table': 'users'}

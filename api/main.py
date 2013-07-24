@@ -216,42 +216,47 @@ class Ranking:
         redemptions_total = cursor.fetchone().count
         posts = {'select': 'COUNT(id) AS count',
                  'table': 'posts',
-                 'where': 'user_id = ?'}
+                 'where': ('user_id = ?', 'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**posts), (user_id,))
         posts = cursor.fetchone().count
         rsvps = {'select': 'COUNT(id) AS count',
                  'table': 'venue_rsvps',
-                 'where': 'user_id = ?'}
+                 'where': ('user_id = ?', 'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**rsvps), (user_id,))
         rsvps = cursor.fetchone().count
         comments = {'select': 'COUNT(id) AS count',
                     'table': 'venue_comments',
-                    'where': 'user_id = ?'}
+                    'where': ('user_id = ?',
+                              'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**comments), (user_id,))
         comments = cursor.fetchone().count
         likes = {'select': 'COUNT(id) AS count',
                  'table': 'post_likes',
-                 'where': 'user_id = ?'}
+                 'where': ('user_id = ?', 'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**likes), (user_id,))
         likes = cursor.fetchone().count
         following = {'select': 'COUNT(id) AS count',
                      'table': 'venue_followers',
-                     'where': 'user_id = ?'}
+                     'where': ('user_id = ?',
+                               'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**following), (user_id,))
         following = cursor.fetchone().count
         redemptions = {'select': 'COUNT(id) AS count',
                        'table': 'promotion_redemptions',
-                       'where': 'user_id = ?'}
+                       'where': ('user_id = ?',
+                                 'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**redemptions), (user_id,))
         redemptions = cursor.fetchone().count
         share_venue = {'select': 'COUNT(id) AS count',
                        'table': 'venue_shares',
-                       'where': 'user_id = ?'}
+                       'where': ('user_id = ?',
+                                 'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**share_venue), (user_id,))
         share_venue = cursor.fetchone().count
         share_posts = {'select': 'COUNT(id) AS count',
                        'table': 'post_shares',
-                       'where': 'user_id = ?'}
+                       'where': ('user_id = ?',
+                                 'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**share_posts), (user_id,))
         share_posts = cursor.fetchone().count
         score = ((share_posts + share_venue) * 5 + posts * 4 + rsvps * 3 + comments * 2 + likes)

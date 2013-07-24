@@ -266,7 +266,7 @@ class Ranking:
                                               COUNT(venue_rsvps.id) * 3 +
                                               COUNT(venue_comments.id) * 2 +
                                               COUNT(post_likes.id)) AS count''',
-                                          'user_id'),
+                                          'posts.user_id'),
                             'table':     'posts',
                             'left_join': ('venue_shares', 'venue_rsvps',
                                           'venue_comments', 'post_likes'),

@@ -206,17 +206,19 @@ class Promotion:
         elif promotion_id:
             qry = {'update':     'promotions',
                    'set_values': ('title', 'description', 'start', '[end]',
-                                  'maximum', 'passcode'),
+                                  'maximum', 'passcode', 'venue_id'),
                    'where':      'id = ?'}
             cursor.execute(util.query(**qry), (title, description, start, end,
-                                               maximum, passcode, 
+                                               maximum, passcode, venue_id,
                                                promotion_id))
         else:
             qry = {'insert_into': 'promotions',
                    'columns':      ('title', 'description', 'start', '[end]',
-                                    'maximum', 'creator', 'passcode')}
+                                    'maximum', 'creator', 'passcode',
+                                    'venue_id')}
             cursor.execute(util.query(**qry), (title, description, start, end,
-                                               maximum, user_id, passcode))
+                                               maximum, user_id, passcode,
+                                               venue_id))
         return True
         
         

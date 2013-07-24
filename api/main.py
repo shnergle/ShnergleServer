@@ -234,7 +234,7 @@ class PromotionRedemption:
                'table':     'promotion_redemptions',
                'where':     ('promotion_redemptions.user_id = ?'),
                'order_by':  'time DESC'}
-            cursor.execute(util.query(**qry), (user_id,))
+        cursor.execute(util.query(**qry), (user_id,))
         return [util.row_to_dict(cursor, row) for row in cursor]
     
     @util.expose

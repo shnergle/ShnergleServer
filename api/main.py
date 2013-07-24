@@ -239,7 +239,7 @@ class Ranking:
         cursor.execute(util.query(**share_posts), (user_id,))
         share_posts = cursor.fetchone().count
         for threshold in t:
-            if posts < threshold:
+            if ((share_posts + share_venue) * 5 + posts * 4 + rsvps * 3 + comments * 2 + likes) < threshold:
                 res = 0
                 break
         else:
@@ -261,9 +261,19 @@ class Ranking:
         thresholds = []
         for percent in (0.8, 0.95, 0.99):
             number = math.floor(percent * users)
-            thresholdqry = {'select':    ('COUNT(id) AS count',
+            thresholdqry = {'select':    ('''(COUNT(venue_shares.id) * 5 +
+                                              COUNT(posts.id) * 4 +
+                                              COUNT(venue_rsvps.id) * 3 +
+                                              COUNT(venue_comments.id) * 2 +
+                                              COUNT(post_likes.id)) AS count''',
                                           'user_id'),
                             'table':     'posts',
+                            'left_join': ('venue_shares', 'venue_rsvps',
+                                          'venue_comments', 'post_likes'),
+                            'on':        ('posts.user_id = venue_shares.user_id',
+                                          'posts.user_id = venue_rsvps.user_id',
+                                          'posts.user_id = venue_comments.user_id',
+                                          'posts.user_id = post_likes.user_id'),
                             'group_by':  'user_id',
                             'order_by':  'count',
                             'limit':     (number - 1, 1)}

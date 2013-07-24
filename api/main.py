@@ -198,7 +198,7 @@ class Promotion:
     @util.jsonp
     def set(self, cursor=None, user_id=None, venue_id=None, delete=None,
             promotion_id=None, title=None, description=None, start=None,
-            end=None, maximum=None, **kwargs):
+            end=None, maximum=None, passcode=None, **kwargs):
         if util.to_bool(delete) and promotion_id:
             qry = {'delete': 'promotions',
                    'where':  ('promotion_id = ?')}
@@ -206,16 +206,16 @@ class Promotion:
         elif promotion_id:
             qry = {'update':     'promotions',
                    'set_values': ('title', 'description', 'start', '[end]',
-                                  'maximum'),
+                                  'maximum', 'passcode'),
                    'where':      'id = ?'}
             cursor.execute(util.query(**qry), (title, description, start, end,
-                                               maximum, promotion_id))
+                                               maximum, promotion_id, passcode))
         else:
             qry = {'insert_into': 'promotions',
                    'columns':      ('title', 'description', 'start', '[end]',
-                                    'maximum', 'creator')}
+                                    'maximum', 'creator', 'passcode')}
             cursor.execute(util.query(**qry), (title, description, start, end,
-                                               maximum, user_id))
+                                               maximum, user_id, passcode))
         return True
 
 

@@ -249,7 +249,7 @@ class Ranking:
                 'posts': posts,
                 'following': following,
                 'redemptions': redemptions,
-                'share': share_posts + share_venue},
+                'share': share_posts + share_venue,
                 'rsvps': rsvps,
                 'comments': comments,
                 'likes': likes}

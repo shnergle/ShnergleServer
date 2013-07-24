@@ -242,7 +242,7 @@ class PromotionRedemption:
     @util.db
     @util.auth
     @util.jsonp
-    def set(self, cursor=None, user_id=None, promotion_id=None **kwargs):
+    def set(self, cursor=None, user_id=None, promotion_id=None, **kwargs):
         qry = {'insert_into': 'promotion_redemptions',
                'columns':     ('user_id', 'promotion_id', 'time')}
         cursor.execute(util.query(**qry), (user_id, promotion_id, util.now()))

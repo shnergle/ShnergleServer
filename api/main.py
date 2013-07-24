@@ -265,34 +265,37 @@ class Ranking:
             number = math.floor(percent * users)
             rsvps = {'select': 'COUNT(id)',
                      'table': 'venue_rsvps',
-                     'where': ('user_id = posts.user_id',
+                     'where': ('user_id = users.user_id',
                                'time > ' + str(util.now() - 2592000))}
             venue_shares = {'select': 'COUNT(id)',
                             'table': 'venue_shares',
-                            'where': ('user_id = posts.user_id',
+                            'where': ('user_id = users.user_id',
                                       'time > ' + str(util.now() - 2592000))}
             post_shares = {'select': 'COUNT(id)',
                            'table': 'post_shares',
-                           'where': ('user_id = posts.user_id',
+                           'where': ('user_id = userss.user_id',
                                      'time > ' + str(util.now() - 2592000))}
             comments = {'select': 'COUNT(id)',
                         'table': 'venue_comments',
-                        'where': ('user_id = posts.user_id',
+                        'where': ('user_id = users.user_id',
                                   'time > ' + str(util.now() - 2592000))}
             likes = {'select': 'COUNT(id)',
                      'table': 'post_likes',
-                     'where': ('user_id = posts.user_id',
+                     'where': ('user_id = users.user_id',
+                               'time > ' + str(util.now() - 2592000))}
+            posts = {'select': 'COUNT(id)',
+                     'table': 'posts',
+                     'where': ('user_id = users.user_id',
                                'time > ' + str(util.now() - 2592000))}
             thresholdqry = {'select':    ('((' + util.query(**venue_shares) + ') * 5 + ' +
             '(' + util.query(**post_shares) + ') * 5 + ' +
-            'COUNT(id) * 4 + ' +
+            '(' + util.query(**posts) + ') * 4 + ' +
             '(' + util.query(**rsvps) + ') * 3 + ' +
             '(' + util.query(**comments) + ') * 2 + ' +
             '(' + util.query(**likes) + ')) AS count',),
-                            'table':     'posts',
-                            'group_by':  'posts.user_id',
+                            'table':     'users',
+                            'group_by':  'user_id',
                             'order_by':  'count',
-                            'where':     'time > ' + str(util.now() - 2592000),
                             'limit':     (number - 1, 1)}
             cursor.execute(util.query(**thresholdqry))
             count = cursor.fetchone()

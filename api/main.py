@@ -190,6 +190,7 @@ class Promotion:
                      'table':    'promotions',
                      'where':    ['venue_id = ?',],
                      'order_by': 'id DESC'}
+        cursor.execute(util.query(**promo_qry), (venue_id,))
         if not util.to_bool(getall):
             promo_qry['limit'] = 1
             promo_qry['where'].append(str(util.now()) + ' >= start')
@@ -197,9 +198,7 @@ class Promotion:
             promo_qry['where'].append('(' + util.query(**red) + ') <= maximum')
             promo_qry['where'].append(level + ' >= level')
             promo_qry['order_by'] = 'level DESC, id DESC'
-            cursor.execute(util.query(**promo_qry), (venue_id,))
             return util.row_to_dict(cursor, cursor.fetchone())
-        cursor.execute(util.query(**promo_qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor.fetchall()]
     
     @util.expose

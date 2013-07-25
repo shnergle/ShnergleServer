@@ -187,11 +187,14 @@ class Promotion:
                                   'creator',
                                   '(' + util.query(**red) + ') AS redemptions'),
                      'table':    'promotions',
-                     'where':    'venue_id = ?',
+                     'where':    ['venue_id = ?',],
                      'order_by': 'id DESC'}
         cursor.execute(util.query(**promo_qry), (venue_id,))
         if not util.to_bool(getall):
             promo_qry['limit'] = 1
+            promo_qry['where'].append(str(util.now()) + ' >= start')
+            promo_qry['where'].append('([end] = 0 OR [end] > ' + str(util.now()) + ')')
+            promo_qry['where'].append('(' + util.query(**red) + ') <= maximum')
             return util.row_to_dict(cursor, cursor.fetchone())
         return [util.row_to_dict(cursor, row) for row in cursor.fetchall()]
     
@@ -560,9 +563,15 @@ class Venue:
                   'table':    'venue_followers',
                   'where':    ('user_id = ' + str(user_id),
                                'venue_id = venues.id')}
+        red = {'select': 'COUNT(id)',
+               'table':  'promotion_redemptions',
+               'where':  'promotion_id = promotions.id'}
         promoqry = {'select':   'COUNT(id)',
                     'table':    'promotions',
-                    'where':    ('venue_id = venues.id')}
+                    'where':    ('venue_id = venues.id',
+                                 str(util.now()) + ' >= start',
+                                 '([end] = 0 OR [end] > ' + str(util.now()) + ')',
+                                 '(' + util.query(**red) + ') <= maximum')}
         managerqry = {'select':   'COUNT(id)',
                       'table':    'venue_managers',
                       'where':    ('user_id = ' + str(user_id),

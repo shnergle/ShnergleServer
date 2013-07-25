@@ -193,7 +193,7 @@ class Promotion:
         if not util.to_bool(getall):
             promo_qry['limit'] = 1
             return util.row_to_dict(cursor, cursor.fetchone())
-        return [util.row_to_dict(cursor, row) for row in cursor]
+        return [util.row_to_dict(cursor, row) for row in cursor.fetchall()]
     
     @util.expose
     @util.protect

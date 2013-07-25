@@ -256,10 +256,23 @@ class PromotionRedemption:
     @util.auth
     @util.jsonp
     def set(self, cursor=None, user_id=None, promotion_id=None, **kwargs):
+        cnt = {'select':   ('COUNT(id)'),
+               'table':     'promotion_redemptions',
+               'where':     ('promotion_id = promotions.id')}
+        promo = {'select':   ('[end]', 'maximum', 'passcode',
+                              '(' + util.query(**cnt) + ') AS count'),
+                 'table':     'promotions',
+                 'where':     ('id = ?')}
+        cursor.execute(util.query(**qry), (promotion_id,))
+        row = cursor.fetchone()
+        if int(row.end) < util.now():
+            return 'time'
+        if int(row.count) >= int(row.maximum):
+            return 'number'
         qry = {'insert_into': 'promotion_redemptions',
                'columns':     ('user_id', 'promotion_id', 'time')}
         cursor.execute(util.query(**qry), (user_id, promotion_id, util.now()))
-        return True
+        return row.passcode
 
 
 class Ranking:

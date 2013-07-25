@@ -178,7 +178,8 @@ class Promotion:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, venue_id=None, getall=None, rank=None, **kwargs):
+    def get(self, cursor=None, venue_id=None, getall=None, level=None,
+            **kwargs):
         red = {'select': 'COUNT(id)',
                'table':  'promotion_redemptions',
                'where':  'promotion_id = promotions.id'}
@@ -195,7 +196,7 @@ class Promotion:
             promo_qry['where'].append(str(util.now()) + ' >= start')
             promo_qry['where'].append('([end] = 0 OR [end] > ' + str(util.now()) + ')')
             promo_qry['where'].append('(' + util.query(**red) + ') <= maximum')
-            promo_qry['where'].append(rank + ' >= level')
+            promo_qry['where'].append(level + ' >= level')
             promo_qry['order_by'] = 'level DESC, id DESC'
             return util.row_to_dict(cursor, cursor.fetchone())
         return [util.row_to_dict(cursor, row) for row in cursor.fetchall()]
@@ -207,7 +208,7 @@ class Promotion:
     @util.jsonp
     def set(self, cursor=None, user_id=None, venue_id=None, delete=None,
             promotion_id=None, title=None, description=None, start=None,
-            end=None, maximum=None, passcode=None, **kwargs):
+            end=None, maximum=None, passcode=None, level=None, **kwargs):
         if util.to_bool(delete) and promotion_id:
             qry = {'delete': 'promotions',
                    'where':  ('id = ?')}
@@ -215,19 +216,19 @@ class Promotion:
         elif promotion_id:
             qry = {'update':     'promotions',
                    'set_values': ('title', 'description', 'start', '[end]',
-                                  'maximum', 'passcode', 'venue_id'),
+                                  'maximum', 'passcode', 'venue_id', 'level'),
                    'where':      'id = ?'}
             cursor.execute(util.query(**qry), (title, description, start, end,
                                                maximum, passcode, venue_id,
-                                               promotion_id))
+                                               level, promotion_id))
         else:
             qry = {'insert_into': 'promotions',
                    'columns':      ('title', 'description', 'start', '[end]',
                                     'maximum', 'creator', 'passcode',
-                                    'venue_id')}
+                                    'venue_id', 'level')}
             cursor.execute(util.query(**qry), (title, description, start, end,
                                                maximum, user_id, passcode,
-                                               venue_id))
+                                               venue_id, level))
         return True
         
         
@@ -560,7 +561,7 @@ class Venue:
     def get(self, cursor=None, user_id=None, term=None, following_only=None,
             my_lat=None, my_lon=None, distance=None, own=None, quiet=None,
             trending=None, from_time=None, until_time=None, promotions=None,
-            rank=None, **kwargs):
+            level=None, **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_followers',
                   'where':    ('user_id = ' + str(user_id),
@@ -574,7 +575,7 @@ class Venue:
                                  str(util.now()) + ' >= start',
                                  '([end] = 0 OR [end] > ' + str(util.now()) + ')',
                                  '(' + util.query(**red) + ') <= maximum',
-                                 rank + ' >= level')}
+                                 level + ' >= level')}
         managerqry = {'select':   'COUNT(id)',
                       'table':    'venue_managers',
                       'where':    ('user_id = ' + str(user_id),

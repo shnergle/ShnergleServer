@@ -178,7 +178,7 @@ class Promotion:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, venue_id=None, getall=None, rank=None, **kwargs):
+    def get(self, cursor=None, venue_id=None, getall=None, **kwargs):
         red = {'select': 'COUNT(id)',
                'table':  'promotion_redemptions',
                'where':  'promotion_id = promotions.id'}
@@ -195,8 +195,6 @@ class Promotion:
             promo_qry['where'].append(str(util.now()) + ' >= start')
             promo_qry['where'].append('([end] = 0 OR [end] > ' + str(util.now()) + ')')
             promo_qry['where'].append('(' + util.query(**red) + ') <= maximum')
-            promo_qry['where'].append(rank + ' >= level')
-            promo_qry['order_by'] = 'level DESC, id DESC'
             return util.row_to_dict(cursor, cursor.fetchone())
         return [util.row_to_dict(cursor, row) for row in cursor.fetchall()]
     
@@ -560,7 +558,7 @@ class Venue:
     def get(self, cursor=None, user_id=None, term=None, following_only=None,
             my_lat=None, my_lon=None, distance=None, own=None, quiet=None,
             trending=None, from_time=None, until_time=None, promotions=None,
-            rank=None, **kwargs):
+            **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_followers',
                   'where':    ('user_id = ' + str(user_id),
@@ -573,8 +571,7 @@ class Venue:
                     'where':    ('venue_id = venues.id',
                                  str(util.now()) + ' >= start',
                                  '([end] = 0 OR [end] > ' + str(util.now()) + ')',
-                                 '(' + util.query(**red) + ') <= maximum',
-                                 rank + ' >= level')}
+                                 '(' + util.query(**red) + ') <= maximum')}
         managerqry = {'select':   'COUNT(id)',
                       'table':    'venue_managers',
                       'where':    ('user_id = ' + str(user_id),

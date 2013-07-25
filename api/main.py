@@ -185,7 +185,7 @@ class Promotion:
                'where':  'promotion_id = promotions.id'}
         promo_qry = {'select':   ('id', 'title', 'description',
                                   'passcode', 'start', '[end]', 'maximum',
-                                  'creator', 'level',
+                                  'creator',
                                   '(' + util.query(**red) + ') AS redemptions'),
                      'table':    'promotions',
                      'where':    ['venue_id = ?',],

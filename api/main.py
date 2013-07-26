@@ -263,7 +263,7 @@ class PromotionRedemption:
                               '(' + util.query(**cnt) + ') AS count'),
                  'table':     'promotions',
                  'where':     ('id = ?')}
-        cursor.execute(util.query(**qry), (promotion_id,))
+        cursor.execute(util.query(**promo), (promotion_id,))
         row = cursor.fetchone()
         if int(row.end) < util.now():
             return 'time'

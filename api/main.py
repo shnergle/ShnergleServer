@@ -188,7 +188,7 @@ class Promotion:
                                   'creator', 'level',
                                   '(' + util.query(**red) + ') AS redemptions'),
                      'table':    'promotions',
-                     'where':    ['venue_id = ?',],
+                     'where':    ['venue_id = ?', 'hidden != 1'],
                      'order_by': 'id DESC'}
         if not util.to_bool(getall):
             promo_qry['limit'] = 1
@@ -211,9 +211,10 @@ class Promotion:
             promotion_id=None, title=None, description=None, start=None,
             end=None, maximum=None, passcode=None, level=None, **kwargs):
         if util.to_bool(delete) and promotion_id:
-            qry = {'delete': 'promotions',
-                   'where':  ('id = ?')}
-            cursor.execute(util.query(**qry), (promotion_id))
+            qry = {'update':     'promotions',
+                   'set_values': ('hidden'),
+                   'where':      'id = ?'}
+            cursor.execute(util.query(**qry), (1, promotion_id))
         elif promotion_id:
             qry = {'update':     'promotions',
                    'set_values': ('title', 'description', 'start', '[end]',
@@ -590,7 +591,8 @@ class Venue:
                                  str(util.now()) + ' >= start',
                                  '([end] = 0 OR [end] > ' + str(util.now()) + ')',
                                  '(' + util.query(**red) + ') <= maximum',
-                                 level + ' >= level')}
+                                 level + ' >= level',
+                                 'hidden != 1')}
         managerqry = {'select':   'COUNT(id)',
                       'table':    'venue_managers',
                       'where':    ('user_id = ' + str(user_id),

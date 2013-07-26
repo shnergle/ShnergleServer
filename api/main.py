@@ -241,7 +241,7 @@ class PromotionRedemption:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, user_id=None, **kwargs):
-        qry = {'select':   ('venues.name', 'posts.time'),
+        qry = {'select':   ('venues.name', 'promotion_redemptions.time'),
                'left_join': ('promotions', 'venues'),
                'on':        ('promotion_redemptions.promotion_id = promotions.id', 'venues.id = promotions.venue_id'),
                'table':     'promotion_redemptions',

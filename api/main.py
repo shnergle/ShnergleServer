@@ -265,9 +265,9 @@ class PromotionRedemption:
                  'where':     ('id = ?')}
         cursor.execute(util.query(**promo), (promotion_id,))
         row = cursor.fetchone()
-        if int(row.end) < util.now():
+        if int(row.end) != 0 and int(row.end) < util.now():
             return 'time'
-        if int(row.count) >= int(row.maximum):
+        if int(row.maximum) != 0 and int(row.count) >= int(row.maximum):
             return 'number'
         qry = {'insert_into': 'promotion_redemptions',
                'columns':     ('user_id', 'promotion_id', 'time')}

@@ -1,3 +1,4 @@
+import hashlib
 import json
 import math
 import os
@@ -8,6 +9,53 @@ import azureutil
 import util
 
 
+class Confirm:
+    
+    @util.expose
+    @util.db
+    def index(self, venue_id, user_id, hashd):
+        qry = {'select':   ('name', 'email', 'phone', 'website'),
+               'table':    'venues',
+               'where':    ('venue_id = ?')}
+        cursor.execute(util.query(**qry), (venue_id))
+        venue = cursor.fetchone()
+        if not venue:
+            return 'Error!'
+        qry = {'select':   ('forename', 'surname'),
+               'table':    'users',
+               'where':    ('user_id = ?')}
+        cursor.execute(util.query(**qry), (user_id))
+        user = cursor.fetchone()
+        if not user:
+            return 'Error!'
+        if hashd != hashlib.md5(venue.email + '|' + str(venue_id) + '|' + str(user_id) + '|confirm|' + os.environ['APP_SECRET']).hexdigest():
+            return 'Error!'
+        qry = {'update':     'venues',
+               'set_values': ('email_verified'),
+               'where':      'id = ?'}
+        cursor.execute(util.query(**qry), (1, venue_id))
+        with open('email_confirmed.txt', 'rb') as f:
+                msg = f.read()
+                msg.replace('[EmailAddress]', venue.email)
+                msg.replace('[PhoneNumber]', venue.phone)
+                msg.replace('[Website]', venue.website)
+                msg.replace('[Name]', user.forename + ' ' + user.surname)
+                msg.replace('[VenueName]', venue.name)
+                msg.replace('[Link]', 'http://shnergle-api.azurewebsites.net/confirm/' + str(venue_id) + '/' + hashlib.md5(venue.email + '|' + str(venue_id) + '|confirm|' + os.environ['APP_SECRET']).hexdigest())
+                subject = 'Thanks for verifying [EmailAddress], we will now complete the verification of [VenueName]'
+                subject.replace('[EmailAddress]', venue.email)
+                subject.replace('[VenueName]', venue.name)
+                msg = MIMEText(msg)
+        msg['Subject'] = subject
+        msg['From'] = os.environ['EMAIL']
+        msg['To'] = venue.email
+        s = smtplib.SMTP(os.environ['SMTP_SERVER'])
+        s.login(os.environ['SMTP_USER'], os.environ['SMTP_USER'])
+        s.sendmail(msg['From'], [msg['To']], msg.as_string())
+        s.quit()
+        return 'Confirmed.'
+        
+        
 class Image:
     
     @util.expose
@@ -824,6 +872,31 @@ class VenueManager:
                    'set_values': ('official'),
                    'where':      'id = ?'}
             cursor.execute(util.query(**qry), (1, venue_id))
+            qry = {'select':   ('name', 'email'),
+                   'table':    'venues',
+                   'where':    ('venue_id = ?')}
+            cursor.execute(util.query(**qry), (venue_id))
+            venue = cursor.fetchone()
+            qry = {'select':   ('forename', 'surname'),
+                   'table':    'users',
+                   'where':    ('user_id = ?')}
+            cursor.execute(util.query(**qry), (user_id))
+            user = cursor.fetchone()
+            with open('email_confirm.txt', 'rb') as f:
+                msg = f.read()
+                msg.replace('[Name]', user.forename + ' ' + user.surname)
+                msg.replace('[VenueName]', venue.name)
+                msg.replace('[Link]', 'http://shnergle-api.azurewebsites.net/confirm/' + str(venue_id) + '/' + str(user_id) + '/' + hashlib.md5(venue.email + '|' + str(venue_id) + '|' + str(user_id) + '|confirm|' + os.environ['APP_SECRET']).hexdigest())
+                subject = 'Verify Email Address ownership for [VenueName] on Shnergle'
+                subject.replace('[VenueName]', venue.name)
+                msg = MIMEText(msg)
+            msg['Subject'] = subject
+            msg['From'] = os.environ['EMAIL']
+            msg['To'] = venue.email
+            s = smtplib.SMTP(os.environ['SMTP_SERVER'])
+            s.login(os.environ['SMTP_USER'], os.environ['SMTP_USER'])
+            s.sendmail(msg['From'], [msg['To']], msg.as_string())
+            s.quit()
         return True
 
 
@@ -1017,6 +1090,7 @@ class VenueView:
 
 
 class ShnergleServer:
+    confirm = Confirm()
     images = Image()
     posts = Post()
     post_likes = PostLike()
@@ -1040,6 +1114,10 @@ class ShnergleServer:
     
     def __init__(self):
         self.v1 = self
+        
+    @util.expose
+    def index(self):
+        return ''
     
     @staticmethod
     def error(status, message, traceback, version):

@@ -1,0 +1,13 @@
+Hi [Name],
+
+Thanks very much for verifying your ownership of [EmailAddress]; we can now proceed to authenticate your application to make [VenueName] an official venue on Shnergle.
+
+We will now compare the email address ([EmailAddress]) and phone number ([PhoneNumber]) you provided with the website you provided [Website]:
+- If everything matches, we will authenticate you straight away and make [VenueName] official.
+- If there is a discrepancy, we will contact the details provided on [Website] in the first instance to find out if this is a legitimate claim.
+
+We aim to complete this process within 24hr, but at times of peak demand it may take longer.
+
+Many thanks,
+
+Team Shnergle

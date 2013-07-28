@@ -1,0 +1,9 @@
+Hi [Name],
+
+You have just registered or claimed [VenueName] as an official venue on Shnergle. We need to check you are eligible to create this official venue page so the first step is to verify your email address.
+
+Please click the following link to verify email address ownership [Link]
+
+Many thanks,
+
+Team Shnergle

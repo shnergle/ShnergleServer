@@ -1,4 +1,3 @@
-<<<<<<< Local Changes
 import hashlib
 import json
 import math
@@ -1139,5 +1138,3 @@ cp_config = {'/':            {'error_page.default': ShnergleServer.error},
                               'tools.staticfile.filename':
                               os.path.join(current_dir, 'favicon.ico')}}
 app = cherrypy.Application(ShnergleServer(), '/', cp_config)
-=======
->>>>>>> External Changes

@@ -13,12 +13,7 @@ class Confirm:
     
     @util.expose
     @util.db
-    def index(self, *args, cursor=None, **kwargs):
-        if len(args) < 3:
-            return 'Error!'
-        venue_id = args[0]
-        user_id = args[1]
-        hashd = args[2]
+    def index(self, venue_id, user_id, hashd, cursor=None, **kwargs):
         qry = {'select':   ('name', 'email', 'phone', 'website'),
                'table':    'venues',
                'where':    ('venue_id = ?')}

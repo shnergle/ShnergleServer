@@ -1,3 +1,4 @@
+<<<<<<< Local Changes
 import hashlib
 import json
 import math
@@ -13,7 +14,10 @@ class Confirm:
     
     @util.expose
     @util.db
-    def index(self, venue_id, user_id, hashd, cursor=None, **kwargs):
+    def index(self, cursor=None, venue_id=None, user_id=None, hashd=None,
+              **kwargs):
+        if not venue_id or not user_id or not hashd:
+            return 'Error!'
         qry = {'select':   ('name', 'email', 'phone', 'website'),
                'table':    'venues',
                'where':    ('venue_id = ?')}
@@ -1135,3 +1139,5 @@ cp_config = {'/':            {'error_page.default': ShnergleServer.error},
                               'tools.staticfile.filename':
                               os.path.join(current_dir, 'favicon.ico')}}
 app = cherrypy.Application(ShnergleServer(), '/', cp_config)
+=======
+>>>>>>> External Changes

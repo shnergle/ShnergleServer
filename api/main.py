@@ -13,7 +13,7 @@ class Confirm:
     
     @util.expose
     @util.db
-    def index(self, venue_id, user_id, hashd):
+    def index(self, venue_id, user_id, hashd, cursor=None, **kwargs):
         qry = {'select':   ('name', 'email', 'phone', 'website'),
                'table':    'venues',
                'where':    ('venue_id = ?')}

@@ -41,11 +41,11 @@ class Confirm:
         cursor.execute(util.query(**qry), (1, venue_id))
         with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'email_confirmed.txt'), 'rb') as f:
                 msg = f.read()
-                msg.replace('[EmailAddress]', venue.email)
-                msg.replace('[PhoneNumber]', venue.phone)
-                msg.replace('[Website]', venue.website)
-                msg.replace('[Name]', user.forename + ' ' + user.surname)
-                msg.replace('[VenueName]', venue.name)
+                msg = msg.replace('[EmailAddress]', venue.email)
+                msg = msg.replace('[PhoneNumber]', venue.phone)
+                msg = msg.replace('[Website]', venue.website)
+                msg = msg.replace('[Name]', user.forename + ' ' + user.surname)
+                msg = msg.replace('[VenueName]', venue.name)
                 subject = 'Thanks for verifying [EmailAddress], we will now complete the verification of [VenueName]'
                 subject.replace('[EmailAddress]', venue.email)
                 subject.replace('[VenueName]', venue.name)
@@ -891,9 +891,9 @@ class VenueManager:
             user = cursor.fetchone()
             with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'email_confirm.txt'), 'rb') as f:
                 msg = f.read()
-                msg.replace('[Name]', user.forename + ' ' + user.surname)
-                msg.replace('[VenueName]', venue.name)
-                msg.replace('[Link]', 'https://shnergle-api.azurewebsites.net/confirm/?venue_id=' + str(venue_id) + '&user_id=' + str(user_id) + '&hashd=' + hashlib.md5(venue.email + '|' + str(venue_id) + '|' + str(user_id) + '|confirm|' + os.environ['APP_SECRET']).hexdigest())
+                msg = msg.replace('[Name]', user.forename + ' ' + user.surname)
+                msg = msg.replace('[VenueName]', venue.name)
+                msg = msg.replace('[Link]', 'https://shnergle-api.azurewebsites.net/confirm/?venue_id=' + str(venue_id) + '&user_id=' + str(user_id) + '&hashd=' + hashlib.md5(venue.email + '|' + str(venue_id) + '|' + str(user_id) + '|confirm|' + os.environ['APP_SECRET']).hexdigest())
                 subject = 'Verify Email Address ownership for [VenueName] on Shnergle'
                 subject.replace('[VenueName]', venue.name)
                 msg = email.mime.text.MIMEText(msg)

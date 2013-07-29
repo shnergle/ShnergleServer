@@ -19,15 +19,15 @@ class Confirm:
             return 'Error!'
         qry = {'select':   ('name', 'email', 'phone', 'website'),
                'table':    'venues',
-               'where':    ('venue_id = ?')}
-        cursor.execute(util.query(**qry), (venue_id))
+               'where':    ('id = ?')}
+        cursor.execute(util.query(**qry), (venue_id,))
         venue = cursor.fetchone()
         if not venue:
             return 'Error!'
         qry = {'select':   ('forename', 'surname'),
                'table':    'users',
-               'where':    ('user_id = ?')}
-        cursor.execute(util.query(**qry), (user_id))
+               'where':    ('id = ?')}
+        cursor.execute(util.query(**qry), (user_id,))
         user = cursor.fetchone()
         if not user:
             return 'Error!'
@@ -880,13 +880,13 @@ class VenueManager:
             cursor.execute(util.query(**qry), (1, venue_id))
             qry = {'select':   ('name', 'email'),
                    'table':    'venues',
-                   'where':    ('venue_id = ?')}
-            cursor.execute(util.query(**qry), (venue_id))
+                   'where':    ('id = ?')}
+            cursor.execute(util.query(**qry), (venue_id,))
             venue = cursor.fetchone()
             qry = {'select':   ('forename', 'surname'),
                    'table':    'users',
-                   'where':    ('user_id = ?')}
-            cursor.execute(util.query(**qry), (user_id))
+                   'where':    ('id = ?')}
+            cursor.execute(util.query(**qry), (user_id,))
             user = cursor.fetchone()
             with open('email_confirm.txt', 'rb') as f:
                 msg = f.read()

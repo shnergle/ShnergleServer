@@ -1,4 +1,4 @@
-import email
+import email.mime.text
 import hashlib
 import json
 import math

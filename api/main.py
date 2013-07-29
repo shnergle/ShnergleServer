@@ -1,7 +1,9 @@
+import email
 import hashlib
 import json
 import math
 import os
+import smtplib
 
 import cherrypy
 
@@ -44,11 +46,10 @@ class Confirm:
                 msg.replace('[Website]', venue.website)
                 msg.replace('[Name]', user.forename + ' ' + user.surname)
                 msg.replace('[VenueName]', venue.name)
-                msg.replace('[Link]', 'https://shnergle-api.azurewebsites.net/confirm/' + str(venue_id) + '/' + hashlib.md5(venue.email + '|' + str(venue_id) + '|confirm|' + os.environ['APP_SECRET']).hexdigest())
                 subject = 'Thanks for verifying [EmailAddress], we will now complete the verification of [VenueName]'
                 subject.replace('[EmailAddress]', venue.email)
                 subject.replace('[VenueName]', venue.name)
-                msg = MIMEText(msg)
+                msg = email.mime.text.MIMEText(msg)
         msg['Subject'] = subject
         msg['From'] = os.environ['EMAIL']
         msg['To'] = venue.email
@@ -895,7 +896,7 @@ class VenueManager:
                 msg.replace('[Link]', 'https://shnergle-api.azurewebsites.net/confirm/?venue_id=' + str(venue_id) + '&user_id=' + str(user_id) + '&hashd=' + hashlib.md5(venue.email + '|' + str(venue_id) + '|' + str(user_id) + '|confirm|' + os.environ['APP_SECRET']).hexdigest())
                 subject = 'Verify Email Address ownership for [VenueName] on Shnergle'
                 subject.replace('[VenueName]', venue.name)
-                msg = MIMEText(msg)
+                msg = email.mime.text.MIMEText(msg)
             msg['Subject'] = subject
             msg['From'] = os.environ['EMAIL']
             msg['To'] = venue.email

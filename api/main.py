@@ -37,7 +37,7 @@ class Confirm:
                'set_values': ('email_verified'),
                'where':      'id = ?'}
         cursor.execute(util.query(**qry), (1, venue_id))
-        with open('email_confirmed.txt', 'rb') as f:
+        with open(os.path.dirname(os.path.abspath(__file__)) + 'email_confirmed.txt', 'rb') as f:
                 msg = f.read()
                 msg.replace('[EmailAddress]', venue.email)
                 msg.replace('[PhoneNumber]', venue.phone)
@@ -888,7 +888,7 @@ class VenueManager:
                    'where':    ('id = ?')}
             cursor.execute(util.query(**qry), (user_id,))
             user = cursor.fetchone()
-            with open('email_confirm.txt', 'rb') as f:
+            with open(os.path.dirname(os.path.abspath(__file__)) + 'email_confirm.txt', 'rb') as f:
                 msg = f.read()
                 msg.replace('[Name]', user.forename + ' ' + user.surname)
                 msg.replace('[VenueName]', venue.name)

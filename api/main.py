@@ -901,6 +901,9 @@ class VenueManager:
             msg['From'] = os.environ['EMAIL']
             msg['To'] = venue.email
             s = smtplib.SMTP(os.environ['SMTP_SERVER'])
+            s.ehlo()
+            s.starttls()
+            s.ehlo()
             s.login(os.environ['SMTP_USER'], os.environ['SMTP_PASS'])
             s.sendmail(msg['From'], [msg['To']], msg.as_string())
             s.quit()

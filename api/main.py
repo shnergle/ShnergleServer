@@ -253,7 +253,7 @@ class Promotion:
             promo_qry['where'].append(level + ' >= level')
             promo_qry['order_by'] = 'level DESC, id DESC'
             cursor.execute(util.query(**promo_qry), (venue_id,))
-            return util.row_to_dict(cursor, cursor.fetchone())
+            return [util.row_to_dict(cursor, row) for row in cursor.fetchall()][0]
         cursor.execute(util.query(**promo_qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor.fetchall()]
     
@@ -395,7 +395,7 @@ class Ranking:
                                  'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**share_posts), (user_id,))
         share_posts = cursor.fetchone().count
-        score = ((share_posts + share_venue) * 5 + posts * 4 + rsvps * 3 + comments * 2 + likes)
+        score = ((share_posts + share_venue) * 5 + posts * 4 + rsvps * 3 + comments * 2 + likes * 2)
         for threshold in t:
             if score < threshold:
                 res = 0
@@ -451,7 +451,7 @@ class Ranking:
             '(' + util.query(**posts) + ') * 4 + ' +
             '(' + util.query(**rsvps) + ') * 3 + ' +
             '(' + util.query(**comments) + ') * 2 + ' +
-            '(' + util.query(**likes) + ')) AS count',),
+            '(' + util.query(**likes) + ') * 2) AS count',),
                             'table':     'users',
                             'group_by':  'id',
                             'order_by':  'count',

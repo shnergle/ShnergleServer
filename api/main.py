@@ -258,7 +258,7 @@ class Promotion:
             if row:
                 return {t[0]: val for t, val in zip(cursor.description, row)}
             else
-                return null
+                return None
         cursor.execute(util.query(**promo_qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor.fetchall()]
     

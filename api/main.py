@@ -254,7 +254,11 @@ class Promotion:
             promo_qry['where'].append(level + ' >= level')
             promo_qry['order_by'] = 'level DESC, id DESC'
             cursor.execute(util.query(**promo_qry), (venue_id,))
-            return {t[0]: val for t, val in zip(cursor.description, cursor.fetchone())}
+            row = cursor.fetchone()
+            if row:
+                return {t[0]: val for t, val in zip(cursor.description, row)}
+            else
+                return null
         cursor.execute(util.query(**promo_qry), (venue_id,))
         return [util.row_to_dict(cursor, row) for row in cursor.fetchall()]
     

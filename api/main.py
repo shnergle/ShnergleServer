@@ -47,8 +47,8 @@ class Confirm:
                 msg = msg.replace('[Name]', user.forename + ' ' + user.surname)
                 msg = msg.replace('[VenueName]', venue.name)
                 subject = 'Thanks for verifying [EmailAddress], we will now complete the verification of [VenueName]'
-                subject.replace('[EmailAddress]', venue.email)
-                subject.replace('[VenueName]', venue.name)
+                subject = subject.replace('[EmailAddress]', venue.email)
+                subject = subject.replace('[VenueName]', venue.name)
                 msg = email.mime.text.MIMEText(msg)
         msg['Subject'] = subject
         msg['From'] = os.environ['EMAIL']

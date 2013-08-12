@@ -927,18 +927,26 @@ class VenueRsvp:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, from_time=None, until_time=None,
-            **kwargs):
+            user_id=None, **kwargs):
         qry = {'select':   'COUNT(id) AS count',
                'table':    'venue_rsvps',
-               'where':    ('venue_id = ?', 'maybe = 1', 'going = 0',
-                            'time >= ?', 'time < ?')}
-        cursor.execute(util.query(**qry), (venue_id, from_time, until_time))
+               'where':    ['venue_id = ?', 'maybe = 1', 'going = 0',
+                            'time >= ?', 'time < ?']}
+        values = [venue_id, from_time, until_time]
+        if user_id:
+            qry['where'].append('user_id = ?')
+            values.append(user_id)
+        cursor.execute(util.query(**qry), values)
         maybe = cursor.fetchone().count
         qry = {'select':   'COUNT(id) AS count',
                'table':    'venue_rsvps',
-               'where':    ('venue_id = ?', 'going = 1',
-                            'time >= ?', 'time < ?')}
-        cursor.execute(util.query(**qry), (venue_id, from_time, until_time))
+               'where':    ['venue_id = ?', 'going = 1',
+                            'time >= ?', 'time < ?']}
+        values = [venue_id, from_time, until_time]
+        if user_id:
+            qry['where'].append('user_id = ?')
+            values.append(user_id)
+        cursor.execute(util.query(**qry), values)
         going = cursor.fetchone().count
         return {'maybe': maybe, 'going': going}
     

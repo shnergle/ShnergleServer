@@ -526,7 +526,8 @@ class User:
             facebook=None, twitter=None, forename=None, surname=None, age=None,
             birth_day=None, birth_month=None, birth_year=None, gender=None,
             employee=None, country=None, language=None, email=None, top5=None,
-            twitter_id=None, twitter_secret=None, save_locally=None, **kwargs):
+            twitter_id=None, twitter_secret=None, save_locally=None,
+            app_version=None, iphone_model=None, ios_version=None, **kwargs):
         if not facebook_id:
             raise cherrypy.HTTPError(403)
         qry = {'select':   'COUNT(id) AS count',

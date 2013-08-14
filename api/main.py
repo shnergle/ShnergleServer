@@ -944,6 +944,7 @@ class VenueRsvp:
                             'time >= ?', 'time < ?')}
         if user_id:
             qry['where'] += ('user_id = ?',)
+        raise Exception(util.query(**qry))
         cursor.execute(util.query(**qry), values)
         going = cursor.fetchone().cnt
         return {'maybe': maybe, 'going': going}

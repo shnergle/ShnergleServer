@@ -933,7 +933,7 @@ class VenueRsvp:
                'where':    ('venue_id = ?', 'maybe = 1', 'going = 0',
                             'time >= ?', 'time < ?')}
         values = (venue_id, from_time, until_time)
-        if user_id:
+        if user_id is not None:
             qry['where'] += ('user_id = ?',)
             values += (user_id,)
         cursor.execute(util.query(**qry), values)
@@ -942,9 +942,8 @@ class VenueRsvp:
                'table':    'venue_rsvps',
                'where':    ('venue_id = ?', 'going = 1',
                             'time >= ?', 'time < ?')}
-        if user_id:
+        if user_id is not None:
             qry['where'] += ('user_id = ?',)
-        raise Exception(util.query(**qry))
         cursor.execute(util.query(**qry), values)
         going = cursor.fetchone().cnt
         return {'maybe': maybe, 'going': going}

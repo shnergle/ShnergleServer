@@ -927,13 +927,13 @@ class VenueRsvp:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, from_time=None, until_time=None,
-            user_id=None, **kwargs):
+            own=None, **kwargs):
         qry = {'select':   'COUNT(id) AS cnt',
                'table':    'venue_rsvps',
                'where':    ('venue_id = ?', 'maybe = 1', 'going = 0',
                             'time >= ?', 'time < ?')}
         values = (venue_id, from_time, until_time)
-        if user_id:
+        if util.to_bool(own):
             qry['where'] += ('user_id = ?',)
             values += (user_id,)
         cursor.execute(util.query(**qry), values)
@@ -942,7 +942,7 @@ class VenueRsvp:
                'table':    'venue_rsvps',
                'where':    ('venue_id = ?', 'going = 1',
                             'time >= ?', 'time < ?')}
-        if user_id:
+        if util.to_bool(own):
             qry['where'] += ('user_id = ?',)
         cursor.execute(util.query(**qry), values)
         going = cursor.fetchone().cnt

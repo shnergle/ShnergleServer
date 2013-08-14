@@ -927,7 +927,7 @@ class VenueRsvp:
     @util.auth
     @util.jsonp
     def get(self, cursor=None, venue_id=None, from_time=None, until_time=None,
-            own=None, **kwargs):
+            own=None, user_id=None, **kwargs):
         qry = {'select':   'COUNT(id) AS cnt',
                'table':    'venue_rsvps',
                'where':    ('venue_id = ?', 'maybe = 1', 'going = 0',

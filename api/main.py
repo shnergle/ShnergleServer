@@ -930,22 +930,20 @@ class VenueRsvp:
             user_id=None, **kwargs):
         qry = {'select':   'COUNT(id) AS cnt',
                'table':    'venue_rsvps',
-               'where':    ['venue_id = ?', 'maybe = 1', 'going = 0',
-                            'time >= ?', 'time < ?']}
-        values = [venue_id, from_time, until_time]
+               'where':    ('venue_id = ?', 'maybe = 1', 'going = 0',
+                            'time >= ?', 'time < ?')}
+        values = (venue_id, from_time, until_time)
         if user_id:
-            qry['where'].append('user_id = ?')
-            values.append(user_id)
+            qry['where'] += ('user_id = ?',)
+            values += (user_id,)
         cursor.execute(util.query(**qry), values)
         maybe = cursor.fetchone().cnt
         qry = {'select':   'COUNT(id) AS cnt',
                'table':    'venue_rsvps',
-               'where':    ['venue_id = ?', 'going = 1',
-                            'time >= ?', 'time < ?']}
-        values = [venue_id, from_time, until_time]
+               'where':    ('venue_id = ?', 'going = 1',
+                            'time >= ?', 'time < ?')}
         if user_id:
-            qry['where'].append('user_id = ?')
-            values.append(user_id)
+            qry['where'] += ('user_id = ?',)
         cursor.execute(util.query(**qry), values)
         going = cursor.fetchone().cnt
         return {'maybe': maybe, 'going': going}

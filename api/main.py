@@ -403,7 +403,7 @@ class Ranking:
         score = ((share_posts + share_venue) * 5 + posts * 4 + rsvps * 3 + comments * 2 + likes * 2)
         for threshold in t:
             if score < threshold:
-                res = 0
+                res = threshold - 1
                 break
         else:
             res = 3

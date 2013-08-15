@@ -401,9 +401,9 @@ class Ranking:
         cursor.execute(util.query(**share_posts), (user_id,))
         share_posts = cursor.fetchone().count
         score = ((share_posts + share_venue) * 5 + posts * 4 + rsvps * 3 + comments * 2 + likes * 2)
-        for threshold in t:
-            if score < threshold:
-                res = threshold - 1
+        for threshold in range(len(t)):
+            if score < t[threshold]:
+                res = threshold
                 break
         else:
             res = 3

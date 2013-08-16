@@ -82,7 +82,8 @@ class Image:
             qry = {'select':   ('id', 'venue_id', 'time'),
                    'table':    'posts',
                    'where':    ('venue_id = ?', 'hidden = 0',
-                                '(' + util.query(**subqry) + ') < 3'),
+                                '(' + util.query(**subqry) + ') < 3',
+                                'time > ' + str(util.now() - 691200)),
                    'order_by': 'time DESC'}
             cursor.execute(util.query(**qry), (entity_id,))
             entity_id = str(cursor.fetchone().id)

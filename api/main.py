@@ -712,7 +712,7 @@ class Venue:
                 psubqry = {'select':   'COUNT(id)',
                            'table':    'post_reports',
                            'where':    ('post_id = posts.id')}
-                post_count = {'select':   'COUNT(id) > 0',
+                post_count = {'select':   'COUNT(id) / NULLIF(COUNT(id), COUNT(id))',
                               'table':    'posts',
                               'where':    ('posts.venue_id = venues.id',
                                            'hidden = 0',

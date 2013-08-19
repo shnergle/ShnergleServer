@@ -642,7 +642,7 @@ class Venue:
     def get(self, cursor=None, user_id=None, term=None, following_only=None,
             my_lat=None, my_lon=None, distance=None, own=None, quiet=None,
             trending=None, from_time=None, until_time=None, promotions=None,
-            level=None, **kwargs):
+            level=None, around_me=None, **kwargs):
         subqry = {'select':   'COUNT(id)',
                   'table':    'venue_followers',
                   'where':    ('user_id = ' + str(user_id),
@@ -681,7 +681,7 @@ class Venue:
                   '(' + util.query(**staffppqry) + ') AS promo_perm',
                   "(" + util.query(**subqry) + ") AS following",
                   '(' + util.query(**promoqry) + ') AS promotions']
-        order_by = 'name ASC'
+        order_by = ('name ASC',)
         if term:
             where = ("name LIKE ?",)
         elif util.to_bool(following_only):
@@ -706,8 +706,19 @@ class Venue:
             where = ('((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) <= ? * ?',)
             if util.to_bool(promotions):
                 where += ('(' + util.query(**promoqry) + ') > 0',)
-            if util.to_bool(quiet) or util.to_bool(trending):
+            elif util.to_bool(quiet) or util.to_bool(trending):
                 fields[0] = 'TOP(12) id'
+            elif util.to_bool(around_me):
+                psubqry = {'select':   'COUNT(id)',
+                           'table':    'post_reports',
+                           'where':    ('post_id = posts.id')}
+                post_count = {'select':   'COUNT(id)',
+                              'table':    'venue_rsvps',
+                              'where':    ('posts.venue_id = venues.id',
+                                           'hidden = 0',
+                                           '(' + util.query(**psubqry) + ') < 3',
+                                           'time > ' + str(util.now() - 691200))}
+                order_by = (util.query(**post_count),) + order_by
         else:
             where = ''
         qry = {'select':   fields,

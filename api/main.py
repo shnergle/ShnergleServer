@@ -713,7 +713,7 @@ class Venue:
                            'table':    'post_reports',
                            'where':    ('post_id = posts.id')}
                 post_count = {'select':   'COUNT(id)',
-                              'table':    'venue_rsvps',
+                              'table':    'posts',
                               'where':    ('posts.venue_id = venues.id',
                                            'hidden = 0',
                                            '(' + util.query(**psubqry) + ') < 3',

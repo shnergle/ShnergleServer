@@ -718,7 +718,7 @@ class Venue:
                                            'hidden = 0',
                                            '(' + util.query(**psubqry) + ') < 3',
                                            'time > ' + str(util.now() - 691200))}
-                order_by = (util.query(**post_count),) + order_by
+                order_by = ('(' + util.query(**post_count) + ')',) + order_by
         else:
             where = ''
         qry = {'select':   fields,

@@ -507,7 +507,8 @@ class User:
                                  'language',
                                  'email',
                                  'top5',
-                                 'save_locally'
+                                 'save_locally',
+                                 'last_login'
                                  ],
                    'table':     'users',
                    'order_by':  'id'}
@@ -556,7 +557,8 @@ class User:
                 'save_locally':   util.to_bool(save_locally),
                 'app_version':    app_version,
                 'iphone_model':   iphone_model,
-                'ios_version':    ios_version}
+                'ios_version':    ios_version,
+                'last_login':     util.now()}
         columns = []
         values = []
         for key, val in data.iteritems():

@@ -1,5 +1,6 @@
 import cherrypy
 
-@cherrypy.expose
-def index():
-    return 'Hi'
+class Main:
+    @cherrypy.expose
+    def index(self):
+        return 'Hi'

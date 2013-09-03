@@ -1159,7 +1159,7 @@ class ShnergleServer:
     
     def __init__(self):
         self.v1 = self
-        self.v2 = v2.main.Main()
+        self.v2 = v2.main
         
     @util.expose
     def index(self):

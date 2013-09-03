@@ -9,6 +9,7 @@ import cherrypy
 
 import azureutil
 import util
+import v2.main
 
 
 class Confirm:
@@ -1158,6 +1159,7 @@ class ShnergleServer:
     
     def __init__(self):
         self.v1 = self
+        self.v2 = v2.main
         
     @util.expose
     def index(self):

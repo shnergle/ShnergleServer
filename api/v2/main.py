@@ -17,7 +17,7 @@ class user:
         cursor = cherrypy.thread_data.db.cursor()
         try:
             cursor.execute('SELECT TOP(1) * FROM users WHERE id = 1')
-            json.dumps(cursor.fetchone())
+            json.dumps({t[0]: val for t, val in zip(cursor.description, cursor.fetchone())})
         finally:
             cursor.commit()
             cursor.close()

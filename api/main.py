@@ -508,7 +508,9 @@ class User:
                                  'email',
                                  'top5',
                                  'save_locally',
-                                 'last_login'
+                                 'last_login',
+                                 'last_facebook',
+                                 'last_twitter'
                                  ],
                    'table':     'users',
                    'order_by':  'id'}
@@ -529,7 +531,8 @@ class User:
             birth_day=None, birth_month=None, birth_year=None, gender=None,
             employee=None, country=None, language=None, email=None, top5=None,
             twitter_id=None, twitter_secret=None, save_locally=None,
-            app_version=None, iphone_model=None, ios_version=None, **kwargs):
+            app_version=None, iphone_model=None, ios_version=None,
+            last_facebook=None, last_twitter=None, **kwargs):
         if not facebook_id:
             raise cherrypy.HTTPError(403)
         qry = {'select':   'COUNT(id) AS count',
@@ -558,7 +561,9 @@ class User:
                 'app_version':    app_version,
                 'iphone_model':   iphone_model,
                 'ios_version':    ios_version,
-                'last_login':     util.now()}
+                'last_login':     util.now(),
+                'last_facebook':  util.to_bool(last_facebook),
+                'last_twitter':   util.to_bool(last_twitter)}
         columns = []
         values = []
         for key, val in data.iteritems():

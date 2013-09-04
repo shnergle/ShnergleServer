@@ -1,43 +1,77 @@
 import cherrypy
-import json
+from sql import *
+from sql.aggregate import *
+from sql.conditionals import *
 
-class image:
+
+def decorate(func):
+    def decorator(*args, **kwargs):
+        if kwargs.pop('app_secret', False) != os.environ['APP_SECRET']:
+            raise cherrypy.HTTPError(401)
+        cursor = cherrypy.thread_data.db.cursor()
+        data = cherrypy.request.json
+        try:
+            return staticmethod(
+                       cherrypy.expose(
+                           cherrypy.tools.json_in()(
+                               cherrypy.tools.json_out()(
+                                   func(cursor, data, *args, **kwargs)
+                               )
+                           )
+                       )
+                   )
+        finally:
+            cursor.commit()
+            cursor.close()
+    return decorator
     
-    @staticmethod
-    @cherrypy.expose
+
+def one(cursor, query):
+    res = cursor.execute(*query).fetchone()
+    return {d[0]: v for d, v in zip(cursor.description, res)}
+    
+    
+def none(cursor, query):
+    return cursor.execute(*query).rowcount
+    
+
+def all(cursor, query):
+    res = cursor.execute(*query).fetchall()
+    return [{d[0]: v for d, v in zip(cursor.description, row)} for row in res]
+
+
+class images:
+    
+    @decorate
     def get():
         return 'Have an image!'
         
         
-class user:
+class users:
     
-    @staticmethod
-    @cherrypy.expose
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.json_out()
-    def get():
-        cursor = cherrypy.thread_data.db.cursor()
-        try:
-            cursor.execute('SELECT TOP(1) * FROM users WHERE id = 1')
-            res = {t[0]: val for t, val in zip(cursor.description, cursor.fetchone())}
-        finally:
-            cursor.commit()
-            cursor.close()
-        return res
+    @decorate
+    def get(cursor, data):
+        users = Table('users')
+        query = users.select(where = users.id == data['id'])
+        return one(cursor, query)
        
-    @staticmethod
-    @cherrypy.expose
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.json_out()
-    def login():
-        cursor = cherrypy.thread_data.db.cursor()
-        try:
-            cursor.execute('SELECT TOP(1) * FROM users WHERE facebook_id = ?', cherrypy.request.json['facebook_id'])
-            res = {t[0]: val for t, val in zip(cursor.description, cursor.fetchone())}
-        finally:
-            cursor.commit()
-            cursor.close()
-        return res
+    @decorate
+    def login(cursor, data):
+        users = Table('users')
+        query = users.update(data.keys(), data.values())
+        query.where = user.facebook_id == data['facebook_id']
+        if none(cursor, query) == 0:
+            query = users.insert(data.keys(), data.values())
+            none(cursor, query)
+        query = users.select(where = users.facebook_id == data['facebook_id'])
+        return one(cursor, query)
+        
+    @decorate
+    def set(cursor, data):
+        users = Table('users')
+        query = users.update(data.keys(), data.values())
+        query.where = user.facebook_id == data['facebook_id']
+        return none(cursor, query)
 
 
 @cherrypy.expose

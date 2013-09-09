@@ -42,7 +42,7 @@ def all(cursor, query):
 
 class images:
     
-    @cherrypy.expose
+    @decorate
     def get():
         return 'Have an image!'
         

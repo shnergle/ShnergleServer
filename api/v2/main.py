@@ -12,7 +12,7 @@ def decorate(func):
         data = cherrypy.request.json
         try:
             return staticmethod(
-                       cherrypy.expose()(
+                       cherrypy.expose(
                            cherrypy.tools.json_in()(
                                cherrypy.tools.json_out()(
                                    func(cursor, data, *args, **kwargs)
@@ -42,7 +42,7 @@ def all(cursor, query):
 
 class images:
     
-    @decorate
+    @cherrypy.expose
     def get():
         return 'Have an image!'
         

@@ -40,14 +40,14 @@ def all(cursor, query):
     return [{d[0]: v for d, v in zip(cursor.description, row)} for row in res]
 
 
-class images:
+class Images:
     
     @decorate
     def get():
         return 'Have an image!'
         
         
-class users:
+class Users:
     
     users = Table('users')
     
@@ -71,3 +71,9 @@ class users:
         query = users.update(data.keys(), data.values())
         query.where = user.facebook_id == data['facebook_id']
         return none(cursor, query)
+        
+
+class Main:
+    
+    images = Images()
+    users = Users()

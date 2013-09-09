@@ -4,7 +4,7 @@ from sql.aggregate import *
 from sql.conditionals import *
 
 
-def decorate(f):
+def decorate(func):
     def decorator(*args, **kwargs):
         if kwargs.pop('app_secret', False) != os.environ['APP_SECRET']:
             raise cherrypy.HTTPError(401)
@@ -15,7 +15,7 @@ def decorate(f):
                        cherrypy.expose(
                            cherrypy.tools.json_in()(
                                cherrypy.tools.json_out()(
-                                   f(*args, cursor=cursor, data=data, **kwargs)
+                                   func(cursor, data, *args, **kwargs)
                                )
                            )
                        )
@@ -49,16 +49,15 @@ class images:
         
 class users:
     
+    users = Table('users')
     
     @decorate
-    def get(cursor=None, data=None):
-        users = Table('users')
+    def get(cursor, data):
         query = users.select(where = users.id == data['id'])
         return one(cursor, query)
        
     @decorate
-    def login(cursor=None, data=None):
-        users = Table('users')
+    def login(cursor, data):
         query = users.update(data.keys(), data.values())
         query.where = user.facebook_id == data['facebook_id']
         if none(cursor, query) == 0:
@@ -68,8 +67,7 @@ class users:
         return one(cursor, query)
         
     @decorate
-    def set(cursor=None, data=None):
-        users = Table('users')
+    def set(cursor, data):
         query = users.update(data.keys(), data.values())
         query.where = user.facebook_id == data['facebook_id']
         return none(cursor, query)

@@ -49,15 +49,16 @@ class images:
         
 class users:
     
-    users = Table('users')
     
     @decorate
     def get(cursor=None, data=None):
+        users = Table('users')
         query = users.select(where = users.id == data['id'])
         return one(cursor, query)
        
     @decorate
     def login(cursor=None, data=None):
+        users = Table('users')
         query = users.update(data.keys(), data.values())
         query.where = user.facebook_id == data['facebook_id']
         if none(cursor, query) == 0:
@@ -68,6 +69,7 @@ class users:
         
     @decorate
     def set(cursor=None, data=None):
+        users = Table('users')
         query = users.update(data.keys(), data.values())
         query.where = user.facebook_id == data['facebook_id']
         return none(cursor, query)

@@ -12,7 +12,7 @@ def decorate(func):
         data = cherrypy.request.json
         try:
             return staticmethod(
-                       cherrypy.expose(
+                       cherrypy.expose()(
                            cherrypy.tools.json_in()(
                                cherrypy.tools.json_out()(
                                    func(cursor, data, *args, **kwargs)

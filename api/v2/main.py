@@ -74,7 +74,7 @@ class users:
         
     @cherrypy.expose
     @staticmethod
-    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
     def index():
         return 'Hi!'
         

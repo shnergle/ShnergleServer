@@ -1,7 +1,7 @@
 import cherrypy
-from sql import *
-from sql.aggregate import *
-from sql.conditionals import *
+#from sql import *
+#from sql.aggregate import *
+#from sql.conditionals import *
 
 
 def decorate(func):

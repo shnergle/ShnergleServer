@@ -1,7 +1,7 @@
 import cherrypy
-#from sql import *
-#from sql.aggregate import *
-#from sql.conditionals import *
+from sql import *
+from sql.aggregate import *
+from sql.conditionals import *
 
 
 def decorate(func):
@@ -71,3 +71,7 @@ class users:
         query = users.update(data.keys(), data.values())
         query.where = user.facebook_id == data['facebook_id']
         return none(cursor, query)
+        
+@cherrypy.expose
+def index():
+    return 'Hi!'

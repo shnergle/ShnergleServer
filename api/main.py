@@ -236,18 +236,23 @@ class Promotion:
     @util.db
     @util.auth
     @util.jsonp
-    def get(self, cursor=None, venue_id=None, getall=None, level=None,
-            **kwargs):
+    def get(self, cursor=None, user_id=None, venue_id=None, getall=None,
+            level=None, from_time=None, until_time=None, **kwargs):
         red = {'select': 'COUNT(id)',
                'table':  'promotion_redemptions',
                'where':  'promotion_id = promotions.id'}
-        promo_qry = {'select':   ('id', 'title', 'description',
+        promo_qry = {'select':   ['id', 'title', 'description',
                                   'passcode', 'start', '[end]', 'maximum',
                                   'creator', 'level',
-                                  '(' + util.query(**red) + ') AS redemptions'),
+                                  '(' + util.query(**red) + ') AS redemptions'],
                      'table':    'promotions',
                      'where':    ['venue_id = ?', 'hidden != 1'],
                      'order_by': 'id DESC'}
+        if from_time and until_time
+            own_red = {'select': 'COUNT(id)',
+                       'table':  'promotion_redemptions',
+                       'where':  ('promotion_id = promotions.id', 'time >= ' + from_time, 'time < ' + until_time, 'user_id = ' + user_id)}
+            promo_qry['select'].append('(' + util.query(**own_red) + ') AS own_redemptions')
         if not util.to_bool(getall):
             promo_qry['limit'] = 1
             promo_qry['where'].append(str(util.now()) + ' >= start')

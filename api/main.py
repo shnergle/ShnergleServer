@@ -248,7 +248,7 @@ class Promotion:
                      'table':    'promotions',
                      'where':    ['venue_id = ?', 'hidden != 1'],
                      'order_by': 'id DESC'}
-        if from_time and until_time
+        if from_time and until_time:
             own_red = {'select': 'COUNT(id)',
                        'table':  'promotion_redemptions',
                        'where':  ('promotion_id = promotions.id', 'time >= ' + from_time, 'time < ' + until_time, 'user_id = ' + user_id)}

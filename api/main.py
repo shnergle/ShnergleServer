@@ -252,7 +252,7 @@ class Promotion:
             promo_qry['limit'] = 1
             promo_qry['where'].append(str(util.now()) + ' >= start')
             promo_qry['where'].append('([end] = 0 OR [end] > ' + str(util.now()) + ')')
-            promo_qry['where'].append('(' + util.query(**red) + ') <= maximum')
+            promo_qry['where'].append('(maximum = 0 OR (' + util.query(**red) + ') < maximum)')
             promo_qry['where'].append(level + ' >= level')
             promo_qry['order_by'] = 'level DESC, id DESC'
             cursor.execute(util.query(**promo_qry), (venue_id,))
@@ -663,7 +663,7 @@ class Venue:
                     'where':    ('venue_id = venues.id',
                                  str(util.now()) + ' >= start',
                                  '([end] = 0 OR [end] > ' + str(util.now()) + ')',
-                                 '(' + util.query(**red) + ') <= maximum',
+                                 '(maximum = 0 OR (' + util.query(**red) + ') < maximum)',
                                  level + ' >= level',
                                  'hidden != 1')}
         managerqry = {'select':   'COUNT(id)',
@@ -1156,10 +1156,10 @@ class ShnergleServer:
     venue_staff = VenueStaff()
     venue_views = VenueView()
     user_searches = UserSearch()
+    v2 = v2.main
     
     def __init__(self):
         self.v1 = self
-        self.v2 = v2.main
         
     @util.expose
     def index(self):

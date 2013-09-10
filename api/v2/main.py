@@ -72,6 +72,10 @@ class users:
         query.where = user.facebook_id == data['facebook_id']
         return none(cursor, query)
         
+    @cherrypy.expose
+    def index():
+        return 'Hi!'
+        
 @cherrypy.expose
 def index():
     return 'Hi!'

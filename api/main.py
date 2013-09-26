@@ -765,7 +765,7 @@ class Venue:
             website=None, facebook=None, twitter=None, v_facebook_id=None,
             twitter_id=None, twitter_token=None, twitter_secret=None, lat=None,
             lon=None, official=None, verified=None, customer_spend=None,
-            authenticated=None, **kwargs):
+            authenticated=None, creator_version=None, **kwargs):
         data = {'name':           name,
                 'address':        address,
                 'country':        country,
@@ -788,7 +788,8 @@ class Venue:
                 'verified':       util.to_bool(verified),
                 'customer_spend': util.to_float(customer_spend),
                 'authenticated':  util.to_bool(authenticated),
-                'creator':        user_id}
+                'creator':        user_id,
+                'creator_version': creator_version}
         columns = []
         values = []
         for key, val in data.iteritems():

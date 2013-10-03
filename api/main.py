@@ -388,11 +388,6 @@ class Ranking:
                  'where': ('user_id = ?', 'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**posts), (user_id,))
         posts = cursor.fetchone().count
-        rsvps = {'select': 'COUNT(id) AS count',
-                 'table': 'venue_rsvps',
-                 'where': ('user_id = ?', 'time >' + str(util.now() - 2592000))}
-        cursor.execute(util.query(**rsvps), (user_id,))
-        rsvps = cursor.fetchone().count
         comments = {'select': 'COUNT(id) AS count',
                     'table': 'venue_comments',
                     'where': ('user_id = ?',
@@ -422,7 +417,7 @@ class Ranking:
                                  'time >' + str(util.now() - 2592000))}
         cursor.execute(util.query(**share_posts), (user_id,))
         share_posts = cursor.fetchone().count
-        score = ((share_posts + share_venue) * 5 + posts * 4 + rsvps * 3 + comments * 2 + likes * 2)
+        score = ((share_posts + share_venue) * 5 + posts * 4 + comments * 2 + likes * 2)
         for threshold in range(len(t)):
             if score < t[threshold]:
                 res = threshold
@@ -437,7 +432,7 @@ class Ranking:
                 'posts': posts,
                 'redemptions': redemptions,
                 'share': share_posts + share_venue,
-                'rsvps': rsvps,
+                'rsvps': 0,
                 'comments': comments,
                 'likes': likes,
                 'score': score}
@@ -449,10 +444,6 @@ class Ranking:
         thresholds = []
         for percent in (0.8, 0.95, 0.99):
             number = math.floor(percent * users)
-            rsvps = {'select': 'COUNT(id)',
-                     'table': 'venue_rsvps',
-                     'where': ('user_id = users.id',
-                               'time > ' + str(util.now() - 2592000))}
             venue_shares = {'select': 'COUNT(id)',
                             'table': 'venue_shares',
                             'where': ('user_id = users.id',
@@ -476,7 +467,6 @@ class Ranking:
             thresholdqry = {'select':    ('((' + util.query(**venue_shares) + ') * 5 + ' +
             '(' + util.query(**post_shares) + ') * 5 + ' +
             '(' + util.query(**posts) + ') * 4 + ' +
-            '(' + util.query(**rsvps) + ') * 3 + ' +
             '(' + util.query(**comments) + ') * 2 + ' +
             '(' + util.query(**likes) + ') * 2) AS count',),
                             'table':     'users',

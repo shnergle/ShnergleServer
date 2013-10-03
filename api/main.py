@@ -94,14 +94,18 @@ class Image:
                 qry = {'insert_into': 'venue_loads',
                        'columns':     ('user_id', 'venue_id', 'time')}
                 cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
+                image = azureutil.retrieve(entity, entity_id)
+                if not image:
+                    image = cherrypy.thread_data.placeholder_image
             except:
                 image = cherrypy.thread_data.placeholder_image
-        image = azureutil.retrieve(entity, entity_id)
-        #if image:
-        #    cherrypy.response.headers['Content-Type'] = 'image/jpeg'
-        #    return image
-        if not image:
-            image = cherrypy.thread_data.placeholder_image
+        else:
+            image = azureutil.retrieve(entity, entity_id)
+            if not image:
+                image = cherrypy.thread_data.placeholder_image
+            #if image:
+            #    cherrypy.response.headers['Content-Type'] = 'image/jpeg'
+            #    return image
         cherrypy.response.headers['Content-Type'] = 'image/jpeg'
         return image
         #raise cherrypy.HTTPError(404)

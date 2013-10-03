@@ -89,10 +89,13 @@ class Image:
                    'order_by': 'time DESC',
                    'limit':    50}
             cursor.execute(util.query(**qry), (entity_id,))
-            entity_id = str(cursor.fetchone().id)
-            qry = {'insert_into': 'venue_loads',
-                   'columns':     ('user_id', 'venue_id', 'time')}
-            cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
+            try:
+                entity_id = str(cursor.fetchone().id)
+                qry = {'insert_into': 'venue_loads',
+                       'columns':     ('user_id', 'venue_id', 'time')}
+                cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
+            except:
+                image = cherrypy.thread_data.placeholder_image
         image = azureutil.retrieve(entity, entity_id)
         #if image:
         #    cherrypy.response.headers['Content-Type'] = 'image/jpeg'

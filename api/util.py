@@ -11,7 +11,7 @@ import pyodbc
 
 def connect(thread_index):
     cherrypy.thread_data.db = pyodbc.connect(os.environ['DATABASE'])
-    cherrypy.thread_data.placeholder_image = open('placeholder.png', 'rb').read()
+    cherrypy.thread_data.placeholder_image = open(os.path.join(current_dir, 'placeholder.png'), 'rb').read()
 
 
 def dont_cache():

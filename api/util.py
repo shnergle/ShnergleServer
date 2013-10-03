@@ -11,6 +11,7 @@ import pyodbc
 
 def connect(thread_index):
     cherrypy.thread_data.db = pyodbc.connect(os.environ['DATABASE'])
+    current_dir = os.path.dirname(os.path.abspath(__file__))
     cherrypy.thread_data.placeholder_image = open(os.path.join(current_dir, 'placeholder.png'), 'rb').read()
 
 

@@ -83,19 +83,25 @@ class Image:
             qry = {'select':   ('id', 'venue_id', 'time'),
                    'table':    'posts',
                    'where':    ('venue_id = ?', 'hidden = 0',
-                                '(' + util.query(**subqry) + ') < 3',
-                                'time > ' + str(util.now() - 691200)),
-                   'order_by': 'time DESC'}
+                                '(' + util.query(**subqry) + ') < 3' #,
+                                #'time > ' + str(util.now() - 691200)),
+                               ),
+                   'order_by': 'time DESC',
+                   'limit':    50}
             cursor.execute(util.query(**qry), (entity_id,))
             entity_id = str(cursor.fetchone().id)
             qry = {'insert_into': 'venue_loads',
                    'columns':     ('user_id', 'venue_id', 'time')}
             cursor.execute(util.query(**qry), (user_id, venue_id, util.now()))
         image = azureutil.retrieve(entity, entity_id)
-        if image:
-            cherrypy.response.headers['Content-Type'] = 'image/jpeg'
-            return image
-        raise cherrypy.HTTPError(404)
+        #if image:
+        #    cherrypy.response.headers['Content-Type'] = 'image/jpeg'
+        #    return image
+        if not image:
+            image = cherrypy.thread_data.placeholder_image
+        cherrypy.response.headers['Content-Type'] = 'image/jpeg'
+        return image
+        #raise cherrypy.HTTPError(404)
 
 
 class Post:
@@ -117,9 +123,11 @@ class Post:
                    'on':        'posts.user_id = users.id',
                    'table':     'posts',
                    'where':     ('posts.venue_id = ?', 'hidden = 0',
-                                 '(' + util.query(**subqry) + ') < 3',
-                                 'time > ' + str(util.now() - 691200)),
-                   'order_by':  'time DESC'}
+                                 '(' + util.query(**subqry) + ') < 3' #,
+                                 #'time > ' + str(util.now() - 691200)),
+                                ),
+                   'order_by':  'time DESC',
+                   'limit':     50}
             cursor.execute(util.query(**qry), (venue_id,))
         else:
             qry = {'select':   ('posts.id', 'venues.name', 'posts.time'),
